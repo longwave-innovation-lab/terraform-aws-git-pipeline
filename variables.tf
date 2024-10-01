@@ -77,3 +77,9 @@ variable "codebuild_privileged_mode" {
   default     = true
   description = "Whether to run the build in privileged mode which is needed when using Docker"
 }
+
+variable "codebuild_buildspec_path" {
+  type        = string
+  default     = "buildspec.yaml"
+  description = "Path to the buildspec file in the source repository"
+}

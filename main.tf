@@ -33,35 +33,26 @@ locals {
 }
 resource "aws_s3_bucket" "pipeline_artifact_bucket" {
   bucket_prefix = local.sanitized_name
+  force_destroy = true # Since is a bucket for artifacts, we can destroy it if needed
+}
+
+resource "aws_s3_bucket_public_access_block" "codepipeline_bucket_pab" {
+  bucket = aws_s3_bucket.pipeline_artifact_bucket.id
+
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
+  restrict_public_buckets = true
 }
 
 #endregion S3
 
 #region ECR
-locals {
-  original_ecr_name = var.repo_name
 
-  # Step 1: Convert to lowercase
-  lowercase_name = lower(local.original_ecr_name)
-
-  # Step 2: Replace invalid characters
-  replaced_invalid_chars = replace(local.lowercase_name, "/[^a-z0-9._-]/", "-")
-
-  # Step 3: Ensure it doesn't start or end with a special character
-  trimmed_name = trim(local.replaced_invalid_chars, "._-")
-
-  # Step 4: Replace multiple consecutive special characters with a single hyphen
-  single_special_chars = replace(local.trimmed_name, "/[._-]+/", "-")
-
-  # Step 5: Ensure it doesn't contain double hyphens
-  no_double_hyphens = replace(local.single_special_chars, "--", "-")
-
-  # Final sanitized name
-  sanitized_ecr_name = local.no_double_hyphens
-}
-
+# Sanitizing the name is not required anymore, it is preferred to throw an error 
+# instead of faking a creation a "maybe" not functioning pipeline
 resource "aws_ecr_repository" "registry" {
-  name                 = local.sanitized_ecr_name
+  name                 = var.repo_name
   image_tag_mutability = "MUTABLE"
   force_delete         = var.force_delete_registry
   image_scanning_configuration {
@@ -198,7 +189,8 @@ data "aws_iam_policy_document" "codebuild_default_policy" {
       "ecr:PutImage"
     ]
     resources = [
-      aws_ecr_repository.registry.arn
+      aws_ecr_repository.registry.arn,
+      "${aws_ecr_repository.registry.arn}/*"
     ]
   }
 
@@ -222,7 +214,7 @@ data "aws_iam_policy_document" "codebuild_secret_policy" {
     effect = "Allow"
     actions = [
       "secretsmanager:GetSecretValue",
-      "secretsmanager:GetSecretValue"
+      "secretsmanager:DescribeSecret"
     ]
     resources = var.secrets_to_read
   }
@@ -232,6 +224,11 @@ resource "aws_iam_role_policy" "codebuild_secrets" {
   count  = length(var.secrets_to_read) > 0 ? 1 : 0
   role   = aws_iam_role.codebuild_role.name
   policy = data.aws_iam_policy_document.codebuild_secret_policy[0].json
+}
+
+data "aws_secretsmanager_secret" "secrets_to_read" {
+  for_each = toset(var.secrets_to_read)
+  arn      = each.key
 }
 
 
@@ -259,11 +256,22 @@ resource "aws_codebuild_project" "cb_project" {
       type  = "PLAINTEXT"
       value = var.repo_branch
     }
+
+    # # make a secret env variable for each element in secrets_to_read
+    # dynamic "environment_variable" {
+    #   for_each = data.aws_secretsmanager_secret.secrets_to_read
+    #   content {
+    #     type  = "SECRETS_MANAGER"
+    #     name = environment_variable.value["name"]
+    #     value = environment_variable.value["name"]
+    #   }
+    # }
   }
 
   source {
     type         = "CODEPIPELINE"
     insecure_ssl = false
+    buildspec    = var.codebuild_buildspec_path
   }
 
   artifacts {
@@ -334,13 +342,9 @@ data "aws_iam_policy_document" "codepipeline_policy" {
   }
 }
 
-resource "aws_s3_bucket_public_access_block" "codepipeline_bucket_pab" {
-  bucket = aws_s3_bucket.pipeline_artifact_bucket.id
-
-  block_public_acls       = true
-  block_public_policy     = true
-  ignore_public_acls      = true
-  restrict_public_buckets = true
+resource "aws_iam_role_policy" "codepipeline_default" {
+  policy = data.aws_iam_policy_document.codepipeline_policy.json
+  role   = aws_iam_role.codepipeline_role.name
 }
 
 resource "aws_codepipeline" "pipeline" {
