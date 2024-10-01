@@ -1,16 +1,16 @@
 {
-  "name": "terraform-aws-module",
-  "version": "0.3.5",
-  "description": "Repository template for a terraform module.",
+  "name": "terraform-aws-github-pipeline",
+  "version": "0.1.0",
+  "description": "Module that creates a pipeline which has a Github repository as a source.",
   "directories": {
     "doc": "docs"
   },
   "scripts": {
-    "tf-validate": "cd ./terraform && terraform validate"
+    "tf-validate": "terraform validate"
   },
   "repository": {
     "type": "git",
-    "url": "https://git.lantechlongwave.it/RnD/terraform-aws-module-template.git"
+    "url": "https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline.git"
   },
   "author": "Mirco Bozzolini"
 }
