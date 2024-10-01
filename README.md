@@ -71,4 +71,5 @@ No modules.
 | <a name="output_codepipeline_role_arn"></a> [codepipeline\_role\_arn](#output\_codepipeline\_role\_arn) | The Amazon Resource Name (ARN) specifying the role for CodePipeline. |
 | <a name="output_ecr_arn"></a> [ecr\_arn](#output\_ecr\_arn) | The Amazon Resource Name (ARN) of the ECR repository. |
 | <a name="output_ecr_registry_name"></a> [ecr\_registry\_name](#output\_ecr\_registry\_name) | The name of the ECR repository. |
+| <a name="output_ecr_registry_uri"></a> [ecr\_registry\_uri](#output\_ecr\_registry\_uri) | The URL of the ECR repository. |
 <!-- END_TF_DOCS -->
