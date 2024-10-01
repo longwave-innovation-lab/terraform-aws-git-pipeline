@@ -8,6 +8,11 @@ output "ecr_registry_name" {
   description = "The name of the ECR repository."
 }
 
+output "ecr_registry_uri" {
+  value       = aws_ecr_repository.registry.repository_url
+  description = "The URL of the ECR repository."
+}
+
 output "codepipeline_arn" {
   value       = aws_codepipeline.pipeline.arn
   description = "The Amazon Resource Name (ARN) of the CodePipeline."
