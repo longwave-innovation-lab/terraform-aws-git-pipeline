@@ -83,3 +83,9 @@ variable "codebuild_buildspec_path" {
   default     = "buildspec.yaml"
   description = "Path to the buildspec file in the source repository"
 }
+
+variable "sns_subscribers" {
+  type = list(string)
+  default = [ ]
+  description = "List of email addresses to subscribe to SNS notifications"
+}
