@@ -86,4 +86,10 @@ No modules.
 | <a name="output_ecr_arn"></a> [ecr\_arn](#output\_ecr\_arn) | The Amazon Resource Name (ARN) of the ECR repository. |
 | <a name="output_ecr_registry_name"></a> [ecr\_registry\_name](#output\_ecr\_registry\_name) | The name of the ECR repository. |
 | <a name="output_ecr_registry_uri"></a> [ecr\_registry\_uri](#output\_ecr\_registry\_uri) | The URL of the ECR repository. |
+| <a name="output_lambda_codebuild_event_listener_arn"></a> [lambda\_codebuild\_event\_listener\_arn](#output\_lambda\_codebuild\_event\_listener\_arn) | The Amazon Resource Name (ARN) identifying the CodeBuild event listener Lambda function. |
+| <a name="output_lambda_codebuild_event_listener_name"></a> [lambda\_codebuild\_event\_listener\_name](#output\_lambda\_codebuild\_event\_listener\_name) | The name identifying the CodeBuild event listener Lambda function. |
+| <a name="output_lambda_codebuild_event_listener_role"></a> [lambda\_codebuild\_event\_listener\_role](#output\_lambda\_codebuild\_event\_listener\_role) | The Amazon Resource Name (ARN) identifying the IAM role for the CodeBuild event listener Lambda function. |
+| <a name="output_sns_topci_name"></a> [sns\_topci\_name](#output\_sns\_topci\_name) | The name of the SNS topic name for pipeline notifications. |
+| <a name="output_sns_topic_arn"></a> [sns\_topic\_arn](#output\_sns\_topic\_arn) | The Amazon Resource Name (ARN) of the SNS topic for pipeline notifications. |
+| <a name="output_sqs_codebuild_events_dlq"></a> [sqs\_codebuild\_events\_dlq](#output\_sqs\_codebuild\_events\_dlq) | The URL of the SQS queue which holds dead-letter messages for CodeBuild events that couldn't be processed by the lambda listener. |
 <!-- END_TF_DOCS -->
