@@ -27,3 +27,33 @@ output "codebuild_role_arn" {
   value       = aws_iam_role.codebuild_role.arn
   description = "The Amazon Resource Name (ARN) specifying the role for Codebuild."
 }
+
+output "sns_topic_arn" {
+  value       = aws_sns_topic.pipeline_notifications.arn
+  description = "The Amazon Resource Name (ARN) of the SNS topic for pipeline notifications."
+}
+
+output "sns_topci_name" {
+  value       = aws_sns_topic.pipeline_notifications.name
+  description = "The name of the SNS topic name for pipeline notifications."
+}
+
+output "lambda_codebuild_event_listener_arn" {
+  value       = aws_lambda_function.codebuild_event_listener.arn
+  description = "The Amazon Resource Name (ARN) identifying the CodeBuild event listener Lambda function."
+}
+
+output "lambda_codebuild_event_listener_name" {
+  value       = aws_lambda_function.codebuild_event_listener.function_name
+  description = "The name identifying the CodeBuild event listener Lambda function."
+}
+
+output "lambda_codebuild_event_listener_role" {
+  value       = aws_iam_role.lambda_function_role.arn
+  description = "The Amazon Resource Name (ARN) identifying the IAM role for the CodeBuild event listener Lambda function."
+}
+
+output "sqs_codebuild_events_dlq" {
+  value       = aws_sqs_queue.evnt_rule_target_dlq.arn
+  description = "The URL of the SQS queue which holds dead-letter messages for CodeBuild events that couldn't be processed by the lambda listener."
+}

@@ -17,4 +17,6 @@ module "github_codepipeline" {
   secrets_to_read = [
     "arn:aws:secretsmanager:eu-west-1:687331130220:secret:InnovationDockerCreds-vOTSnB"
   ]
+
+  sns_subscribers = ["mirco.bozzolini@lantechlongwave.it"]
 }
