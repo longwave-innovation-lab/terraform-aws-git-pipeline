@@ -1,4 +1,17 @@
-## 0.2.0 (2024-10-01)
+## [0.3.0](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/compare/v0.2.0...v0.3.0) (2024-10-03)
+
+
+### Features
+
+* added codebuild event listener lambda with notifications ([fb728d9](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/commit/fb728d9dc48a4bd4786e8543a2a6d7b45a649d79))
+* first version with all infrastructure working, TODO fix lambda code and layers ([a70264a](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/commit/a70264a56d2c884f3f93dada81bb433fdcd1d713))
+
+
+### Bug Fixes
+
+* ignoring .zip files ([afbe2b1](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/commit/afbe2b17dd4a9927724043a16e2cb47257bb04d5))
+
+## [0.2.0](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/compare/cd304134ce404db0ad3761c9540179725b7edc8d...v0.2.0) (2024-10-01)
 
 
 ### Features
