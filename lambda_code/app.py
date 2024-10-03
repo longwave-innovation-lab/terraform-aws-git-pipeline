@@ -3,17 +3,11 @@ import boto3
 import traceback
 import json
 import logging
-import pydash
+import os
 
 logger: logging.Logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
-# For local Testing
-# session = boto3.Session(profile_name="tep")
-# ssm_client = session.client('ssm')
-# sns_client = session.client('sns')
-
-ssm_client = boto3.client('ssm')
 sns_client = boto3.client('sns')
 codebuild_client = boto3.client('codebuild')
 
@@ -39,10 +33,19 @@ monitor_logs: str = "logs-link"
 failed_phases_attr: str = "failed-phases"
 build_number: str = "build-number"
 
-REPO_NAME_ATTR_KEY: str = "repo_name"
+REPO_NAME_ATTR_KEY: str = "REPO_NAME"
 IMAGE_TAG_ATTR_KEY: str = "IMAGE_TAG"
 BRANCH_NAME_ATTR_KEY: str = "BRANCH_NAME"
+TOPIC_ARN_ENV_VAR: str = "SNS_TOPIC_ARN"
 EXPORTED_ENV_VAR_ATTR_KEY: str = "exportedEnvironmentVariables"
+
+def get_nested(dictionary, keys, default=None):
+    for key in keys:
+        if isinstance(dictionary, dict):
+            dictionary = dictionary.get(key, default)
+        else:
+            return default
+    return dictionary
 
 def get_build_details(build_id: str) -> dict:
     build_details: dict = None
@@ -59,38 +62,26 @@ def get_build_details(build_id: str) -> dict:
 def lambda_handler(event, context):
 
     try:
-        # TODO remove
         logger.info(f"Complete Event: {event}")
         
         # Getting environmental variables of codebuild to find the repo_name
-        env_vars: list[dict] = pydash.get(event,f"{detail}.{additional_information}.{environment}.{environment_variables}")
-        # env_vars: list[dict] = event[detail][additional_information][environment][environment_variables]
+        env_vars: list[dict] = get_nested(event, [detail,additional_information,environment,environment_variables], None)
         repo_name: str = None
         branch_name: str = None
 
         for env_var in env_vars:
-            if env_var["name"] == REPO_NAME_ATTR_KEY:
+            if env_var["name"].upper() == REPO_NAME_ATTR_KEY:
                 repo_name = env_var["value"]
-            elif env_var["name"] == BRANCH_NAME_ATTR_KEY:
+            elif env_var["name"].upper() == BRANCH_NAME_ATTR_KEY:
                 branch_name = env_var["value"]
 
         if repo_name is None:
             raise Exception(
                 "No repo_name found in the codebuild environment variables")
 
-        logger.info(f"Reacting build event on repo <{repo_name}>")
+        logger.info(f"Reacting build event on repository:branch <{repo_name}:{branch_name}>")
 
-        # if len(repo_name) + len(bucket_s3_suffix) > 63:
-        #     raise Exception(f"The repo name <{repo_name}> is too long to be a valid S3 bucket name.")
-
-        # Define the S3 bucket name and key
-        # valid_s3_bucket_name: str = repo_name.replace("_","-").lower() + bucket_s3_suffix
-
-        sns_parameter: str = ssm_client.get_parameter(
-            Name=repo_name + "_topic"
-        )
-
-        sns_topic_arn: str = sns_parameter["Parameter"]["Value"]
+        sns_topic_arn: str = os.getenv(TOPIC_ARN_ENV_VAR)
 
         logger.info(f"sns_topic_arn is <{sns_topic_arn}>")
 
@@ -99,16 +90,16 @@ def lambda_handler(event, context):
 
         logger.info(f"Building notification message...")
         
-        build_id_value: str = pydash.get(event, f"{detail}.{build_id}")
-        message_build_status = pydash.get(event,f"{detail}.{build_status}")
-        message_build_start_time = pydash.get(event,f"{detail}.{additional_information}.{build_start_time}")
-        message_monitor_logs = pydash.get(event,f"{detail}.{additional_information}.{logs}.{deep_link}")
-        message_build_number = pydash.get(event,f"{detail}.{additional_information}.{build_number}")
-        
+        build_id_value: str = get_nested(event, [detail, build_id])
+        message_build_status = get_nested(event, [detail, build_status])
+        message_build_start_time = get_nested(event, [detail, additional_information, build_start_time])
+        message_monitor_logs = get_nested(event, [detail, additional_information, logs, deep_link])
+        message_build_number = get_nested(event, [detail, additional_information, build_number])
+
         message_subject: str = f"Status of <{repo_name}:{branch_name}> pipeline (build N <{message_build_number}>) is <{message_build_status}>"
         
         build_details: dict = get_build_details(build_id_value)
-        expo_env_vars: dict = pydash.get(build_details, f"{EXPORTED_ENV_VAR_ATTR_KEY}")
+        expo_env_vars: dict = get_nested(build_details, [EXPORTED_ENV_VAR_ATTR_KEY])
         
         # Beginning to build the string message
         string_message = (string_message + f"STATUS: {message_build_status}\n" + 
@@ -130,15 +121,15 @@ def lambda_handler(event, context):
         if message_build_status == "FAILED":
             failed_phases: list[dict] = []
             
-            phases: list[dict] = pydash.get(event,f"{detail}.{additional_information}.{phases_attr}")
-
+            phases: list[dict] = get_nested(event, [detail, additional_information, phases_attr])
+            
             failed_phase_found: bool = False
             for phase in phases:
-                status: str = pydash.get(phase,phase_status)
+                status: str = get_nested(phase, [phase_status])
                 if status == "FAILED":
                     
-                    phase_type_value: str = pydash.get(phase,phase_type_attr)
-                    phase_context_value: list[str] = pydash.get(phase,phase_context)
+                    phase_type_value: str = get_nested(phase, [phase_type_attr])
+                    phase_context_value: list[str] = get_nested(phase, [phase_context])
                     
                     # Print in the message the first line
                     if not failed_phase_found:

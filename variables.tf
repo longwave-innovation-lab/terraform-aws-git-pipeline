@@ -85,7 +85,7 @@ variable "codebuild_buildspec_path" {
 }
 
 variable "sns_subscribers" {
-  type = list(string)
-  default = [ ]
+  type        = list(string)
+  default     = []
   description = "List of email addresses to subscribe to SNS notifications"
 }

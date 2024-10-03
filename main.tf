@@ -408,10 +408,8 @@ resource "aws_cloudwatch_event_rule" "codebuild_events_rule" {
     region      = [data.aws_region.current.name]
     detail = {
       build-status = ["IN_PROGRESS", "FAILED", "STOPPED", "SUCCEEDED"]
+      project-name = [aws_codebuild_project.cb_project.name]
     }
-    # resources = [
-    #   aws_codebuild_project.cb_project.arn
-    # ]
   })
 }
 
@@ -503,6 +501,11 @@ resource "aws_lambda_function" "codebuild_event_listener" {
   architectures = ["arm64"]
   timeout       = 10
   memory_size   = 256
+  environment {
+    variables = {
+      "SNS_TOPIC_ARN" = aws_sns_topic.pipeline_notifications.arn
+    }
+  }
 }
 
 resource "aws_lambda_permission" "allow_eventbridge" {
