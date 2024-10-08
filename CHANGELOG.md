@@ -1,3 +1,10 @@
+## [0.3.1](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/compare/v0.3.0...v0.3.1) (2024-10-08)
+
+
+### Bug Fixes
+
+* minor syntax error in bucket naming ([0735778](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/commit/0735778194638102dc7b8b4dc3ca91b0b3018310))
+
 ## [0.3.0](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/compare/v0.2.0...v0.3.0) (2024-10-03)
 
 
