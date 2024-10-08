@@ -15,7 +15,7 @@ data "aws_codestarconnections_connection" "github_provider" {
 #region S3
 
 locals {
-  original_name = "${var.repo_org}-${var.repo_name}-articat-bucket"
+  original_name = "${var.repo_org}-${var.repo_name}-artifact-bucket"
 
   sanitized_name = lower(
     substr(
