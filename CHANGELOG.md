@@ -1,3 +1,10 @@
+## [0.3.2](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/compare/v0.3.1...v0.3.2) (2024-10-21)
+
+
+### Bug Fixes
+
+* updated os version for codebuild environment ([3d0b562](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/commit/3d0b562f24d21aedfee3cde4104f25e01366f2e1))
+
 ## [0.3.1](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/compare/v0.3.0...v0.3.1) (2024-10-08)
 
 
