@@ -1,3 +1,10 @@
+## [0.3.3](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/compare/v0.3.2...v0.3.3) (2024-10-24)
+
+
+### Bug Fixes
+
+* restricted codepipeline action to a specific codebuild project, added stopbuild action to permissions ([dd2f8e0](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/commit/dd2f8e006ad193a27d9bbed56229078d77e3a45d))
+
 ## [0.3.2](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/compare/v0.3.1...v0.3.2) (2024-10-21)
 
 
