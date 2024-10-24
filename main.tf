@@ -336,9 +336,10 @@ data "aws_iam_policy_document" "codepipeline_policy" {
     actions = [
       "codebuild:BatchGetBuilds",
       "codebuild:StartBuild",
+      "codebuild:StopBuild"
     ]
 
-    resources = ["*"]
+    resources = [ aws_codebuild_project.cb_project.arn ]
   }
 }
 
