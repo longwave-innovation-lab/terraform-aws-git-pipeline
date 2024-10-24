@@ -239,7 +239,7 @@ resource "aws_codebuild_project" "cb_project" {
   service_role   = aws_iam_role.codebuild_role.arn
 
   environment {
-    compute_type                = var.codebuild_comput_type
+    compute_type                = var.codebuild_compute_type
     image                       = var.codebuild_image
     image_pull_credentials_type = "CODEBUILD"
     privileged_mode             = var.codebuild_privileged_mode
@@ -336,9 +336,10 @@ data "aws_iam_policy_document" "codepipeline_policy" {
     actions = [
       "codebuild:BatchGetBuilds",
       "codebuild:StartBuild",
+      "codebuild:StopBuild"
     ]
 
-    resources = ["*"]
+    resources = [ aws_codebuild_project.cb_project.arn ]
   }
 }
 

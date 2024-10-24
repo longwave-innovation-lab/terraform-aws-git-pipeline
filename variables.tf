@@ -54,7 +54,7 @@ variable "codebuild_queue_minutes_timeout" {
   description = "Number of minutes to timeout the codebuild queue"
 }
 
-variable "codebuild_comput_type" {
+variable "codebuild_compute_type" {
   type        = string
   default     = "BUILD_GENERAL1_SMALL"
   description = "Compute type for the CodeBuild project. Available values: BUILD_GENERAL1_SMALL, BUILD_GENERAL1_MEDIUM, BUILD_GENERAL1_LARGE, BUILD_GENERAL1_2XLARGE"
