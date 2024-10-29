@@ -1,3 +1,10 @@
+## [0.4.0](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/compare/v0.3.3...v0.4.0) (2024-10-29)
+
+
+### Features
+
+* added variable to append an additional policy document to the codebuild role ([147566b](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/commit/147566b36e81cef6b9e0dddc6c76519376b61eb0))
+
 ## [0.3.3](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/compare/v0.3.2...v0.3.3) (2024-10-24)
 
 
@@ -31,16 +38,4 @@
 ### Bug Fixes
 
 * ignoring .zip files ([afbe2b1](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/commit/afbe2b17dd4a9927724043a16e2cb47257bb04d5))
-
-## [0.2.0](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/compare/cd304134ce404db0ad3761c9540179725b7edc8d...v0.2.0) (2024-10-01)
-
-
-### Features
-
-* first version to test ([cd30413](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/commit/cd304134ce404db0ad3761c9540179725b7edc8d))
-
-
-### Bug Fixes
-
-* fixed some things and added some outputs ([9b2ea38](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/commit/9b2ea382da484e324ab148cb189ac2c356031a9e))
 
