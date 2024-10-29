@@ -89,3 +89,9 @@ variable "sns_subscribers" {
   default     = []
   description = "List of email addresses to subscribe to SNS notifications"
 }
+
+variable "codebuild_role_additional_policy" {
+  type        = any
+  default     = {}
+  description = "Additional policy to attach to the CodeBuild role, it must be in json"
+}

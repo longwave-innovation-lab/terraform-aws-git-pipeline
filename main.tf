@@ -208,6 +208,12 @@ resource "aws_iam_role_policy" "codebuild_default" {
   policy = data.aws_iam_policy_document.codebuild_default_policy.json
 }
 
+resource "aws_iam_role_policy" "codebuild_extra" {
+  count  = var.codebuild_role_additional_policy != {} ? 1 : 0
+  role   = aws_iam_role.codebuild_role.name
+  policy = var.codebuild_role_additional_policy
+}
+
 data "aws_iam_policy_document" "codebuild_secret_policy" {
   count = length(var.secrets_to_read) > 0 ? 1 : 0
   statement {
@@ -339,7 +345,7 @@ data "aws_iam_policy_document" "codepipeline_policy" {
       "codebuild:StopBuild"
     ]
 
-    resources = [ aws_codebuild_project.cb_project.arn ]
+    resources = [aws_codebuild_project.cb_project.arn]
   }
 }
 
