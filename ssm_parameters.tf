@@ -3,11 +3,6 @@ data "aws_ssm_parameters_by_path" "parameters_to_read" {
   path     = each.key
 }
 
-output "debug_parameters" {
-  value       = flatten(concat([for parameter in data.aws_ssm_parameters_by_path.parameters_to_read : parameter.arns]))
-  description = "List of created parameters flattened"
-}
-
 data "aws_iam_policy_document" "codebuild_parameter_store_policy" {
   count = length(data.aws_ssm_parameters_by_path.parameters_to_read) > 0 ? 1 : 0
   statement {
