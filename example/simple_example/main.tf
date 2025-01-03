@@ -41,7 +41,7 @@ module "github_codepipeline" {
   secrets_to_read = [
     "arn:aws:secretsmanager:eu-west-1:687331130220:secret:InnovationDockerCreds-vOTSnB"
   ]
-  parameters_paths_to_read               = [ "/test/" ]
+  parameters_paths_to_read         = ["/test/"]
   codebuild_role_additional_policy = data.aws_iam_policy_document.example_extra.json
   sns_subscribers                  = ["mirco.bozzolini@lantechlongwave.it"]
 }

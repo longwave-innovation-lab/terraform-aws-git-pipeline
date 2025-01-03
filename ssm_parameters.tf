@@ -14,7 +14,7 @@ data "aws_iam_policy_document" "codebuild_parameter_store_policy" {
       "ssm:DescribeParameters"
     ]
     # transform all data.aws_ssm_parameters_by_path.parameters_to_read into a single array to use in resources
-    resources = flatten(concat([ for parameter in data.aws_ssm_parameters_by_path.parameters_to_read : parameter.arns ]))
+    resources = flatten(concat([for parameter in data.aws_ssm_parameters_by_path.parameters_to_read : parameter.arns]))
   }
 }
 
