@@ -1,3 +1,10 @@
+## [0.5.0](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/compare/v0.4.0...v0.5.0) (2025-01-03)
+
+
+### Features
+
+* now paths for SSM parameters can be specified to make the codebuild project read those parameters ([5c43221](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/commit/5c43221414cfaec704c25e790d544aee7010e927))
+
 ## [0.4.0](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/compare/v0.3.3...v0.4.0) (2024-10-29)
 
 
@@ -25,17 +32,4 @@
 ### Bug Fixes
 
 * minor syntax error in bucket naming ([0735778](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/commit/0735778194638102dc7b8b4dc3ca91b0b3018310))
-
-## [0.3.0](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/compare/v0.2.0...v0.3.0) (2024-10-03)
-
-
-### Features
-
-* added codebuild event listener lambda with notifications ([fb728d9](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/commit/fb728d9dc48a4bd4786e8543a2a6d7b45a649d79))
-* first version with all infrastructure working, TODO fix lambda code and layers ([a70264a](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/commit/a70264a56d2c884f3f93dada81bb433fdcd1d713))
-
-
-### Bug Fixes
-
-* ignoring .zip files ([afbe2b1](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/commit/afbe2b17dd4a9927724043a16e2cb47257bb04d5))
 
