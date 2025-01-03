@@ -39,7 +39,13 @@ variable "images_to_keep" {
 variable "secrets_to_read" {
   type        = list(string)
   default     = []
-  description = "List of secrets to read from the repository"
+  description = "List of secrets ARNs from SecretManager to read from the Codebuild project"
+}
+
+variable "parameters_paths_to_read" {
+  type        = list(string)
+  default     = []
+  description = "List of parameters PATHS from Parameter store to read from the Codebuild project. Note: the last part of the path, the paramater name, should not be present in this variable otherwise no parameters will be found at runtime."
 }
 
 variable "build_minutes_timeout" {

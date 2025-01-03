@@ -237,7 +237,6 @@ data "aws_secretsmanager_secret" "secrets_to_read" {
   arn      = each.key
 }
 
-
 resource "aws_codebuild_project" "cb_project" {
   name           = "${var.repo_org}-${var.repo_name}-project"
   build_timeout  = var.build_minutes_timeout

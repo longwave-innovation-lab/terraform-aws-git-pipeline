@@ -16,8 +16,20 @@ data "aws_iam_policy_document" "example_extra" {
   }
 }
 
+resource "aws_ssm_parameter" "test_parameters" {
+  for_each = {
+    "test" : "test",
+    "test2" : "test2"
+  }
+
+  type  = "SecureString"
+  name  = "/test/${each.key}"
+  value = each.value
+}
+
 module "github_codepipeline" {
-  source = "../.."
+  depends_on = [aws_ssm_parameter.test_parameters]
+  source     = "../.."
 
   repo_org                             = "Longwave-innovation"
   repo_name                            = "example_pipe"
@@ -29,6 +41,7 @@ module "github_codepipeline" {
   secrets_to_read = [
     "arn:aws:secretsmanager:eu-west-1:687331130220:secret:InnovationDockerCreds-vOTSnB"
   ]
+  parameters_paths_to_read         = ["/test/"]
   codebuild_role_additional_policy = data.aws_iam_policy_document.example_extra.json
   sns_subscribers                  = ["mirco.bozzolini@lantechlongwave.it"]
 }
