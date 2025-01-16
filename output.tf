@@ -57,3 +57,8 @@ output "sqs_codebuild_events_dlq" {
   value       = aws_sqs_queue.evnt_rule_target_dlq.arn
   description = "The URL of the SQS queue which holds dead-letter messages for CodeBuild events that couldn't be processed by the lambda listener."
 }
+
+output "ssm_paramaters_to_read" {
+  value       = data.aws_ssm_parameters_by_path.parameters_to_read.arns
+  description = "The Amazon Resource Name (ARN) of the SSM parameters to read from the SSM parameter store during pipeline execution."
+}
