@@ -2,8 +2,7 @@ name: Bug Report
 description: Notifica un bug generale
 title: "[Bug]: "
 labels:
-- "Kind/Bug"
-- "Status/Need More Info"
+- "bug"
 body:
 - type: markdown
   attributes:

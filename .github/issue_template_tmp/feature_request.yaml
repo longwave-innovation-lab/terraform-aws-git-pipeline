@@ -1,8 +1,8 @@
 name: Feature Request
-about: Richiedi una Feature Request
+description: Richiedi una Feature Request
 title: "[Feature Request]: "
 labels:
-- Kind/Feature
+- enhancement
 body:
 - type: markdown
   attributes:
