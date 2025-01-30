@@ -59,6 +59,7 @@ output "sqs_codebuild_events_dlq" {
 }
 
 output "ssm_paramaters_to_read" {
-  value       = data.aws_ssm_parameters_by_path.parameters_to_read.arns
+  # value       = data.aws_ssm_parameters_by_path.parameters_to_read.arns
+  value = { for k,v in data.aws_ssm_parameters_by_path.parameters_to_read : k => v.arns}
   description = "The Amazon Resource Name (ARN) of the SSM parameters to read from the SSM parameter store during pipeline execution."
 }

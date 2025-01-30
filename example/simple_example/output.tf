@@ -27,3 +27,8 @@ output "codebuild_role_arn" {
   value       = module.github_codepipeline.codebuild_role_arn
   description = "The Amazon Resource Name (ARN) specifying the role for Codebuild."
 }
+
+output "parameters_to_read" {
+  value = module.github_codepipeline.ssm_paramaters_to_read
+  description = "The parameters that were read from SSM."
+}
