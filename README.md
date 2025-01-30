@@ -98,4 +98,5 @@ No modules.
 | <a name="output_sns_topci_name"></a> [sns\_topci\_name](#output\_sns\_topci\_name) | The name of the SNS topic name for pipeline notifications. |
 | <a name="output_sns_topic_arn"></a> [sns\_topic\_arn](#output\_sns\_topic\_arn) | The Amazon Resource Name (ARN) of the SNS topic for pipeline notifications. |
 | <a name="output_sqs_codebuild_events_dlq"></a> [sqs\_codebuild\_events\_dlq](#output\_sqs\_codebuild\_events\_dlq) | The URL of the SQS queue which holds dead-letter messages for CodeBuild events that couldn't be processed by the lambda listener. |
+| <a name="output_ssm_paramaters_to_read"></a> [ssm\_paramaters\_to\_read](#output\_ssm\_paramaters\_to\_read) | The Amazon Resource Name (ARN) of the SSM parameters to read from the SSM parameter store during pipeline execution. |
 <!-- END_TF_DOCS -->
