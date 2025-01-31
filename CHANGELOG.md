@@ -1,3 +1,10 @@
+## [0.2.2](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/compare/v0.2.1...v0.2.2) (2025-01-31)
+
+
+### Bug Fixes
+
+* fixed an error when used with another LW module lambda.zip payload will be used cross modules and cause conflics closes [#4](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/issues/4) ([244ff28](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/commit/244ff28de11f592ad3bdd9d9392597cc179f5071))
+
 ## [0.2.1](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/compare/v0.2.0...v0.2.1) (2025-01-31)
 
 ## [0.2.0](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/compare/cd304134ce404db0ad3761c9540179725b7edc8d...v0.2.0) (2025-01-30)
