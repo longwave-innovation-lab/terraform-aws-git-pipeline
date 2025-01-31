@@ -52,14 +52,14 @@ data "archive_file" "lambda" {
 resource "aws_lambda_function" "codebuild_event_listener" {
   # If the file is not in the current working directory you will need to include a
   # path.module in the filename.
-  filename      = "lambda_function_payload.zip"
-  function_name = "${var.repo_org}-${var.repo_name}_CodebuildEvent"
-  role          = aws_iam_role.lambda_function_role.arn
-  handler       = "app.lambda_handler"
-
+  filename         = "lambda_function_payload.zip"
+  function_name    = "${var.repo_org}-${var.repo_name}_CodebuildEvent"
+  role             = aws_iam_role.lambda_function_role.arn
+  handler          = "app.lambda_handler"
+  description      = "Lambda that will react to events from ${aws_codepipeline.pipeline.name}"
   source_code_hash = data.archive_file.lambda.output_base64sha256
 
-  runtime       = "python3.9"
+  runtime       = "python3.12"
   architectures = ["arm64"]
   timeout       = 10
   memory_size   = 256
