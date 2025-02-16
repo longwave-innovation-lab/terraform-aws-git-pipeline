@@ -16,7 +16,7 @@ resource "aws_cloudwatch_event_rule" "codebuild_events_rule" {
 
 resource "aws_cloudwatch_event_target" "lambda_target" {
   rule      = aws_cloudwatch_event_rule.codebuild_events_rule.name
-  target_id = "${local.final_name}${local.codepipeline_resources_suffix}"
+  target_id = substr("${local.final_name}${local.codepipeline_resources_suffix}", 0, 64)
   arn       = aws_lambda_function.codebuild_event_listener.arn
 
   retry_policy {
