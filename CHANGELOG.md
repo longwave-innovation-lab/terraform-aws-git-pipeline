@@ -1,3 +1,11 @@
+## [0.2.7](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/compare/v0.2.6...v0.2.7) (2025-02-16)
+
+
+### Bug Fixes
+
+* changed name of codepipeline pipeline to be more standard ([bc8b87c](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/commit/bc8b87cbc086fcc41f6d46ef76c17b27b381abc3))
+* fixed codebuild project logs permission arn ([dfab8cf](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/commit/dfab8cf8aa6316dbce36604378bf53afe8b8912a))
+
 ## [0.2.6](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/compare/v0.2.5...v0.2.6) (2025-02-16)
 
 
@@ -25,11 +33,4 @@
 ### Bug Fixes
 
 * **lambda:** lambda role name is truncated if repo name is too long ([e4f7843](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/commit/e4f7843c0c63894154845106a7b79894feb624e1))
-
-## [0.2.2](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/compare/v0.2.1...v0.2.2) (2025-01-31)
-
-
-### Bug Fixes
-
-* fixed an error when used with another LW module lambda.zip payload will be used cross modules and cause conflics closes [#4](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/issues/4) ([244ff28](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/commit/244ff28de11f592ad3bdd9d9392597cc179f5071))
 
