@@ -1,3 +1,10 @@
+## [0.2.6](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/compare/v0.2.5...v0.2.6) (2025-02-16)
+
+
+### Bug Fixes
+
+* **lambda:** fixed function name length passed to cloudwatch event target ([a178f31](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/commit/a178f31d407509b81a2e5c8d15ed8785a4da7edb))
+
 ## [0.2.5](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/compare/v0.2.4...v0.2.5) (2025-02-16)
 
 
@@ -25,6 +32,4 @@
 ### Bug Fixes
 
 * fixed an error when used with another LW module lambda.zip payload will be used cross modules and cause conflics closes [#4](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/issues/4) ([244ff28](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/commit/244ff28de11f592ad3bdd9d9392597cc179f5071))
-
-## [0.2.1](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/compare/v0.2.0...v0.2.1) (2025-01-31)
 
