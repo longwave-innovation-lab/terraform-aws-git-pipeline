@@ -1,3 +1,10 @@
+## [0.2.4](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/compare/v0.2.3...v0.2.4) (2025-02-16)
+
+
+### Bug Fixes
+
+* now the same suffix is used on all resources and all nameprefixes are valued correctly closes [#7](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/issues/7) closes [#8](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/issues/8) ([6baef40](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/commit/6baef4097afc1d2e4b830ff11f239592873f7cf1))
+
 ## [0.2.3](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/compare/v0.2.2...v0.2.3) (2025-02-16)
 
 
