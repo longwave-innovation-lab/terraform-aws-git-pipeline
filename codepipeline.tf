@@ -1,10 +1,3 @@
-locals {
-  codepipeline_resources_suffix = "_Codepipeline"
-  untruncated_name = "${var.repo_org}_${var.repo_name}"
-  max_name_length = 64 - length(local.codepipeline_resources_suffix)
-  final_name = length(local.untruncated_name) > local.max_name_length ? substr(local.untruncated_name, 0, local.max_name_length) : local.untruncated_name
-}
-
 data "aws_iam_policy_document" "assume_role_codepipeline" {
   statement {
     effect = "Allow"
@@ -19,7 +12,7 @@ data "aws_iam_policy_document" "assume_role_codepipeline" {
 }
 
 resource "aws_iam_role" "codepipeline_role" {
-  name               = "${local.final_name}${local.codepipeline_resources_suffix}"
+  name_prefix        = length("${local.final_name}${local.codepipeline_resources_suffix}") > 38 ? substr("${local.final_name}${local.codepipeline_resources_suffix}", 0 , 37) : "${local.final_name}${local.codepipeline_resources_suffix}"
   assume_role_policy = data.aws_iam_policy_document.assume_role_codepipeline.json
 }
 

@@ -1,5 +1,5 @@
 resource "aws_sns_topic" "pipeline_notifications" {
-  name_prefix  = "${var.repo_org}-${var.repo_name}_Notifications"
+  name_prefix  = length("${local.final_name}${local.codepipeline_resources_suffix}") > 38 ? substr("${local.final_name}${local.codepipeline_resources_suffix}", 0 , 37) : "${local.final_name}${local.codepipeline_resources_suffix}"
   display_name = "Notification topic about the pipeline in ${var.repo_org}/${var.repo_name}"
 }
 

@@ -137,7 +137,7 @@ data "aws_secretsmanager_secret" "secrets_to_read" {
 }
 
 resource "aws_codebuild_project" "cb_project" {
-  name           = "${var.repo_org}-${var.repo_name}-project"
+  name           = "${local.final_name}${local.codepipeline_resources_suffix}"
   build_timeout  = var.build_minutes_timeout
   queued_timeout = var.codebuild_queue_minutes_timeout
   service_role   = aws_iam_role.codebuild_role.arn
