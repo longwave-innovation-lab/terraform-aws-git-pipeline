@@ -59,7 +59,7 @@ resource "aws_iam_role_policy" "codepipeline_default" {
 }
 
 resource "aws_codepipeline" "pipeline" {
-  name     = "${var.repo_org}_${var.repo_name}_pipeline"
+  name     = "${local.final_name}${local.codepipeline_resources_suffix}"
   role_arn = aws_iam_role.codepipeline_role.arn
 
   artifact_store {
