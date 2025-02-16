@@ -1,3 +1,10 @@
+## [0.2.3](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/compare/v0.2.2...v0.2.3) (2025-02-16)
+
+
+### Bug Fixes
+
+* **lambda:** lambda role name is truncated if repo name is too long ([e4f7843](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/commit/e4f7843c0c63894154845106a7b79894feb624e1))
+
 ## [0.2.2](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/compare/v0.2.1...v0.2.2) (2025-01-31)
 
 
