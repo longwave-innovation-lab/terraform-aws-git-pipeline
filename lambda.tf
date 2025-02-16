@@ -53,7 +53,7 @@ resource "aws_lambda_function" "codebuild_event_listener" {
   # If the file is not in the current working directory you will need to include a
   # path.module in the filename.
   filename         = "${path.module}/lambda_function_payload.zip"
-  function_name    = "${local.final_name}${local.codepipeline_resources_suffix}"
+  function_name    = substr("${local.final_name}${local.codepipeline_resources_suffix}", 0, 64)
   role             = aws_iam_role.lambda_function_role.arn
   handler          = "app.lambda_handler"
   description      = "Lambda that will react to events from ${aws_codepipeline.pipeline.name}"
