@@ -1,7 +1,15 @@
-<!-- BEGIN_TF_DOCS -->
 # terraform-aws-github-pipeline
 
+<!-- START doctoc-->
+<!-- END doctoc -->
+
+## Intro
+
 Module that creates a pipeline which has a Github repository as a source.
+
+<!-- BEGIN_TF_DOCS -->
+
+
 
 ## Requirements
 
