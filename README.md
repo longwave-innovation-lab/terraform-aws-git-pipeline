@@ -9,8 +9,6 @@ Module that creates a pipeline which has a Github repository as a source.
 
 <!-- BEGIN_TF_DOCS -->
 
-
-
 ## Requirements
 
 No requirements.
