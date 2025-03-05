@@ -88,8 +88,8 @@ data "aws_iam_policy_document" "codebuild_default_policy" {
       "ecr:PutImage"
     ]
     resources = [
-      aws_ecr_repository.registry.arn,
-      "${aws_ecr_repository.registry.arn}/*"
+      local.registry_arn,
+      "${local.registry_arn}/*"
     ]
   }
 
