@@ -12,11 +12,11 @@ data "aws_iam_policy_document" "assume_role_codepipeline" {
 }
 
 resource "aws_iam_role" "codepipeline_role" {
-  name_prefix        = length("${local.final_name}${local.codepipeline_resources_suffix}") > 38 ? substr("${local.final_name}${local.codepipeline_resources_suffix}", 0 , 37) : "${local.final_name}${local.codepipeline_resources_suffix}"
+  name_prefix        = length("${local.final_name}${local.codepipeline_resources_suffix}") > 38 ? substr("${local.final_name}${local.codepipeline_resources_suffix}", 0, 37) : "${local.final_name}${local.codepipeline_resources_suffix}"
   assume_role_policy = data.aws_iam_policy_document.assume_role_codepipeline.json
 }
 
-data "aws_iam_policy_document" "codepipeline_policy" {
+data "aws_iam_policy_document" "codepipeline_default" {
   statement {
     effect = "Allow"
 
@@ -54,7 +54,28 @@ data "aws_iam_policy_document" "codepipeline_policy" {
 }
 
 resource "aws_iam_role_policy" "codepipeline_default" {
-  policy = data.aws_iam_policy_document.codepipeline_policy.json
+  policy = data.aws_iam_policy_document.codepipeline_default.json
+  role   = aws_iam_role.codepipeline_role.name
+}
+
+data "aws_iam_policy_document" "codepipeline_manual_approval" {
+  count = var.add_manual_approval ? 1 : 0
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "sns:Publish",
+    ]
+
+    resources = [
+      aws_sns_topic.pipeline_notifications.arn
+    ]
+  }
+}
+
+resource "aws_iam_role_policy" "codepipeline_manual_approval" {
+  count  = var.add_manual_approval ? 1 : 0
+  policy = data.aws_iam_policy_document.codepipeline_manual_approval[0].json
   role   = aws_iam_role.codepipeline_role.name
 }
 
@@ -82,6 +103,29 @@ resource "aws_codepipeline" "pipeline" {
         ConnectionArn    = data.aws_codestarconnections_connection.github_provider.arn
         FullRepositoryId = "${var.repo_org}/${var.repo_name}"
         BranchName       = var.repo_branch
+      }
+    }
+  }
+
+  dynamic "stage" {
+    for_each = var.add_manual_approval ? [1] : []
+    content {
+      name = "Approve"
+
+      action {
+        name            = "ManualApproval"
+        category        = "Approval"
+        owner           = "AWS"
+        provider        = "Manual"
+        version         = "1"
+        run_order       = 1
+        input_artifacts = []
+        configuration = {
+          NotificationArn    = aws_sns_topic.pipeline_notifications.arn
+          IsSummaryRequired  = "False"
+          CustomData         = "Deploy of ${local.github_repo_url} must be approved beforehand"
+          ExternalEntityLink = local.github_repo_url
+        }
       }
     }
   }

@@ -4,9 +4,10 @@ on:
     branches: [ main ]
     paths:
     - '**.tf'
-    - '**.tfvars'
     - '**.hcl'
     - '.terraform.lock.hcl'
+    - '**.md'
+
 jobs:
 
   tf-docs:
@@ -25,21 +26,18 @@ jobs:
         git config --global user.email "innovation_r&d@lantechlongwave.it"
         git config --global user.name "ActionBot"
 
-    - name: Install terraform-docs
-      run: |
-        cd ..
-        curl -Lo terraform-docs.tar.gz https://github.com/terraform-docs/terraform-docs/releases/download/v0.17.0/terraform-docs-v0.17.0-linux-amd64.tar.gz
-        tar -xzf terraform-docs.tar.gz
-        sudo mv terraform-docs /usr/local/bin/
+    - name: Updating Table Of Contents
+      uses: technote-space/toc-generator@v4
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        TOC_TITLE: ''
+        TARGET_PATHS: 'README*.md, **/README*.md'
 
-    - name: Render terraform docs inside the README.md and push changes back to PR branch
-      run: |
-        terraform-docs markdown table .
-        git add '*README.md'
-        if ! git diff-index --quiet HEAD; then
-          git commit -m "[skip ci] terraform-docs: Update DOCUMENTATION"
-          git push origin HEAD:${{ github.event.pull_request.head.ref }}
-        fi
+    - name: Committing changes
+      uses: stefanzweifel/git-auto-commit-action@v4
+      with:
+        commit_message: "[skip ci] terraform-docs: Update DOCUMENTATION and TOC"
+        branch: ${{ github.event.pull_request.head.ref }}
 
   lint-markdown:
     needs: [ tf-docs ]
@@ -74,74 +72,4 @@ jobs:
       run: |
         cat linting_errors.html
 
-    # - name: Replace newlines with <br> in linting_errors.html
-    #   if: ${{ failure() }}
-    #   run: |
-    #     awk '{printf "%s%s", (NR > 1 ? "<br>" : ""), $0} END {print ""}' linting_errors.html > tmp_linting_errors.html
-    #     mv tmp_linting_errors.html linting_errors.html
-
-    # - name: Prepend the html tags
-    #   if: ${{ failure() }}
-    #   run: |
-    #     string_to_prepend="<html><body><pre>"
-    #     sed -i '1s/^/'"$string_to_prepend"'/; 1q' linting_errors.html
-
-    # - name: Append closing HTML tags to linting_errors.html
-    #   if: ${{ failure() }}
-    #   run: |
-    #     echo "</pre></body></html>" >> linting_errors.html
-
-    # - name: Showing the html file result
-    #   if: ${{ failure() }}
-    #   run: |
-    #     more linting_errors.html
-
-    # - name: Send mail on lint fail
-    #   if: ${{ failure() }}
-    #   uses: dawidd6/action-send-mail@v3
-    #   with:
-    #     # Specify connection via URL (replaces server_address, server_port, secure,
-    #     # username and password)
-    #     #
-    #     # Format:
-    #     #
-    #     #  * smtp://user:password@server:port
-    #     #  * smtp+starttls://user:password@server:port
-    #     # connection_url: ${{secrets.MAIL_CONNECTION}}
-    #     # Required mail server address if not connection_url:
-    #     server_address: LLEXEDGE01.ll.local
-    #     # Server port, default 25:
-    #     server_port: 25
-    #     # Optional whether this connection use TLS (default is true if server_port is 465)
-    #     # secure: true
-    #     # Optional (recommended) mail server username:
-    #     # username: ${{secrets.MAIL_USERNAME}}
-    #     # Optional (recommended) mail server password:
-    #     # password: ${{secrets.MAIL_PASSWORD}}
-    #     # Required mail subject:
-    #     subject: Gitea Action to check <${{github.repository}}> documentation syntax status <${{ job.status }}>
-    #     # Required recipients' addresses:
-    #     to: ${{ github.actor }}@lantechlongwave.it
-    #     # Required sender full name (address can be skipped):
-    #     from: ${{github.repository}}.gitea.action@lantechlongwave.it # <user@example.com>
-    #     # Optional plain body:
-    #     # body: "${{ join(steps.markdown_linting.outputs.*, '\n') }}"
-    #     # Optional HTML body read from file:
-    #     html_body: file://linting_errors.html
-    #     # Optional carbon copy recipients:
-    #     cc: innovation_r&d@LantechLongwave.it
-    #     # Optional blind carbon copy recipients:
-    #     # bcc: r2d2@example.com,hansolo@example.com
-    #     # Optional recipient of the email response:
-    #     # reply_to: luke@example.com
-    #     # Optional Message ID this message is replying to:
-    #     # in_reply_to: <random-luke@example.com>
-    #     # Optional unsigned/invalid certificates allowance:
-    #     ignore_cert: true
-    #     # Optional converting Markdown to HTML (set content_type to text/html too):
-    #     convert_markdown: true
-    #     # Optional attachments:
-    #     # attachments: attachments.zip,git.diff,./dist/static/*.js
-    #     # Optional priority: 'high', 'normal' (default) or 'low'
-    #     priority: low
     - run: echo "This job's status is ${{ job.status }}."

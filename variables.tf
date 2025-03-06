@@ -101,3 +101,15 @@ variable "codebuild_role_additional_policy" {
   default     = {}
   description = "Additional policy to attach to the CodeBuild role, it must be in json"
 }
+
+variable "add_manual_approval" {
+  type        = bool
+  default     = false
+  description = "Whether to add manual approval to the CodePipeline"
+}
+
+variable "use_existing_ecr" {
+  type        = bool
+  default     = false
+  description = "Whether to use an existing ECR repository"
+}

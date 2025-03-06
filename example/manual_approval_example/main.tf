@@ -1,0 +1,47 @@
+
+resource "aws_codestarconnections_connection" "github_connection" {
+  name          = "GHConnection"
+  provider_type = "GitHub"
+}
+
+data "aws_iam_policy_document" "example_extra" {
+  statement {
+    effect = "Allow"
+    actions = [
+      "lambda:*"
+    ]
+    resources = [
+      "*"
+    ]
+  }
+}
+
+resource "aws_ssm_parameter" "test_parameters" {
+  for_each = {
+    "test" : "test",
+    "test2" : "test2"
+  }
+
+  type  = "SecureString"
+  name  = "/test/${each.key}"
+  value = each.value
+}
+
+module "github_codepipeline" {
+  depends_on = [aws_ssm_parameter.test_parameters]
+  source     = "../.."
+
+  repo_org                             = "Longwave-innovation"
+  repo_name                            = "demo_pipe"
+  repo_branch                          = "main"
+  existing_codestart_gh_connection_arn = aws_codestarconnections_connection.github_connection.arn
+  add_manual_approval                  = true
+  force_delete_registry                = true
+  use_existing_ecr                     = true
+  secrets_to_read = [
+    "arn:aws:secretsmanager:eu-west-1:687331130220:secret:InnovationDockerCreds-vOTSnB"
+  ]
+  parameters_paths_to_read         = ["/test/"]
+  codebuild_role_additional_policy = data.aws_iam_policy_document.example_extra.json
+  sns_subscribers                  = ["mirco.bozzolini@longwave.it"]
+}

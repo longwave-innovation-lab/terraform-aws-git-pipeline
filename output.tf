@@ -1,15 +1,15 @@
 output "ecr_arn" {
-  value       = aws_ecr_repository.registry.arn
+  value       = local.registry_arn
   description = "The Amazon Resource Name (ARN) of the ECR repository."
 }
 
 output "ecr_registry_name" {
-  value       = aws_ecr_repository.registry.name
+  value       = local.registry_name
   description = "The name of the ECR repository."
 }
 
-output "ecr_registry_uri" {
-  value       = aws_ecr_repository.registry.repository_url
+output "ecr_registry_url" {
+  value       = local.registry_url
   description = "The URL of the ECR repository."
 }
 
