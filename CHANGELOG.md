@@ -1,3 +1,10 @@
+## [0.4.2](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/compare/v0.4.1...v0.4.2) (2025-03-10)
+
+
+### Bug Fixes
+
+* changed default value for repo org shortname ([b4d2110](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/commit/b4d21105a489222aea8d23c92246e35b2ab99067))
+
 ## [0.4.1](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/compare/v0.4.0...v0.4.1) (2025-03-10)
 
 
@@ -44,11 +51,4 @@
 
 * changed name of codepipeline pipeline to be more standard ([bc8b87c](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/commit/bc8b87cbc086fcc41f6d46ef76c17b27b381abc3))
 * fixed codebuild project logs permission arn ([dfab8cf](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/commit/dfab8cf8aa6316dbce36604378bf53afe8b8912a))
-
-## [0.2.6](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/compare/v0.2.5...v0.2.6) (2025-02-16)
-
-
-### Bug Fixes
-
-* **lambda:** fixed function name length passed to cloudwatch event target ([a178f31](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/commit/a178f31d407509b81a2e5c8d15ed8785a4da7edb))
 
