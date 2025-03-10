@@ -26,24 +26,6 @@ jobs:
         git config --global user.email "innovation_r&d@lantechlongwave.it"
         git config --global user.name "ActionBot"
 
-    # - name: Showing file list
-    #   run: |
-    #     ls -la
-    # - name: Install terraform-docs
-    #   run: |
-    #     cd ..
-    #     curl -Lo terraform-docs.tar.gz https://github.com/terraform-docs/terraform-docs/releases/download/v0.17.0/terraform-docs-v0.17.0-linux-amd64.tar.gz
-    #     tar -xzf terraform-docs.tar.gz
-    #     sudo mv terraform-docs /usr/local/bin/
-
-    # - name: Render terraform docs inside the README.md and push changes back to PR branch
-    #   run: |
-    #     cd $GITHUB_WORKSPACE
-    #     echo "Current directory: $(pwd)"
-    #     echo "Directory contents:"
-    #     ls -la
-    #     terraform-docs markdown table .
-
     - name: Render terraform docs inside the README.md and push changes back to PR branch
       uses: terraform-docs/gh-actions@v1.3.0
       with:
