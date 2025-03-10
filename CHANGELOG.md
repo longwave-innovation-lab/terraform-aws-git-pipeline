@@ -1,3 +1,22 @@
+## [0.4.0](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/compare/v0.3.0...v0.4.0) (2025-03-10)
+
+
+### Features
+
+* added path filter to decide when to trigger closes [#16](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/issues/16) added codepipeline type variable ([9c59a7a](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/commit/9c59a7aeda6bc32a8a31ba1ab07c77591b4614b4))
+
+
+### Bug Fixes
+
+* **action:** added command to move back to repo dir ([4279715](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/commit/427971578aabb11675e491d462379acf0836edea))
+* **action:** added command to move back to repo dir ([83462e0](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/commit/83462e06385ade5f05b1c4fbd1ca62eae53764d3))
+* **action:** changed tf docs recursive direcotory name ([fcad2ac](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/commit/fcad2ac1847350c9a02623796c70a4f15edad440))
+* **action:** fixed tf docs config file syntax ([f6ead71](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/commit/f6ead7191eee1be7f6210344c598bfa2343df354))
+* **action:** rolled back documentation action and re-enabled terraform docs ([2394522](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/commit/2394522a3ad102b1fc3085439c549dab6b679526))
+* **action:** testing tf docs action ([5fa7300](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/commit/5fa7300ed915520f04f55bf1c695b8600615e3c3))
+* fixed naming issue adding branch name in resources names ([411993e](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/commit/411993e61b8f0106b1ccf4ee1e280a00fbaf4c7c))
+* **tf docs:** enabled recursive updates on example dir ([8cfe65a](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/commit/8cfe65a628717992894f49d5df4f0a90ec10bb29))
+
 ## [0.3.0](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/compare/v0.2.7...v0.3.0) (2025-03-06)
 
 
@@ -32,11 +51,4 @@
 ### Bug Fixes
 
 * fixed target_id length passed to cloudwatch event target ([63b2651](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/commit/63b2651c2be10f2ba20ca73b4ab6e8ab96a6ab25))
-
-## [0.2.4](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/compare/v0.2.3...v0.2.4) (2025-02-16)
-
-
-### Bug Fixes
-
-* now the same suffix is used on all resources and all nameprefixes are valued correctly closes [#7](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/issues/7) closes [#8](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/issues/8) ([6baef40](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/commit/6baef4097afc1d2e4b830ff11f239592873f7cf1))
 
