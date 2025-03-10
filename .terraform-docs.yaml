@@ -7,7 +7,7 @@ footer-from: ""
 
 recursive:
   enabled: true
-  path: example
+  path: examples
   include-main: true
 
 output:
