@@ -1,3 +1,16 @@
+## [0.3.0](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/compare/v0.2.7...v0.3.0) (2025-03-06)
+
+
+### Features
+
+* implemented manual approval closes [#13](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/issues/13) and use of existing ecr closes [#15](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/issues/15) ([b83ee6f](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/commit/b83ee6f8686fa0396aa9579e76192d7ea7a30dd0))
+
+
+### Bug Fixes
+
+* **actions:** updated doc and toc action ([ad9f75e](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/commit/ad9f75e8663d055b1510f38239fe4a782dbd2bd2))
+* **action:** updated doc action triggers ([2d35d2b](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/commit/2d35d2b1be4821199f3b85b9c27a99b2fa2977ee))
+
 ## [0.2.7](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/compare/v0.2.6...v0.2.7) (2025-02-16)
 
 
@@ -26,11 +39,4 @@
 ### Bug Fixes
 
 * now the same suffix is used on all resources and all nameprefixes are valued correctly closes [#7](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/issues/7) closes [#8](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/issues/8) ([6baef40](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/commit/6baef4097afc1d2e4b830ff11f239592873f7cf1))
-
-## [0.2.3](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/compare/v0.2.2...v0.2.3) (2025-02-16)
-
-
-### Bug Fixes
-
-* **lambda:** lambda role name is truncated if repo name is too long ([e4f7843](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/commit/e4f7843c0c63894154845106a7b79894feb624e1))
 
