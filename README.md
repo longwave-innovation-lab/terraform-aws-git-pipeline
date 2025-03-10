@@ -18,7 +18,6 @@
 Module that creates a pipeline which has a Github repository as a source.
 
 <!-- BEGIN_TF_DOCS -->
-
 ## Requirements
 
 No requirements.
@@ -53,6 +52,7 @@ No modules.
 | [aws_iam_role_policy.codebuild_parameters](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy) | resource |
 | [aws_iam_role_policy.codebuild_secrets](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy) | resource |
 | [aws_iam_role_policy.codepipeline_default](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy) | resource |
+| [aws_iam_role_policy.codepipeline_manual_approval](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy) | resource |
 | [aws_iam_role_policy_attachment.lambda_basic_execution](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
 | [aws_lambda_function.codebuild_event_listener](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lambda_function) | resource |
 | [aws_lambda_permission.allow_eventbridge](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lambda_permission) | resource |
@@ -64,12 +64,14 @@ No modules.
 | [archive_file.lambda](https://registry.terraform.io/providers/hashicorp/archive/latest/docs/data-sources/file) | data source |
 | [aws_caller_identity.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity) | data source |
 | [aws_codestarconnections_connection.github_provider](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/codestarconnections_connection) | data source |
+| [aws_ecr_repository.existing](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ecr_repository) | data source |
 | [aws_iam_policy_document.assume_role_codebuild](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_iam_policy_document.assume_role_codepipeline](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_iam_policy_document.codebuild_default_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_iam_policy_document.codebuild_parameter_store_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_iam_policy_document.codebuild_secret_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
-| [aws_iam_policy_document.codepipeline_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
+| [aws_iam_policy_document.codepipeline_default](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
+| [aws_iam_policy_document.codepipeline_manual_approval](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_iam_policy_document.lambda_function_policy_document](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_region.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region) | data source |
 | [aws_secretsmanager_secret.secrets_to_read](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/secretsmanager_secret) | data source |
@@ -83,6 +85,7 @@ No modules.
 | <a name="input_repo_branch"></a> [repo\_branch](#input\_repo\_branch) | Name of the branch to listen | `string` | n/a | yes |
 | <a name="input_repo_name"></a> [repo\_name](#input\_repo\_name) | Name of the repository | `string` | n/a | yes |
 | <a name="input_repo_org"></a> [repo\_org](#input\_repo\_org) | Name of the organization | `string` | n/a | yes |
+| <a name="input_add_manual_approval"></a> [add\_manual\_approval](#input\_add\_manual\_approval) | Whether to add manual approval to the CodePipeline | `bool` | `false` | no |
 | <a name="input_build_minutes_timeout"></a> [build\_minutes\_timeout](#input\_build\_minutes\_timeout) | Number of minutes to timeout the build | `number` | `5` | no |
 | <a name="input_codebuild_buildspec_path"></a> [codebuild\_buildspec\_path](#input\_codebuild\_buildspec\_path) | Path to the buildspec file in the source repository | `string` | `"buildspec.yaml"` | no |
 | <a name="input_codebuild_compute_type"></a> [codebuild\_compute\_type](#input\_codebuild\_compute\_type) | Compute type for the CodeBuild project. Available values: BUILD\_GENERAL1\_SMALL, BUILD\_GENERAL1\_MEDIUM, BUILD\_GENERAL1\_LARGE, BUILD\_GENERAL1\_2XLARGE | `string` | `"BUILD_GENERAL1_SMALL"` | no |
@@ -97,6 +100,7 @@ No modules.
 | <a name="input_scan_images_on_push"></a> [scan\_images\_on\_push](#input\_scan\_images\_on\_push) | Whether to scan images on push to the registry | `bool` | `false` | no |
 | <a name="input_secrets_to_read"></a> [secrets\_to\_read](#input\_secrets\_to\_read) | List of secrets ARNs from SecretManager to read from the Codebuild project | `list(string)` | `[]` | no |
 | <a name="input_sns_subscribers"></a> [sns\_subscribers](#input\_sns\_subscribers) | List of email addresses to subscribe to SNS notifications | `list(string)` | `[]` | no |
+| <a name="input_use_existing_ecr"></a> [use\_existing\_ecr](#input\_use\_existing\_ecr) | Whether to use an existing ECR repository | `bool` | `false` | no |
 
 ## Outputs
 
@@ -107,7 +111,7 @@ No modules.
 | <a name="output_codepipeline_role_arn"></a> [codepipeline\_role\_arn](#output\_codepipeline\_role\_arn) | The Amazon Resource Name (ARN) specifying the role for CodePipeline. |
 | <a name="output_ecr_arn"></a> [ecr\_arn](#output\_ecr\_arn) | The Amazon Resource Name (ARN) of the ECR repository. |
 | <a name="output_ecr_registry_name"></a> [ecr\_registry\_name](#output\_ecr\_registry\_name) | The name of the ECR repository. |
-| <a name="output_ecr_registry_uri"></a> [ecr\_registry\_uri](#output\_ecr\_registry\_uri) | The URL of the ECR repository. |
+| <a name="output_ecr_registry_url"></a> [ecr\_registry\_url](#output\_ecr\_registry\_url) | The URL of the ECR repository. |
 | <a name="output_lambda_codebuild_event_listener_arn"></a> [lambda\_codebuild\_event\_listener\_arn](#output\_lambda\_codebuild\_event\_listener\_arn) | The Amazon Resource Name (ARN) identifying the CodeBuild event listener Lambda function. |
 | <a name="output_lambda_codebuild_event_listener_name"></a> [lambda\_codebuild\_event\_listener\_name](#output\_lambda\_codebuild\_event\_listener\_name) | The name identifying the CodeBuild event listener Lambda function. |
 | <a name="output_lambda_codebuild_event_listener_role"></a> [lambda\_codebuild\_event\_listener\_role](#output\_lambda\_codebuild\_event\_listener\_role) | The Amazon Resource Name (ARN) identifying the IAM role for the CodeBuild event listener Lambda function. |
