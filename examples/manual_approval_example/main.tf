@@ -34,6 +34,8 @@ module "github_codepipeline" {
   repo_org                             = "Longwave-innovation"
   repo_name                            = "demo_pipe"
   repo_branch                          = "main"
+  codepipeline_type                    = "v2"
+  codepipeline_source_file_paths       = ["package.json"]
   existing_codestart_gh_connection_arn = aws_codestarconnections_connection.github_connection.arn
   add_manual_approval                  = true
   force_delete_registry                = true

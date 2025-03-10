@@ -82,10 +82,32 @@ resource "aws_iam_role_policy" "codepipeline_manual_approval" {
 resource "aws_codepipeline" "pipeline" {
   name     = "${local.final_name}${local.codepipeline_resources_suffix}"
   role_arn = aws_iam_role.codepipeline_role.arn
-
+  
+  pipeline_type = upper(var.codepipeline_type)
   artifact_store {
     location = aws_s3_bucket.pipeline_artifact_bucket.bucket
     type     = "S3"
+  }
+
+  dynamic "trigger" {
+    for_each = upper(var.codepipeline_type) == "V2" ? [1] : []
+    content {
+      provider_type = "CodeStarSourceConnection"
+      git_configuration {
+        source_action_name = "Source"
+
+        push {
+          branches {
+            includes = [ var.repo_branch ]
+          }
+          file_paths {
+            includes = var.codepipeline_source_file_paths
+          }
+
+        }
+
+      }
+    }
   }
 
   stage {
@@ -103,6 +125,7 @@ resource "aws_codepipeline" "pipeline" {
         ConnectionArn    = data.aws_codestarconnections_connection.github_provider.arn
         FullRepositoryId = "${var.repo_org}/${var.repo_name}"
         BranchName       = var.repo_branch
+
       }
     }
   }
