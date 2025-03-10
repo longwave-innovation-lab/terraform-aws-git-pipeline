@@ -8,6 +8,12 @@ variable "repo_org" {
   description = "Name of the organization"
 }
 
+variable "repo_org_shortname" {
+  type        = string
+  default     = null
+  description = "This is used to name resources when repo name and repo org are too long."
+}
+
 variable "repo_branch" {
   type        = string
   description = "Name of the branch to listen"
@@ -121,7 +127,7 @@ variable "codepipeline_type" {
 }
 
 variable "codepipeline_source_file_paths" {
-  type = list(string)
-  default = [ "*" ]
+  type        = list(string)
+  default     = ["*"]
   description = "A list of patterns of Git repository file paths that, when a commit is pushed, are to be included as criteria that starts the pipeline. Pipeline type must be V2."
 }
