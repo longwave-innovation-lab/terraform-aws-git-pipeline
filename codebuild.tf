@@ -12,7 +12,7 @@ data "aws_iam_policy_document" "assume_role_codebuild" {
 }
 
 resource "aws_iam_role" "codebuild_role" {
-  name_prefix        = substr("${var.repo_org}_${var.repo_name}_Codebuild", 0, 38)
+  name_prefix        = substr("${var.repo_org}_${var.repo_name}_${var.repo_branch}_Codebuild", 0, 38)
   assume_role_policy = data.aws_iam_policy_document.assume_role_codebuild.json
 }
 
