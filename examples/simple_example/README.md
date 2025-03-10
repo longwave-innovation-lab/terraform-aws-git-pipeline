@@ -6,7 +6,6 @@
 
 This example shows the creation of a pipeline of `type V1`, that listen to every change on the branch `main`.
 
-
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
 
