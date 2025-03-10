@@ -1,3 +1,10 @@
+## [0.4.1](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/compare/v0.4.0...v0.4.1) (2025-03-10)
+
+
+### Bug Fixes
+
+* added repo org shortname to prevend naming problems on long names closes [#18](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/issues/18) ([604b4c4](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/commit/604b4c4b4f1d063f45c5218426c8563977c05650))
+
 ## [0.4.0](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/compare/v0.3.0...v0.4.0) (2025-03-10)
 
 
@@ -44,11 +51,4 @@
 ### Bug Fixes
 
 * **lambda:** fixed function name length passed to cloudwatch event target ([a178f31](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/commit/a178f31d407509b81a2e5c8d15ed8785a4da7edb))
-
-## [0.2.5](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/compare/v0.2.4...v0.2.5) (2025-02-16)
-
-
-### Bug Fixes
-
-* fixed target_id length passed to cloudwatch event target ([63b2651](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/commit/63b2651c2be10f2ba20ca73b4ab6e8ab96a6ab25))
 
