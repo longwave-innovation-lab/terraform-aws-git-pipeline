@@ -25,7 +25,9 @@ jobs:
       run: |
         git config --global user.email "innovation_r&d@lantechlongwave.it"
         git config --global user.name "ActionBot"
-
+    - name: Showing file list
+      run: |
+        ls -la
     # - name: Install terraform-docs
     #   run: |
     #     cd ..
