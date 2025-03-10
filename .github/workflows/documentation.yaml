@@ -25,9 +25,10 @@ jobs:
       run: |
         git config --global user.email "innovation_r&d@lantechlongwave.it"
         git config --global user.name "ActionBot"
-    - name: Showing file list
-      run: |
-        ls -la
+
+    # - name: Showing file list
+    #   run: |
+    #     ls -la
     # - name: Install terraform-docs
     #   run: |
     #     cd ..
@@ -47,7 +48,7 @@ jobs:
       uses: terraform-docs/gh-actions@v1.3.0
       with:
         working-dir: .
-        config-file: .terraform-docs.yml
+        config-file: .terraform-docs.yaml
 
     - name: Updating Table Of Contents
       uses: technote-space/toc-generator@v4
