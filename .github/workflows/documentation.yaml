@@ -35,6 +35,7 @@ jobs:
 
     - name: Render terraform docs inside the README.md and push changes back to PR branch
       run: |
+        cd $GITHUB_WORKSPACE
         terraform-docs markdown table .
 
     - name: Updating Table Of Contents
