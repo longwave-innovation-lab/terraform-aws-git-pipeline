@@ -10,7 +10,7 @@ variable "repo_org" {
 
 variable "repo_org_shortname" {
   type        = string
-  default     = null
+  default     = ""
   description = "This is used to name resources when repo name and repo org are too long."
 }
 
