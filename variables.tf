@@ -113,3 +113,15 @@ variable "use_existing_ecr" {
   default     = false
   description = "Whether to use an existing ECR repository"
 }
+
+variable "codepipeline_type" {
+  type        = string
+  default     = "V1"
+  description = "Codepipeline version, it can be `v1` o `v2`. [See documentation to choose](https://docs.aws.amazon.com/codepipeline/latest/userguide/pipeline-types.html)"
+}
+
+variable "codepipeline_source_file_paths" {
+  type = list(string)
+  default = [ "*" ]
+  description = "A list of patterns of Git repository file paths that, when a commit is pushed, are to be included as criteria that starts the pipeline. Pipeline type must be V2."
+}

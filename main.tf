@@ -10,7 +10,6 @@ locals {
 
   untruncated_name = "${var.repo_org}-${var.repo_name}-${var.repo_branch}"
   github_repo_url  = "https://github.com/${var.repo_org}/${var.repo_name}"
-  # max_name_length = 64 - length(local.codepipeline_resources_suffix)
-  max_name_length = 64
-  final_name      = length(local.untruncated_name) > local.max_name_length ? substr(local.untruncated_name, 0, local.max_name_length) : local.untruncated_name
+  max_name_length  = 64
+  final_name       = length(local.untruncated_name) > local.max_name_length ? substr(local.untruncated_name, 0, local.max_name_length) : local.untruncated_name
 }
