@@ -36,12 +36,6 @@ variable "force_delete_registry" {
   description = "Whether to force delete the registry, even if there are still images"
 }
 
-variable "images_to_keep" {
-  type        = number
-  default     = 20
-  description = "Number of images to keep in the registry"
-}
-
 variable "secrets_to_read" {
   type        = list(string)
   default     = []
@@ -51,7 +45,7 @@ variable "secrets_to_read" {
 variable "parameters_paths_to_read" {
   type        = list(string)
   default     = []
-  description = "List of parameters PATHS from Parameter store to read from the Codebuild project. Note: the last part of the path, the paramater name, should not be present in this variable otherwise no parameters will be found at runtime."
+  description = "List of parameters PATHS from Parameter store to read from the Codebuild project. <br> **Note**: the last part of the path, the `paramater name`, should not be present in this variable otherwise no parameters will be found at runtime."
 }
 
 variable "build_minutes_timeout" {
@@ -114,16 +108,28 @@ variable "add_manual_approval" {
   description = "Whether to add manual approval to the CodePipeline"
 }
 
-variable "use_existing_ecr" {
+variable "ecr_use_existing" {
   type        = bool
   default     = false
   description = "Whether to use an existing ECR repository"
 }
 
+variable "ecr_custom_registry_name" {
+  type        = string
+  default     = ""
+  description = "If the repo name is not the same as the image name use this. E.g. Mono repositories with multiple projects inside"
+}
+
+variable "ecr_tagged_images_to_keep" {
+  type        = number
+  default     = 20
+  description = "Number of tagged images to keep in the registry"
+}
+
 variable "codepipeline_type" {
   type        = string
   default     = "V1"
-  description = "Codepipeline version, it can be `v1` o `v2`. [See documentation to choose](https://docs.aws.amazon.com/codepipeline/latest/userguide/pipeline-types.html)"
+  description = "Codepipeline version, it can be `v1` or `v2`. [See documentation to choose](https://docs.aws.amazon.com/codepipeline/latest/userguide/pipeline-types.html)"
 }
 
 variable "codepipeline_source_file_paths" {
