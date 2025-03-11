@@ -126,6 +126,12 @@ variable "ecr_tagged_images_to_keep" {
   description = "Number of tagged images to keep in the registry"
 }
 
+variable "ecr_untagged_images_to_keep" {
+  type        = number
+  default     = 1
+  description = "Number of un-tagged images to keep in the registry"
+}
+
 variable "codepipeline_type" {
   type        = string
   default     = "V1"

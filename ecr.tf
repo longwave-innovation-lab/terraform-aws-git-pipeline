@@ -46,7 +46,7 @@ resource "aws_ecr_lifecycle_policy" "images_lifecycle" {
             "selection": {
                 "tagStatus": "untagged",
                 "countType": "imageCountMoreThan",
-                "countNumber": 1
+                "countNumber": ${var.ecr_untagged_images_to_keep}
             },
             "action": {
                 "type": "expire"
