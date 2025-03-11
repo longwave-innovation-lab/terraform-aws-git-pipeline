@@ -161,6 +161,15 @@ resource "aws_codebuild_project" "cb_project" {
       value = var.repo_branch
     }
 
+    dynamic "environment_variable" {
+      for_each = var.ecr_custom_registry_name != "" ? [1] : []
+      content {
+        name  = "CUSTOM_REGISTRY_NAME"
+        type  = "PLAINTEXT"
+        value = var.ecr_custom_registry_name
+      }
+    }
+
     # # make a secret env variable for each element in secrets_to_read
     # dynamic "environment_variable" {
     #   for_each = data.aws_secretsmanager_secret.secrets_to_read
