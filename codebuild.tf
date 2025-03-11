@@ -170,6 +170,15 @@ resource "aws_codebuild_project" "cb_project" {
       }
     }
 
+    dynamic "environment_variable" {
+      for_each = var.codebuild_additional_env_vars
+      content {
+        name  = environment_variable.value.name
+        type  = environment_variable.value.type
+        value = environment_variable.value.value
+      }
+    }
+
     # # make a secret env variable for each element in secrets_to_read
     # dynamic "environment_variable" {
     #   for_each = data.aws_secretsmanager_secret.secrets_to_read

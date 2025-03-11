@@ -39,9 +39,20 @@ module "github_codepipeline" {
   existing_codestart_gh_connection_arn = aws_codestarconnections_connection.github_connection.arn
   add_manual_approval                  = true
   force_delete_registry                = true
-  use_existing_ecr                     = true
+  ecr_use_existing                     = true
+  ecr_max_untagged_images              = 10
   secrets_to_read = [
     "arn:aws:secretsmanager:eu-west-1:687331130220:secret:InnovationDockerCreds-vOTSnB"
+  ]
+  codebuild_additional_env_vars = [{
+    name  = "TEST1"
+    type  = "PLAINTEXT"
+    value = "test1"
+    }, {
+    name  = "TEST2"
+    type  = "PLAINTEXT"
+    value = "test2"
+    }
   ]
   parameters_paths_to_read         = ["/test/"]
   codebuild_role_additional_policy = data.aws_iam_policy_document.example_extra.json
