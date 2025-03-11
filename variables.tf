@@ -90,6 +90,16 @@ variable "codebuild_buildspec_path" {
   description = "Path to the buildspec file in the source repository"
 }
 
+variable "codebuild_additional_env_vars" {
+  type = list(object({
+    name  = string
+    type  = string
+    value = string
+  }))
+  default     = []
+  description = "List of additional environment variables to add to the CodeBuild project. See [documentation](https://docs.aws.amazon.com/codebuild/latest/APIReference/API_EnvironmentVariable.html)"
+}
+
 variable "sns_subscribers" {
   type        = list(string)
   default     = []
