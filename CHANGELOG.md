@@ -1,3 +1,17 @@
+## [0.6.0](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/compare/v0.5.0...v0.6.0) (2025-03-11)
+
+
+### Features
+
+* adapted custom registry name in sns notifics closes [#23](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/issues/23) ([8daacd9](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/commit/8daacd935d751aed6c2865c84c715c54d31825bd))
+* added parameter to change max number or un-tagged images in registry ([d2c8f10](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/commit/d2c8f103e6943004e9e7fca4ffc34f14e9a86751))
+
+
+### Bug Fixes
+
+* **action:** make action retrigger upon changes ([2063e18](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/commit/2063e189e51c99ebeb32fcb1df4b9e8e6c84f6d0))
+* **action:** updated tf docs action ([d93151e](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/commit/d93151e31b772907a7e24abaf3d68c00fb2c028b))
+
 ## [0.5.0](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/compare/v0.4.2...v0.5.0) (2025-03-11)
 
 
@@ -37,17 +51,4 @@
 * **action:** testing tf docs action ([5fa7300](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/commit/5fa7300ed915520f04f55bf1c695b8600615e3c3))
 * fixed naming issue adding branch name in resources names ([411993e](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/commit/411993e61b8f0106b1ccf4ee1e280a00fbaf4c7c))
 * **tf docs:** enabled recursive updates on example dir ([8cfe65a](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/commit/8cfe65a628717992894f49d5df4f0a90ec10bb29))
-
-## [0.3.0](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/compare/v0.2.7...v0.3.0) (2025-03-06)
-
-
-### Features
-
-* implemented manual approval closes [#13](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/issues/13) and use of existing ecr closes [#15](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/issues/15) ([b83ee6f](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/commit/b83ee6f8686fa0396aa9579e76192d7ea7a30dd0))
-
-
-### Bug Fixes
-
-* **actions:** updated doc and toc action ([ad9f75e](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/commit/ad9f75e8663d055b1510f38239fe4a782dbd2bd2))
-* **action:** updated doc action triggers ([2d35d2b](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/commit/2d35d2b1be4821199f3b85b9c27a99b2fa2977ee))
 
