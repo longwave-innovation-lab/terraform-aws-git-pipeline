@@ -36,6 +36,7 @@ build_number: str = "build-number"
 REPO_NAME_ATTR_KEY: str = "REPO_NAME"
 IMAGE_TAG_ATTR_KEY: str = "IMAGE_TAG"
 BRANCH_NAME_ATTR_KEY: str = "BRANCH_NAME"
+CUSTOM_REGISTRY_NAME_ATTR_KEY: str = "CUSTOM_REGISTRY_NAME"
 TOPIC_ARN_ENV_VAR: str = "SNS_TOPIC_ARN"
 EXPORTED_ENV_VAR_ATTR_KEY: str = "exportedEnvironmentVariables"
 
@@ -68,18 +69,25 @@ def lambda_handler(event, context):
         env_vars: list[dict] = get_nested(event, [detail,additional_information,environment,environment_variables], None)
         repo_name: str = None
         branch_name: str = None
+        custom_registry_name: str = None
 
         for env_var in env_vars:
             if env_var["name"].upper() == REPO_NAME_ATTR_KEY:
                 repo_name = env_var["value"]
             elif env_var["name"].upper() == BRANCH_NAME_ATTR_KEY:
                 branch_name = env_var["value"]
+            elif env_var["name"].upper() == CUSTOM_REGISTRY_NAME_ATTR_KEY:
+                custom_registry_name = env_var["value"]
 
         if repo_name is None:
             raise Exception(
                 "No repo_name found in the codebuild environment variables")
 
-        logger.info(f"Reacting build event on repository:branch <{repo_name}:{branch_name}>")
+        
+        if custom_registry_name:
+            logger.info(f"Reacting build event on repository:branch - image <{repo_name}:{branch_name} - {custom_registry_name}>")
+        else:
+            logger.info(f"Reacting build event on repository:branch <{repo_name}:{branch_name}>")
 
         sns_topic_arn: str = os.getenv(TOPIC_ARN_ENV_VAR)
 
@@ -97,6 +105,8 @@ def lambda_handler(event, context):
         message_build_number = get_nested(event, [detail, additional_information, build_number])
 
         message_subject: str = f"Status of <{repo_name}:{branch_name}> pipeline (build N <{message_build_number}>) is <{message_build_status}>"
+        if custom_registry_name:
+            message_subject = f"Status of <{repo_name}:{branch_name} - {custom_registry_name}> pipeline (build N <{message_build_number}>) is <{message_build_status}>"
         
         build_details: dict = get_build_details(build_id_value)
         expo_env_vars: dict = get_nested(build_details, [EXPORTED_ENV_VAR_ATTR_KEY])

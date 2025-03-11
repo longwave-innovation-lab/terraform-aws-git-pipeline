@@ -120,10 +120,16 @@ variable "ecr_custom_registry_name" {
   description = "If the repo name is not the same as the image name use this. E.g. Mono repositories with multiple projects inside"
 }
 
-variable "ecr_tagged_images_to_keep" {
+variable "ecr_max_tagged_images" {
   type        = number
   default     = 20
   description = "Number of tagged images to keep in the registry"
+}
+
+variable "ecr_max_untagged_images" {
+  type        = number
+  default     = 1
+  description = "Number of un-tagged images to keep in the registry"
 }
 
 variable "codepipeline_type" {

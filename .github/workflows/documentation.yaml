@@ -7,6 +7,7 @@ on:
     - '**.hcl'
     - '.terraform.lock.hcl'
     - '**.md'
+    - '.github/workflows/documentation.yaml'
 
 jobs:
 
@@ -31,6 +32,8 @@ jobs:
       with:
         working-dir: .
         config-file: .terraform-docs.yaml
+        git-push: "true"
+        git-commit-message: "docs: terraform-docs automated update"
 
     - name: Updating Table Of Contents
       uses: technote-space/toc-generator@v4

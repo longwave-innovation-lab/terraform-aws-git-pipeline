@@ -30,11 +30,11 @@ resource "aws_ecr_lifecycle_policy" "images_lifecycle" {
     "rules": [
         {
             "rulePriority": 2,
-            "description": "Keep last ${var.ecr_tagged_images_to_keep} images",
+            "description": "Keep last ${var.ecr_max_tagged_images} images",
             "selection": {
                 "tagStatus": "any",
                 "countType": "imageCountMoreThan",
-                "countNumber": ${var.ecr_tagged_images_to_keep}
+                "countNumber": ${var.ecr_max_tagged_images}
             },
             "action": {
                 "type": "expire"
@@ -46,7 +46,7 @@ resource "aws_ecr_lifecycle_policy" "images_lifecycle" {
             "selection": {
                 "tagStatus": "untagged",
                 "countType": "imageCountMoreThan",
-                "countNumber": 1
+                "countNumber": ${var.ecr_max_untagged_images}
             },
             "action": {
                 "type": "expire"
