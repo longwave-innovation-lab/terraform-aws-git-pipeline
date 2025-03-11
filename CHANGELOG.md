@@ -1,3 +1,10 @@
+## [0.5.0](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/compare/v0.4.2...v0.5.0) (2025-03-11)
+
+
+### Features
+
+* **ecr:** custom registry name closes [#21](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/issues/21) ([e9cb983](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/commit/e9cb9838ff5dd22662ee9546b9fc52ba1a842ffc))
+
 ## [0.4.2](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/compare/v0.4.1...v0.4.2) (2025-03-10)
 
 
@@ -43,12 +50,4 @@
 
 * **actions:** updated doc and toc action ([ad9f75e](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/commit/ad9f75e8663d055b1510f38239fe4a782dbd2bd2))
 * **action:** updated doc action triggers ([2d35d2b](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/commit/2d35d2b1be4821199f3b85b9c27a99b2fa2977ee))
-
-## [0.2.7](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/compare/v0.2.6...v0.2.7) (2025-02-16)
-
-
-### Bug Fixes
-
-* changed name of codepipeline pipeline to be more standard ([bc8b87c](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/commit/bc8b87cbc086fcc41f6d46ef76c17b27b381abc3))
-* fixed codebuild project logs permission arn ([dfab8cf](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/commit/dfab8cf8aa6316dbce36604378bf53afe8b8912a))
 
