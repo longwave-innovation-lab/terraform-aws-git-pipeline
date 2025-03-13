@@ -34,6 +34,8 @@ To further customize the pipeline behavior look ad [input arguments](#inputs).
 
 Very basic pipeline which creates a registry, notifies a list of subscriber upon codebuild events and listen to push events on a branch over a github repository.
 
+[Try the terraform code](./examples/simple_example/README.md).
+
 ```hcl
 resource "aws_codestarconnections_connection" "github_connection" {
   name          = "GHConnection"
@@ -60,6 +62,8 @@ The SNS service will send to all pipeline subscribers a notification upon requir
 Users must be logged in and have permissions to approve such stage to make the pipeline continue.
 
 Since the pipeline mode will be `SUPERSEDED` each commit push will invalidate previous approval requests.
+
+[Try the terraform code](./examples/manual_approval_example/README.md).
 
 ```hcl
 resource "aws_codestarconnections_connection" "github_connection" {
@@ -110,6 +114,8 @@ To do this we need:
     }]
 
    ```
+
+[Try the terraform code](./examples/environment_var_example/README.md).
 
 **Here's the complete example**:
 
