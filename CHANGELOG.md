@@ -1,3 +1,5 @@
+## [0.7.1](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/compare/v0.7.0...v0.7.1) (2025-03-13)
+
 ## [0.7.0](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/compare/v0.6.0...v0.7.0) (2025-03-11)
 
 
@@ -32,11 +34,4 @@
 ### Bug Fixes
 
 * changed default value for repo org shortname ([b4d2110](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/commit/b4d21105a489222aea8d23c92246e35b2ab99067))
-
-## [0.4.1](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/compare/v0.4.0...v0.4.1) (2025-03-10)
-
-
-### Bug Fixes
-
-* added repo org shortname to prevend naming problems on long names closes [#18](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/issues/18) ([604b4c4](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/commit/604b4c4b4f1d063f45c5218426c8563977c05650))
 
