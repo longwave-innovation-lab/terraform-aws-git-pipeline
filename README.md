@@ -4,6 +4,10 @@
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
 - [Intro](#intro)
+- [Usage](#usage)
+  - [Basic Pipeline](#basic-pipeline)
+  - [Basic Manual Approval](#basic-manual-approval)
+  - [Using Environment Variables](#using-environment-variables)
 - [Requirements](#requirements)
 - [Providers](#providers)
 - [Modules](#modules)
@@ -16,6 +20,140 @@
 ## Intro
 
 Module that creates a pipeline which has a Github repository as a source.
+
+The pipeline structure is very basic at the moment.
+<br>In this version it creates a source stage followed by an optional manual approval and finally a build stage.
+
+## Usage
+
+Here's some examples on how to used the module.
+
+To further customize the pipeline behavior look ad [input arguments](#inputs).
+
+### Basic Pipeline
+
+Very basic pipeline which creates a registry, notifies a list of subscriber upon codebuild events and listen to push events on a branch over a github repository.
+
+```hcl
+resource "aws_codestarconnections_connection" "github_connection" {
+  name          = "GHConnection"
+  provider_type = "GitHub"
+}
+
+module "github_codepipeline" {
+  source                               = "git::https://github.com/Longwave-innovation/terraform-aws-github-pipeline.git?ref=v0.7.0"
+  repo_org                             = "org_name"
+  repo_name                            = "repo_name"
+  repo_branch                          = "branch_name"
+  existing_codestart_gh_connection_arn = aws_codestarconnections_connection.github_connection.arn
+  force_delete_registry                = true
+  sns_subscribers                      = ["subscriber_mail@domain.com"]
+}
+```
+
+### Basic Manual Approval
+
+Thanks to the input argument `add_manual_approval` you can seamlessly add an approval step between the source and build stages.
+
+The SNS service will send to all pipeline subscribers a notification upon requirement of an approval.
+
+Users must be logged in and have permissions to approve such stage to make the pipeline continue.
+
+Since the pipeline mode will be `SUPERSEDED` each commit push will invalidate previous approval requests.
+
+```hcl
+resource "aws_codestarconnections_connection" "github_connection" {
+  name          = "GHConnection"
+  provider_type = "GitHub"
+}
+
+module "github_codepipeline" {
+  source                               = "git::https://github.com/Longwave-innovation/terraform-aws-github-pipeline.git?ref=v0.7.0"
+  repo_org                             = "org_name"
+  repo_name                            = "repo_name"
+  repo_branch                          = "branch_name"
+  add_manual_approval                  = true
+  existing_codestart_gh_connection_arn = aws_codestarconnections_connection.github_connection.arn
+  force_delete_registry                = true
+  sns_subscribers                      = ["subscriber_mail@domain.com"]
+}
+```
+
+### Using Environment Variables
+
+This module can handle secrets and parameters in a secure way, since the values are injected at runtime into the environment variables.
+
+To do this we need:
+
+1. Grant permissions to the CodeBuild resource to read parameters and secrets:
+
+    ```hcl
+    secrets_to_read          = [data.aws_secretsmanager_secret.secret.arn]    # ARNs of secrets to access
+    parameters_paths_to_read = ["/my-paramater-path/"]    # Parameter Store paths to access
+    ```
+
+2. Setup the environment variables to be injected at runtime, see [official docs](https://docs.aws.amazon.com/codebuild/latest/APIReference/API_EnvironmentVariable.html):
+
+   ```hcl
+    codebuild_additional_env_vars = [{
+        name  = "MY_SIMPLE_VALUE"
+        type  = "PLAINTEXT"    # For non-sensitive values
+        value = "my_value"
+    }, {
+        name  = "MY_SECRET_VALUE"
+        type  = "SECRETS_MANAGER"    # For sensitive values from Secrets Manager
+        value = "${data.aws_secretsmanager_secret.secret.name}:<secret-json-key>"
+    }, {
+        name  = "MY_PARAMETER_VALUE"
+        type  = "PARAMETER_STORE"    # For configuration values from Parameter Store
+        value = data.aws_ssm_parameter.parameter.name
+    }]
+
+   ```
+
+**Here's the complete example**:
+
+```hcl
+resource "aws_codestarconnections_connection" "github_connection" {
+  name          = "GHConnection"
+  provider_type = "GitHub"
+}
+
+data "aws_secretsmanager_secret" "secret" {
+  name = "my-secret"
+}
+
+data "aws_ssm_parameter" "parameter" {
+  name = "/my-paramater-path/my-parameter"
+}
+
+module "github_codepipeline" {
+  source                               = "git::https://github.com/Longwave-innovation/terraform-aws-github-pipeline.git?ref=v0.7.0"
+  repo_org                             = "org_name"
+  repo_name                            = "repo_name"
+  repo_branch                          = "branch_name"
+  codepipeline_type                    = "v2"
+  existing_codestart_gh_connection_arn = aws_codestarconnections_connection.github_connection.arn
+  force_delete_registry                = true
+  secrets_to_read                      = [data.aws_secretsmanager_secret.secret.arn]
+  parameters_paths_to_read             = ["/my-paramater-path/"]
+  codebuild_additional_env_vars = [{
+    name  = "MY_SIMPLE_VALUE"
+    type  = "PLAINTEXT"
+    value = "my_value"
+    }, {
+    name  = "MY_SECRET_VALUE"
+    type  = "SECRETS_MANAGER"
+    value = "${data.aws_secretsmanager_secret.secret.name}:<secret-json-key>"
+    }, {
+    name  = "MY_PARAMETER_VALUE"
+    type  = "PARAMETER_STORE"
+    value = data.aws_ssm_parameter.parameter.name
+    }
+  ]
+  sns_subscribers = ["subscriber_mail@domain.com"]
+}
+```
 
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
