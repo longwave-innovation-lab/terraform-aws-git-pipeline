@@ -45,10 +45,8 @@ module "github_codepipeline" {
   codepipeline_type                    = "v2"
   existing_codestart_gh_connection_arn = aws_codestarconnections_connection.github_connection.arn
   force_delete_registry                = true
-  ecr_max_untagged_images              = 10
-  secrets_to_read = [
-    data.aws_secretsmanager_secret.secret.arn
-  ]
+  secrets_to_read                      = [data.aws_secretsmanager_secret.secret.arn]
+  parameters_paths_to_read             = ["/my-paramater-path/"]
   codebuild_additional_env_vars = [{
     name  = "MY_SIMPLE_VALUE"
     type  = "PLAINTEXT"
@@ -63,7 +61,5 @@ module "github_codepipeline" {
     value = data.aws_ssm_parameter.parameter.name
     }
   ]
-  parameters_paths_to_read         = ["/my-paramater-path/"]
-  codebuild_role_additional_policy = data.aws_iam_policy_document.example_extra.json
-  sns_subscribers                  = ["subscriber_mail@domain.com"]
+  sns_subscribers = ["subscriber_mail@domain.com"]
 }
