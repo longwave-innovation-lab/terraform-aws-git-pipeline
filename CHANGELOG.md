@@ -1,3 +1,14 @@
+## [1.0.0](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/compare/v0.7.1...v1.0.0) (2025-05-20)
+
+
+### ⚠ BREAKING CHANGES
+
+* **ecr:** now ECR policies don't remove production images, you can specify different pattern to keep different kind of tags closes #32
+
+### Features
+
+* **ecr:** now ECR policies don't remove production images, you can specify different pattern to keep different kind of tags closes [#32](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/issues/32) ([3a67e58](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/commit/3a67e5841f0efc0151a35fda6ef2e30efc8f35a3))
+
 ## [0.7.1](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/compare/v0.7.0...v0.7.1) (2025-03-13)
 
 ## [0.7.0](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/compare/v0.6.0...v0.7.0) (2025-03-11)
@@ -27,11 +38,4 @@
 ### Features
 
 * **ecr:** custom registry name closes [#21](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/issues/21) ([e9cb983](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/commit/e9cb9838ff5dd22662ee9546b9fc52ba1a842ffc))
-
-## [0.4.2](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/compare/v0.4.1...v0.4.2) (2025-03-10)
-
-
-### Bug Fixes
-
-* changed default value for repo org shortname ([b4d2110](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/commit/b4d21105a489222aea8d23c92246e35b2ab99067))
 
