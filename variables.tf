@@ -130,10 +130,34 @@ variable "ecr_custom_registry_name" {
   description = "If the repo name is not the same as the image name use this. E.g. Mono repositories with multiple projects inside"
 }
 
-variable "ecr_max_tagged_images" {
+variable "ecr_override_lifecycle_policy" {
+  type        = bool
+  default     = false
+  description = "Whether or not override the lifecycle policy of an existing ECR repository."
+}
+
+variable "ecr_max_prod_tagged_images" {
   type        = number
   default     = 20
-  description = "Number of tagged images to keep in the registry"
+  description = "Number of `PRODUCTION TAGGED` images to keep in the registry, where production tagged means the tags follows the X.Y.Z tags"
+}
+
+variable "ecr_prod_tag_pattern_list" {
+  type        = list(string)
+  default     = ["latest", "0.*.*", "1.*.*", "2.*.*"]
+  description = "Tag pattern list to match production images. See [ECR lifecycle policy doc](https://docs.aws.amazon.com/AmazonECR/latest/userguide/lifecycle_policy_parameters.html#lp_tag_pattern_list)."
+}
+
+variable "ecr_max_dev_tagged_images" {
+  type        = number
+  default     = 10
+  description = "Number of `TAGGED` images to keep in the registry"
+}
+
+variable "ecr_dev_tag_pattern_list" {
+  type        = list(string)
+  default     = ["dev-*.*.*"]
+  description = "Tag pattern list to match development images. See [ECR lifecycle policy doc](https://docs.aws.amazon.com/AmazonECR/latest/userguide/lifecycle_policy_parameters.html#lp_tag_pattern_list)."
 }
 
 variable "ecr_max_untagged_images" {
