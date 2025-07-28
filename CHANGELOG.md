@@ -1,3 +1,11 @@
+## [1.0.1](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/compare/v1.0.0...v1.0.1) (2025-07-28)
+
+
+### Bug Fixes
+
+* **sns:** corretta issue lunghezza DisplayName closes [#36](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/issues/36) ([3692dcd](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/commit/3692dcd7974098c3e8e881f7a980b72cc7d26e8d))
+* solved lifecycle policy creation on new ECR registry ([2db2b14](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/commit/2db2b14191ed1171d7111c721f55a8dff9eea9a5))
+
 ## [1.0.0](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/compare/v0.7.1...v1.0.0) (2025-05-20)
 
 
@@ -31,11 +39,4 @@
 
 * **action:** make action retrigger upon changes ([2063e18](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/commit/2063e189e51c99ebeb32fcb1df4b9e8e6c84f6d0))
 * **action:** updated tf docs action ([d93151e](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/commit/d93151e31b772907a7e24abaf3d68c00fb2c028b))
-
-## [0.5.0](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/compare/v0.4.2...v0.5.0) (2025-03-11)
-
-
-### Features
-
-* **ecr:** custom registry name closes [#21](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/issues/21) ([e9cb983](https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline/commit/e9cb9838ff5dd22662ee9546b9fc52ba1a842ffc))
 

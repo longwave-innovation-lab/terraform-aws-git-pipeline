@@ -1,6 +1,6 @@
 {
   "name": "terraform-aws-github-pipeline",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Module that creates a pipeline which has a Github repository as a source.",
   "directories": {
     "doc": "docs"
