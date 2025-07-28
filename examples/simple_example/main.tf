@@ -32,7 +32,7 @@ module "github_codepipeline" {
   source     = "../.."
 
   repo_org                             = "Longwave-innovation"
-  repo_name                            = "example_pipe_extremely_long_name"
+  repo_name                            = "example_pipe_extremely_long_nameaaaaaaaaaaa"
   repo_branch                          = "main"
   existing_codestart_gh_connection_arn = aws_codestarconnections_connection.github_connection.arn
 

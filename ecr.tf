@@ -67,7 +67,7 @@ resource "aws_ecr_lifecycle_policy" "images_lifecycle" {
     data.aws_ecr_repository.existing,
     aws_ecr_repository.registry
   ]
-  count      = (var.ecr_use_existing && var.ecr_override_lifecycle_policy) ? 1 : 0
+  count      = ((var.ecr_use_existing && var.ecr_override_lifecycle_policy) || !var.ecr_use_existing) ? 1 : 0
   repository = local.registry_name
   policy     = data.aws_ecr_lifecycle_policy_document.policy.json
 }

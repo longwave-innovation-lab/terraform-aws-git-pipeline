@@ -8,8 +8,8 @@ output "ecr_registry_name" {
   description = "The name of the ECR repository."
 }
 
-output "ecr_registry_uri" {
-  value       = module.github_codepipeline.ecr_registry_uri
+output "ecr_registry_url" {
+  value       = module.github_codepipeline.ecr_registry_url
   description = "The URL of the ECR repository."
 }
 
