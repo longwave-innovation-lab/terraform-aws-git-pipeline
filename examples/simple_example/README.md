@@ -30,7 +30,7 @@ This example shows the creation of a pipeline of `type V1`, that listen to every
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | 5.67.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 5.80.0 |
 
 ## Modules
 
@@ -62,6 +62,6 @@ This example shows the creation of a pipeline of `type V1`, that listen to every
 | <a name="output_codepipeline_role_arn"></a> [codepipeline\_role\_arn](#output\_codepipeline\_role\_arn) | The Amazon Resource Name (ARN) specifying the role for CodePipeline. |
 | <a name="output_ecr_arn"></a> [ecr\_arn](#output\_ecr\_arn) | The Amazon Resource Name (ARN) of the ECR repository. |
 | <a name="output_ecr_registry_name"></a> [ecr\_registry\_name](#output\_ecr\_registry\_name) | The name of the ECR repository. |
-| <a name="output_ecr_registry_uri"></a> [ecr\_registry\_uri](#output\_ecr\_registry\_uri) | The URL of the ECR repository. |
+| <a name="output_ecr_registry_url"></a> [ecr\_registry\_url](#output\_ecr\_registry\_url) | The URL of the ECR repository. |
 | <a name="output_parameters_to_read"></a> [parameters\_to\_read](#output\_parameters\_to\_read) | The parameters that were read from SSM. |
 <!-- END_TF_DOCS -->
