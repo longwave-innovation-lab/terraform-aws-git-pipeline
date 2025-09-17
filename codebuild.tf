@@ -27,8 +27,8 @@ data "aws_iam_policy_document" "codebuild_default_policy" {
     ]
 
     resources = [
-      "arn:aws:logs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:log-group:/aws/codebuild/${local.final_name}${local.codepipeline_resources_suffix}*",
-      "arn:aws:logs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:log-group:/aws/codebuild/${local.final_name}${local.codepipeline_resources_suffix}"
+      "arn:aws:logs:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:log-group:/aws/codebuild/${local.final_name}${local.codepipeline_resources_suffix}*",
+      "arn:aws:logs:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:log-group:/aws/codebuild/${local.final_name}${local.codepipeline_resources_suffix}"
     ]
   }
 
