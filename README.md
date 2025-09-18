@@ -164,14 +164,18 @@ module "github_codepipeline" {
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
 
-No requirements.
+| Name | Version |
+|------|---------|
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.5.7 |
+| <a name="requirement_archive"></a> [archive](#requirement\_archive) | >= 2.7.0 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 6.0.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_archive"></a> [archive](#provider\_archive) | 2.6.0 |
-| <a name="provider_aws"></a> [aws](#provider\_aws) | 5.69.0 |
+| <a name="provider_archive"></a> [archive](#provider\_archive) | >= 2.7.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 6.0.0 |
 
 ## Modules
 
@@ -244,16 +248,18 @@ No modules.
 | <a name="input_codepipeline_type"></a> [codepipeline\_type](#input\_codepipeline\_type) | Codepipeline version, it can be `v1` or `v2`. [See documentation to choose](https://docs.aws.amazon.com/codepipeline/latest/userguide/pipeline-types.html) | `string` | `"V1"` | no |
 | <a name="input_ecr_custom_registry_name"></a> [ecr\_custom\_registry\_name](#input\_ecr\_custom\_registry\_name) | If the repo name is not the same as the image name use this. E.g. Mono repositories with multiple projects inside | `string` | `""` | no |
 | <a name="input_ecr_dev_tag_pattern_list"></a> [ecr\_dev\_tag\_pattern\_list](#input\_ecr\_dev\_tag\_pattern\_list) | Tag pattern list to match development images. See [ECR lifecycle policy doc](https://docs.aws.amazon.com/AmazonECR/latest/userguide/lifecycle_policy_parameters.html#lp_tag_pattern_list). | `list(string)` | <pre>[<br/>  "dev-*.*.*"<br/>]</pre> | no |
+| <a name="input_ecr_image_tag_mutability"></a> [ecr\_image\_tag\_mutability](#input\_ecr\_image\_tag\_mutability) | Mutability mode for image tags. Must be one of: `MUTABLE`, `IMMUTABLE`, `IMMUTABLE_WITH_EXCLUSION`, or `MUTABLE_WITH_EXCLUSION`. | `string` | `"MUTABLE"` | no |
 | <a name="input_ecr_max_dev_tagged_images"></a> [ecr\_max\_dev\_tagged\_images](#input\_ecr\_max\_dev\_tagged\_images) | Number of `TAGGED` images to keep in the registry | `number` | `10` | no |
 | <a name="input_ecr_max_prod_tagged_images"></a> [ecr\_max\_prod\_tagged\_images](#input\_ecr\_max\_prod\_tagged\_images) | Number of `PRODUCTION TAGGED` images to keep in the registry, where production tagged means the tags follows the X.Y.Z tags | `number` | `20` | no |
 | <a name="input_ecr_max_untagged_images"></a> [ecr\_max\_untagged\_images](#input\_ecr\_max\_untagged\_images) | Number of un-tagged images to keep in the registry | `number` | `1` | no |
+| <a name="input_ecr_mutability_exclusion_filters"></a> [ecr\_mutability\_exclusion\_filters](#input\_ecr\_mutability\_exclusion\_filters) | List of tag filters that will exclude images from mutability. Only used when `ecr_image_tag_mutability` is set to `IMMUTABLE_WITH_EXCLUSION` or `MUTABLE_WITH_EXCLUSION`.  Each filter can be up to 128 characters long and can contain a maximum of 2 wildcards () and use must contain only letters, numbers, and special characters (.\_-). | `list(string)` | `[]` | no |
 | <a name="input_ecr_override_lifecycle_policy"></a> [ecr\_override\_lifecycle\_policy](#input\_ecr\_override\_lifecycle\_policy) | Whether or not override the lifecycle policy of an existing ECR repository. | `bool` | `false` | no |
 | <a name="input_ecr_prod_tag_pattern_list"></a> [ecr\_prod\_tag\_pattern\_list](#input\_ecr\_prod\_tag\_pattern\_list) | Tag pattern list to match production images. See [ECR lifecycle policy doc](https://docs.aws.amazon.com/AmazonECR/latest/userguide/lifecycle_policy_parameters.html#lp_tag_pattern_list). | `list(string)` | <pre>[<br/>  "latest",<br/>  "0.*.*",<br/>  "1.*.*",<br/>  "2.*.*"<br/>]</pre> | no |
+| <a name="input_ecr_scan_images_on_push"></a> [ecr\_scan\_images\_on\_push](#input\_ecr\_scan\_images\_on\_push) | Whether to scan images on push to the registry | `bool` | `false` | no |
 | <a name="input_ecr_use_existing"></a> [ecr\_use\_existing](#input\_ecr\_use\_existing) | Whether to use an existing ECR repository | `bool` | `false` | no |
 | <a name="input_force_delete_registry"></a> [force\_delete\_registry](#input\_force\_delete\_registry) | Whether to force delete the registry, even if there are still images | `bool` | `false` | no |
 | <a name="input_parameters_paths_to_read"></a> [parameters\_paths\_to\_read](#input\_parameters\_paths\_to\_read) | List of parameters PATHS from Parameter store to read from the Codebuild project. <br> **Note**: the last part of the path, the `paramater name`, should not be present in this variable otherwise no parameters will be found at runtime. | `list(string)` | `[]` | no |
 | <a name="input_repo_org_shortname"></a> [repo\_org\_shortname](#input\_repo\_org\_shortname) | This is used to name resources when repo name and repo org are too long. | `string` | `""` | no |
-| <a name="input_scan_images_on_push"></a> [scan\_images\_on\_push](#input\_scan\_images\_on\_push) | Whether to scan images on push to the registry | `bool` | `false` | no |
 | <a name="input_secrets_to_read"></a> [secrets\_to\_read](#input\_secrets\_to\_read) | List of secrets ARNs from SecretManager to read from the Codebuild project | `list(string)` | `[]` | no |
 | <a name="input_sns_subscribers"></a> [sns\_subscribers](#input\_sns\_subscribers) | List of email addresses to subscribe to SNS notifications | `list(string)` | `[]` | no |
 
