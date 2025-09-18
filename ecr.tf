@@ -10,10 +10,18 @@ locals {
 resource "aws_ecr_repository" "registry" {
   count                = var.ecr_use_existing ? 0 : 1
   name                 = local.registry_name
-  image_tag_mutability = "MUTABLE"
+  image_tag_mutability = var.ecr_image_tag_mutability
   force_delete         = var.force_delete_registry
   image_scanning_configuration {
-    scan_on_push = var.scan_images_on_push
+    scan_on_push = var.ecr_scan_images_on_push
+  }
+
+  dynamic "image_tag_mutability_exclusion_filter" {
+    for_each = toset(var.ecr_mutability_exclusion_filters)
+    content {
+      filter      = image_tag_mutability_exclusion_filter.value
+      filter_type = "WILDCARD"
+    }
   }
 }
 
