@@ -58,8 +58,13 @@ output "sqs_codebuild_events_dlq" {
   description = "The URL of the SQS queue which holds dead-letter messages for CodeBuild events that couldn't be processed by the lambda listener."
 }
 
-output "ssm_paramaters_to_read" {
+output "fixed_path_ssm_paramaters_to_read" {
   # value       = data.aws_ssm_parameters_by_path.parameters_to_read.arns
   value       = { for k, v in data.aws_ssm_parameters_by_path.parameters_to_read : k => v.arns }
-  description = "The Amazon Resource Name (ARN) of the SSM parameters to read from the SSM parameter store during pipeline execution."
+  description = "The Amazon Resource Name (ARN) of the SSM parameters with a fixed path that the pipeline will have access."
+}
+
+output "wildcard_path_ssm_parameters_to_read" {
+  value       = local.wildcard_ssm_arns
+  description = "The SSM parameters with a wildcard path that the pipeline will have access."
 }
