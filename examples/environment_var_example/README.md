@@ -71,5 +71,6 @@ This examples shows how to set some environment variables and use them as:
 | <a name="output_ecr_arn"></a> [ecr\_arn](#output\_ecr\_arn) | The Amazon Resource Name (ARN) of the ECR repository. |
 | <a name="output_ecr_registry_name"></a> [ecr\_registry\_name](#output\_ecr\_registry\_name) | The name of the ECR repository. |
 | <a name="output_ecr_registry_uri"></a> [ecr\_registry\_uri](#output\_ecr\_registry\_uri) | The URL of the ECR repository. |
-| <a name="output_parameters_to_read"></a> [parameters\_to\_read](#output\_parameters\_to\_read) | The parameters that were read from SSM. |
+| <a name="output_fixed_parameters_to_read"></a> [fixed\_parameters\_to\_read](#output\_fixed\_parameters\_to\_read) | The parameters that were read from SSM with fixed path. |
+| <a name="output_wildcard_parameters_to_read"></a> [wildcard\_parameters\_to\_read](#output\_wildcard\_parameters\_to\_read) | The parameters wildcard path that the pipeline will have access to. |
 <!-- END_TF_DOCS -->
