@@ -37,3 +37,5 @@ terraform.rc
 # Avoid to upload any zip file
 *.zip
 
+# Avoid to fix version in this module to be able to use compatible versions when usign this module
+# .terraform.lock.hcl
