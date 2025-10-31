@@ -40,12 +40,21 @@ jobs:
         fetch-depth: 0
         token: ${{ secrets.GITHUB_TOKEN }}
 
+    - name: Debug git configuration
+      run: |
+        echo "Git remote:"
+        git remote -v
+        echo "Git config remote.origin.url:"
+        git config --get remote.origin.url
+        echo "Git config --list | grep url:"
+        git config --list | grep url || true
+
     - name: Generate changelog
       id: changelog
-      uses: TriPSs/conventional-changelog-action@latest
+      uses: TriPSs/conventional-changelog-action@v6.2.0
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
-        git-user-email: innovation_r&d@LantechLongwave.it
+        git-user-email: innovation_r&d@longwave.it
         skip-on-empty: false
         preset: conventionalcommits
         output-file: CHANGELOG.md
