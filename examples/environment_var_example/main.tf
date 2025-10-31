@@ -38,19 +38,10 @@ data "aws_iam_policy_document" "example_extra" {
 }
 
 resource "aws_ssm_parameter" "test_parameter" {
-  for_each = {
-    "/test/par1" : "super-secret-value-test",
-    "/test/par2" : "super-secret-value-test2",
-    "/test2/par1" : "super-secret-value-test3",
-    "/test2/par2" : "super-secret-value-test4",
-    "/test3/par1" : "super-secret-value-test5",
-    "/test3/par2" : "super-secret-value-test6",
-    "/test4/par1" : "super-secret-value-test7",
-    "/test4/par2" : "super-secret-value-test8"
-  }
-  type  = "SecureString"
-  name  = each.key
-  value = each.value
+  for_each = local.ssm_parameters_to_create
+  type     = "SecureString"
+  name     = each.key
+  value    = each.value
 }
 
 resource "aws_secretsmanager_secret" "secret" {

@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://git.lantechlongwave.it/RnD/terraform-aws-github-pipeline.git"
+    "url": "https://github.com/Longwave-innovation/terraform-aws-gitops-updater"
   },
   "author": "Mirco Bozzolini"
 }
