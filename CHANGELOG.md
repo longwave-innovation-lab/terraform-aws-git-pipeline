@@ -1,25 +1,3 @@
-## [3.0.0](https://github.com/Longwave-innovation/terraform-aws-gitops-updater/compare/v2.0.0...v3.0.0) (2025-10-31)
-
-
-### ⚠ BREAKING CHANGES
-
-* update to AWS V6
-
-### Features
-
-* **ecr:** now image mutability can be chosen even with exclusions closes [#38](https://github.com/Longwave-innovation/terraform-aws-gitops-updater/issues/38) ([1fcf53a](https://github.com/Longwave-innovation/terraform-aws-gitops-updater/commit/1fcf53aaf1499301f66ac86d08b39d5e35b0499a))
-* **ssm:** parameters to read can now include wildcard paths closes [#35](https://github.com/Longwave-innovation/terraform-aws-gitops-updater/issues/35) ([b4c205a](https://github.com/Longwave-innovation/terraform-aws-gitops-updater/commit/b4c205a63da4570aefc2ac7e4067fd824c965412))
-* update to AWS V6 ([6c92814](https://github.com/Longwave-innovation/terraform-aws-gitops-updater/commit/6c928147a712134f2a4caa3e5e4dcd1f705d356c))
-
-
-### Bug Fixes
-
-* added providers version constraints in module [#39](https://github.com/Longwave-innovation/terraform-aws-gitops-updater/issues/39) ([f7963a6](https://github.com/Longwave-innovation/terraform-aws-gitops-updater/commit/f7963a6d6e52b91a1f507d37032331696e1b04a1))
-* **examples:** fixed reference in outputs ([0309ac8](https://github.com/Longwave-innovation/terraform-aws-gitops-updater/commit/0309ac8ebe5901b417d742dafd06cba0a93ce641))
-* **gitignore:** ignoring lock.hcl ([8cbc1c2](https://github.com/Longwave-innovation/terraform-aws-gitops-updater/commit/8cbc1c20a212f2f669ddba8c059425b22d53d260))
-* ignoring .terraform.locl.hcl from now on to prevent restriction on version imposed by this module [#39](https://github.com/Longwave-innovation/terraform-aws-gitops-updater/issues/39) ([6131c47](https://github.com/Longwave-innovation/terraform-aws-gitops-updater/commit/6131c479673adfff99dcc857bf146fec9a201c4d))
-* put restriction on provider, mainly for major/minor version [#39](https://github.com/Longwave-innovation/terraform-aws-gitops-updater/issues/39) ([2b8642a](https://github.com/Longwave-innovation/terraform-aws-gitops-updater/commit/2b8642ad44e3253d4e6fb7f9eff3db976dc19573))
-
 ## [2.0.0](https://github.com/Longwave-innovation/terraform-aws-gitops-updater/compare/v1.0.1...v2.0.0) (2025-09-18)
 
 
