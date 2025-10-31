@@ -28,7 +28,12 @@ output "codebuild_role_arn" {
   description = "The Amazon Resource Name (ARN) specifying the role for Codebuild."
 }
 
-output "parameters_to_read" {
-  value       = module.github_codepipeline.ssm_paramaters_to_read
-  description = "The parameters that were read from SSM."
+output "fixed_parameters_to_read" {
+  value       = module.github_codepipeline.fixed_path_ssm_paramaters_to_read
+  description = "The parameters that were read from SSM with fixed path."
+}
+
+output "wildcard_parameters_to_read" {
+  value       = module.github_codepipeline.wildcard_path_ssm_parameters_to_read
+  description = "The parameters wildcard path that the pipeline will have access to."
 }

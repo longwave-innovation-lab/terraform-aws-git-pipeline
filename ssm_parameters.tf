@@ -1,5 +1,13 @@
+locals {
+  fixed_paths    = [for path in var.parameters_paths_to_read : path if !endswith(path, "*")]
+  wildcard_paths = [for path in var.parameters_paths_to_read : path if endswith(path, "*")]
+  wildcard_ssm_arns = flatten(
+    [for path in local.wildcard_paths : "arn:aws:ssm:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:parameter${path}"]
+  )
+}
+
 data "aws_ssm_parameters_by_path" "parameters_to_read" {
-  for_each = toset(var.parameters_paths_to_read)
+  for_each = toset(local.fixed_paths)
   path     = each.key
 }
 
@@ -14,7 +22,11 @@ data "aws_iam_policy_document" "codebuild_parameter_store_policy" {
       "ssm:DescribeParameters"
     ]
     # transform all data.aws_ssm_parameters_by_path.parameters_to_read into a single array to use in resources
-    resources = flatten(concat([for parameter in data.aws_ssm_parameters_by_path.parameters_to_read : parameter.arns]))
+    resources = flatten(
+      concat(
+        [for parameter in data.aws_ssm_parameters_by_path.parameters_to_read : parameter.arns],
+        local.wildcard_ssm_arns
+    ))
   }
 }
 

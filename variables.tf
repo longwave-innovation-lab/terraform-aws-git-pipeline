@@ -24,7 +24,7 @@ variable "existing_codestart_gh_connection_arn" {
   description = "Arn of the existing GitHub connection"
 }
 
-variable "scan_images_on_push" {
+variable "ecr_scan_images_on_push" {
   type        = bool
   default     = false
   description = "Whether to scan images on push to the registry"
@@ -122,6 +122,18 @@ variable "ecr_use_existing" {
   type        = bool
   default     = false
   description = "Whether to use an existing ECR repository"
+}
+
+variable "ecr_image_tag_mutability" {
+  type        = string
+  default     = "MUTABLE"
+  description = "Mutability mode for image tags. Must be one of: `MUTABLE`, `IMMUTABLE`, `IMMUTABLE_WITH_EXCLUSION`, or `MUTABLE_WITH_EXCLUSION`."
+}
+
+variable "ecr_mutability_exclusion_filters" {
+  type        = list(string)
+  default     = []
+  description = "List of tag filters that will exclude images from mutability. Only used when `ecr_image_tag_mutability` is set to `IMMUTABLE_WITH_EXCLUSION` or `MUTABLE_WITH_EXCLUSION`.  Each filter can be up to 128 characters long and can contain a maximum of 2 wildcards () and use must contain only letters, numbers, and special characters (._-)."
 }
 
 variable "ecr_custom_registry_name" {
