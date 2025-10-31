@@ -39,9 +39,9 @@ data "aws_iam_policy_document" "example_extra" {
 
 resource "aws_ssm_parameter" "test_parameter" {
   for_each = local.ssm_parameters_to_create
-  type  = "SecureString"
-  name  = each.key
-  value = each.value
+  type     = "SecureString"
+  name     = each.key
+  value    = each.value
 }
 
 resource "aws_secretsmanager_secret" "secret" {
