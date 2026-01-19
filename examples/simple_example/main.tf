@@ -45,6 +45,10 @@ module "github_codepipeline" {
   parameters_paths_to_read         = ["/test/"]
   ecr_image_tag_mutability         = "IMMUTABLE_WITH_EXCLUSION"
   ecr_mutability_exclusion_filters = ["dev-*", "qa-*"]
+  ecr_external_access_arns = [
+    "arn:aws:iam::760661275543:root",
+    "arn:aws:iam::760661275543:role/lw-intesa-poc-k8s-eks-nodes"
+  ]
   codebuild_role_additional_policy = data.aws_iam_policy_document.example_extra.json
   sns_subscribers                  = ["mirco.bozzolini@lantechlongwave.it"]
 }
