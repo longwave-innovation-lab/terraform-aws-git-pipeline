@@ -17,7 +17,7 @@ jobs:
       contents: write
       pull-requests: write
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
       with:
         ref: ${{ github.event.pull_request.head.ref }}
         token: ${{ secrets.GITHUB_TOKEN }}
@@ -28,57 +28,70 @@ jobs:
         git config --global user.name "ActionBot"
 
     - name: Render terraform docs inside the README.md and push changes back to PR branch
-      uses: terraform-docs/gh-actions@v1.3.0
+      uses: terraform-docs/gh-actions@v1.4.1
       with:
         working-dir: .
         config-file: .terraform-docs.yaml
         git-push: "true"
         git-commit-message: "docs: terraform-docs automated update"
 
-    - name: Updating Table Of Contents
-      uses: technote-space/toc-generator@v4
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        TOC_TITLE: ''
-        TARGET_PATHS: 'README*.md, **/README*.md'
 
-    - name: Committing changes
-      uses: stefanzweifel/git-auto-commit-action@v5
+  readme-toc:
+    runs-on: ubuntu-latest
+    needs: [ tf-docs ]
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+    - uses: actions/checkout@v6
       with:
-        commit_message: "[skip ci] terraform-docs: Update DOCUMENTATION and TOC"
+        ref: ${{ github.event.pull_request.head.ref }}
+        token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Set up Node.js (for doctoc)
+      uses: actions/setup-node@v6
+      with:
+        node-version: '22'
+
+    - name: Install DocToc
+      run: npm install -g doctoc
+
+    - name: Generate / Update TOC in markdown README(s)
+      run: |
+        # generate or update TOC in all README files
+        # --notitle removes the default "Table of Contents" header
+        # --maxlevel can limit depth (e.g. 3) if desired
+        doctoc ./README.md --notitle
+
+    - name: Commit updated TOC(s) if changed
+      uses: stefanzweifel/git-auto-commit-action@v7
+      with:
+        commit_message: "[skip ci] docs: updated TOC"
         branch: ${{ github.event.pull_request.head.ref }}
 
   lint-markdown:
+    name: Markdown Linting
     needs: [ tf-docs ]
     runs-on: ubuntu-latest
     steps:
-    - run: echo "The job was automatically triggered by a ${{ github.event_name }} event made by ${{ github.actor }}."
-    - run: echo "This job is now running on a ${{ runner.os }} server hosted by Gitea!"
-    - run: echo "The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
-    - name: Installing markdownlint and test
-
-      run: |
-        npm install -g markdownlint-cli
-        markdownlint --version
 
     - name: Check out repository code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
 
-    - run: echo "The ${{ github.repository }} repository has been cloned to the runner."
+    - uses: DavidAnson/markdownlint-cli2-action@v22
+      with:
+        globs: |
+          **/*.md
+          !CHANGELOG.md
+        fix: true
 
-    - name: Moving the script into the git folder
-      run: cd ${{ github.workspace }}
-
-    - name: Checking markdown linting errors
-      id: markdown_linting
-      # Preventing the command to exit as soon as there's an exit code != 0 with `set +e`
-      # Save the exit code of the command and use it with the comamnd `exit`` at the end of step
+    - name: Set up Git identity
       run: |
-        markdownlint '**/*.md' --ignore node_modules -o linting_errors.html
+        git config --global user.email "innovation_r&d@longwave.it"
+        git config --global user.name "ActionBot"
 
-    - name: See content of linting_errors.html
-      if: ${{ failure() }}
-      run: |
-        cat linting_errors.html
-
-    - run: echo "This job's status is ${{ job.status }}."
+    - name: Commit changes
+      uses: stefanzweifel/git-auto-commit-action@v7
+      with:
+        commit_message: "[skip ci] docs: markdown lint fixes applied"
+        branch: ${{ github.event.pull_request.head.ref }}
