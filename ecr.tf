@@ -1,4 +1,4 @@
-# Sanitizing the name is not required anymore, it is preferred to throw an error 
+# Sanitizing the name is not required anymore, it is preferred to throw an error
 # instead of faking a creation a "maybe" not functioning pipeline
 
 locals {
@@ -68,6 +68,38 @@ data "aws_ecr_lifecycle_policy_document" "policy" {
       count_number = var.ecr_max_untagged_images
     }
   }
+}
+
+data "aws_iam_policy_document" "ecr_ext_access" {
+  count = length(var.ecr_external_access_arns) > 0 ? 1 : 0
+  statement {
+    principals {
+      identifiers = var.ecr_external_access_arns
+      type        = "AWS"
+    }
+    sid    = "Allow access to ECR"
+    effect = "Allow"
+    actions = [
+      "ecr:GetAuthorizationToken",
+      "ecr:BatchCheckLayerAvailability",
+      "ecr:GetDownloadUrlForLayer",
+      "ecr:GetRepositoryPolicy",
+      "ecr:DescribeRepositories",
+      "ecr:ListImages",
+      "ecr:DescribeImages",
+      "ecr:BatchGetImage",
+      "ecr:GetLifecyclePolicy",
+      "ecr:GetLifecyclePolicyPreview",
+      "ecr:ListTagsForResource",
+      "ecr:DescribeImageScanFindings"
+    ]
+  }
+}
+
+resource "aws_ecr_repository_policy" "external_access" {
+  count      = length(var.ecr_external_access_arns) > 0 ? 1 : 0
+  policy     = data.aws_iam_policy_document.ecr_ext_access[0].json
+  repository = local.registry_name
 }
 
 resource "aws_ecr_lifecycle_policy" "images_lifecycle" {

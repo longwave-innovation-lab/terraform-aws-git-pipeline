@@ -191,6 +191,7 @@ No modules.
 | [aws_codepipeline.pipeline](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/codepipeline) | resource |
 | [aws_ecr_lifecycle_policy.images_lifecycle](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ecr_lifecycle_policy) | resource |
 | [aws_ecr_repository.registry](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ecr_repository) | resource |
+| [aws_ecr_repository_policy.external_access](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ecr_repository_policy) | resource |
 | [aws_iam_role.codebuild_role](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
 | [aws_iam_role.codepipeline_role](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
 | [aws_iam_role.lambda_function_role](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
@@ -221,6 +222,7 @@ No modules.
 | [aws_iam_policy_document.codebuild_secret_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_iam_policy_document.codepipeline_default](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_iam_policy_document.codepipeline_manual_approval](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
+| [aws_iam_policy_document.ecr_ext_access](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_iam_policy_document.lambda_function_policy_document](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_region.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region) | data source |
 | [aws_secretsmanager_secret.secrets_to_read](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/secretsmanager_secret) | data source |
@@ -248,6 +250,7 @@ No modules.
 | <a name="input_codepipeline_type"></a> [codepipeline\_type](#input\_codepipeline\_type) | Codepipeline version, it can be `v1` or `v2`. [See documentation to choose](https://docs.aws.amazon.com/codepipeline/latest/userguide/pipeline-types.html) | `string` | `"V1"` | no |
 | <a name="input_ecr_custom_registry_name"></a> [ecr\_custom\_registry\_name](#input\_ecr\_custom\_registry\_name) | If the repo name is not the same as the image name use this. E.g. Mono repositories with multiple projects inside | `string` | `""` | no |
 | <a name="input_ecr_dev_tag_pattern_list"></a> [ecr\_dev\_tag\_pattern\_list](#input\_ecr\_dev\_tag\_pattern\_list) | Tag pattern list to match development images. See [ECR lifecycle policy doc](https://docs.aws.amazon.com/AmazonECR/latest/userguide/lifecycle_policy_parameters.html#lp_tag_pattern_list). | `list(string)` | <pre>[<br/>  "dev-*.*.*"<br/>]</pre> | no |
+| <a name="input_ecr_external_access_arns"></a> [ecr\_external\_access\_arns](#input\_ecr\_external\_access\_arns) | List of resources that needs to access the registry. [Look here](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_elements_principal.html) on syntax. | `list(string)` | `[]` | no |
 | <a name="input_ecr_image_tag_mutability"></a> [ecr\_image\_tag\_mutability](#input\_ecr\_image\_tag\_mutability) | Mutability mode for image tags. Must be one of: `MUTABLE`, `IMMUTABLE`, `IMMUTABLE_WITH_EXCLUSION`, or `MUTABLE_WITH_EXCLUSION`. | `string` | `"MUTABLE"` | no |
 | <a name="input_ecr_max_dev_tagged_images"></a> [ecr\_max\_dev\_tagged\_images](#input\_ecr\_max\_dev\_tagged\_images) | Number of `TAGGED` images to keep in the registry | `number` | `10` | no |
 | <a name="input_ecr_max_prod_tagged_images"></a> [ecr\_max\_prod\_tagged\_images](#input\_ecr\_max\_prod\_tagged\_images) | Number of `PRODUCTION TAGGED` images to keep in the registry, where production tagged means the tags follows the X.Y.Z tags | `number` | `20` | no |

@@ -30,6 +30,12 @@ variable "ecr_scan_images_on_push" {
   description = "Whether to scan images on push to the registry"
 }
 
+variable "ecr_external_access_arns" {
+  type        = list(string)
+  default     = []
+  description = "List of resources that needs to access the registry. [Look here](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_elements_principal.html) on syntax."
+}
+
 variable "force_delete_registry" {
   type        = bool
   default     = false
