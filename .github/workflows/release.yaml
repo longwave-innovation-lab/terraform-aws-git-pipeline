@@ -19,8 +19,7 @@ on:
     - '**.hcl'
     - '.terraform.lock.hcl'
     - 'package.json'
-# env:
-#   IMAGE_NAME: ${{ github.repository }}
+    - '/workflows/release.yaml'
 
 jobs:
 
@@ -35,7 +34,7 @@ jobs:
       version: ${{ steps.changelog.outputs.version }}
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
       with:
         fetch-depth: 0
         token: ${{ secrets.GITHUB_TOKEN }}
@@ -55,6 +54,7 @@ jobs:
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         git-user-email: innovation_r&d@longwave.it
+        skip-version-file: true
         skip-on-empty: false
         preset: conventionalcommits
         output-file: CHANGELOG.md
