@@ -74,7 +74,7 @@ variable "codebuild_compute_type" {
 
 variable "codebuild_image" {
   type        = string
-  default     = "aws/codebuild/amazonlinux2-x86_64-standard:5.0"
+  default     = "aws/codebuild/amazonlinux-x86_64-standard:5.0"
   description = "Base image for the CodeBuild project"
 }
 
