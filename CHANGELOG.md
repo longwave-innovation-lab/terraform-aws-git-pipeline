@@ -1,3 +1,10 @@
+## [3.1.1](https://github.com/Longwave-innovation/terraform-aws-github-pipeline/compare/v3.1.0...v3.1.1) (2026-01-21)
+
+
+### Bug Fixes
+
+* updated default codepipeline policy closes [#30](https://github.com/Longwave-innovation/terraform-aws-github-pipeline/issues/30) ([b39b190](https://github.com/Longwave-innovation/terraform-aws-github-pipeline/commit/b39b190519739f720649e70b47dd02fceb5580e7))
+
 ## [3.1.0](https://github.com/Longwave-innovation/terraform-aws-github-pipeline/compare/v3.0.0...v3.1.0) (2026-01-21)
 
 
@@ -68,15 +75,4 @@
 
 * **sns:** corretta issue lunghezza DisplayName closes [#36](https://github.com/Longwave-innovation/terraform-aws-github-pipeline/issues/36) ([3692dcd](https://github.com/Longwave-innovation/terraform-aws-github-pipeline/commit/3692dcd7974098c3e8e881f7a980b72cc7d26e8d))
 * solved lifecycle policy creation on new ECR registry ([2db2b14](https://github.com/Longwave-innovation/terraform-aws-github-pipeline/commit/2db2b14191ed1171d7111c721f55a8dff9eea9a5))
-
-## [1.0.0](https://github.com/Longwave-innovation/terraform-aws-github-pipeline/compare/v0.7.1...v1.0.0) (2025-05-20)
-
-
-### ⚠ BREAKING CHANGES
-
-* **ecr:** now ECR policies don't remove production images, you can specify different pattern to keep different kind of tags closes #32
-
-### Features
-
-* **ecr:** now ECR policies don't remove production images, you can specify different pattern to keep different kind of tags closes [#32](https://github.com/Longwave-innovation/terraform-aws-github-pipeline/issues/32) ([3a67e58](https://github.com/Longwave-innovation/terraform-aws-github-pipeline/commit/3a67e5841f0efc0151a35fda6ef2e30efc8f35a3))
 
