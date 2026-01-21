@@ -1,3 +1,17 @@
+## [3.1.0](https://github.com/Longwave-innovation/terraform-aws-github-pipeline/compare/v3.0.0...v3.1.0) (2026-01-21)
+
+
+### Features
+
+* now multiplatform can be done in parallel instances closes [#42](https://github.com/Longwave-innovation/terraform-aws-github-pipeline/issues/42) ([f19cf00](https://github.com/Longwave-innovation/terraform-aws-github-pipeline/commit/f19cf007017d132f23b6e8521508088b108cd245))
+
+
+### Bug Fixes
+
+* changed default amazonlinux container image for codebuild to use the proper alias ([f32ca68](https://github.com/Longwave-innovation/terraform-aws-github-pipeline/commit/f32ca68cc043cfe79e9975dfbc0886dcc6e316ec))
+* sns notifications give more info in parallel codepipeline [#42](https://github.com/Longwave-innovation/terraform-aws-github-pipeline/issues/42) ([52ec016](https://github.com/Longwave-innovation/terraform-aws-github-pipeline/commit/52ec016059500e5ab074fd141aac5b61eb579b57))
+* updated example with sample repo ([e3602a7](https://github.com/Longwave-innovation/terraform-aws-github-pipeline/commit/e3602a75f0820e66f2b69ee02a85fa9adcfaf0c7))
+
 ## [3.0.0](https://github.com/Longwave-innovation/terraform-aws-github-pipeline/compare/v2.0.0...v3.0.0) (2026-01-19)
 
 
@@ -65,6 +79,4 @@
 ### Features
 
 * **ecr:** now ECR policies don't remove production images, you can specify different pattern to keep different kind of tags closes [#32](https://github.com/Longwave-innovation/terraform-aws-github-pipeline/issues/32) ([3a67e58](https://github.com/Longwave-innovation/terraform-aws-github-pipeline/commit/3a67e5841f0efc0151a35fda6ef2e30efc8f35a3))
-
-## [0.7.1](https://github.com/Longwave-innovation/terraform-aws-github-pipeline/compare/v0.7.0...v0.7.1) (2025-03-13)
 
