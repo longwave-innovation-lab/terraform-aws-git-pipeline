@@ -8,6 +8,8 @@
   - [Basic Pipeline](#basic-pipeline)
   - [Basic Manual Approval](#basic-manual-approval)
   - [Using Environment Variables](#using-environment-variables)
+- [CodeBuild Enviroment Configuration](#codebuild-enviroment-configuration)
+- [Parallel multiplatform](#parallel-multiplatform)
 - [Requirements](#requirements)
 - [Providers](#providers)
 - [Modules](#modules)
@@ -158,6 +160,81 @@ module "github_codepipeline" {
     }
   ]
   sns_subscribers = ["subscriber_mail@domain.com"]
+}
+```
+
+## CodeBuild Enviroment Configuration
+
+You can use different configuration to customize your CodeBuild project where the automation will run.
+
+For the complete list of available images use this command:
+
+```sh
+aws codebuild list-curated-environment-images
+```
+
+Other detail can be read on the [official documentation page](https://docs.aws.amazon.com/codebuild/latest/userguide/build-env-ref.html).
+
+## Parallel multiplatform
+
+Multi-platform pipelines generate an Image Index in ECR. Due to virtualization of different architectures, this process takes significantly longer when run on the same instance.
+
+To speed up the pipeline, when parallel multiplatform mode is enabled, the workflow structure changes as follows:
+
+1. **Source Stage** - Connected to Git Repository
+2. **Multiplatform-Cache-Build Stage** (runs in parallel):
+   - ARM64 Builder - runs on ARM instance, pushes cache to ECR
+   - x86_64 (AMD64) Builder - runs on x86_64 instance, pushes cache to ECR
+3. **CreateImageIndex Stage**:
+   - Reads the cache from ECR
+   - Creates the Image Index
+   - Pushes to ECR the final image with proper tag
+
+To enable this feature, set `parallel_multiplatform_build_enabled = true` in your module configuration.
+
+Due to this structure, you need two different `buildspec.yaml` files: one for cache creation and one for the image index. Alternatively, you can use the same file with a script that checks for the `CACHE_TAG` environment variable to determine whether to build cache layers or create the final image index.
+
+Each cache builder instance can be configured using the following parameters:
+
+```hcl
+variable "parallel_instances_configuration" {
+  type = object({
+    cache_amd64 = object({
+      compute_type          = optional(string, "BUILD_GENERAL1_MEDIUM")
+      image                 = optional(string, "aws/codebuild/amazonlinux-x86_64-standard:5.0")
+      privileged_mode       = optional(bool, true)
+      container_type        = optional(string, "LINUX_CONTAINER")
+      buildspec_path        = optional(string, "buildspec-cache.yaml")
+      build_minutes_timeout = optional(number, 15)
+      platform_name         = optional(string, "linux/amd64")
+    })
+    cache_arm64 = object({
+      compute_type          = optional(string, "BUILD_GENERAL1_MEDIUM")
+      image                 = optional(string, "aws/codebuild/amazonlinux-aarch64-standard:3.0")
+      privileged_mode       = optional(bool, true)
+      container_type        = optional(string, "ARM_CONTAINER")
+      buildspec_path        = optional(string, "buildspec-cache.yaml")
+      build_minutes_timeout = optional(number, 15)
+      platform_name         = optional(string, "linux/arm64")
+    })
+  })
+  default = {
+    cache_amd64 = {
+      compute_type    = "BUILD_GENERAL1_MEDIUM"
+      image           = "aws/codebuild/amazonlinux-x86_64-standard:5.0"
+      privileged_mode = true
+      container_type  = "LINUX_CONTAINER"
+      buildspec_path  = "buildspec-cache.yaml"
+    }
+    cache_arm64 = {
+      compute_type    = "BUILD_GENERAL1_MEDIUM"
+      image           = "aws/codebuild/amazonlinux-aarch64-standard:3.0"
+      privileged_mode = true
+      container_type  = "ARM_CONTAINER"
+      buildspec_path  = "buildspec-cache.yaml"
+    }
+  }
+  description = "Configuration for both environments. To know about possible values check [CodeBuild doc](https://docs.aws.amazon.com/codebuild/latest/userguide/build-env-ref.html)."
 }
 ```
 

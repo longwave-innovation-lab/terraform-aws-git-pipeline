@@ -26,7 +26,7 @@ data "aws_iam_policy_document" "lambda_function_policy_document" {
     actions = [
       "codebuild:BatchGetBuilds"
     ]
-    resources = [aws_codebuild_project.cb_project.arn]
+    resources = local.codebuild_projects_arns
   }
 
   statement {

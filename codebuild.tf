@@ -1,3 +1,25 @@
+locals {
+  codebuild_projects_arns = (
+    var.parallel_multiplatform_build_enabled ?
+    concat(
+      [for k, v in var.parallel_instances_configuration : aws_codebuild_project.cache_builders[k].arn],
+      [aws_codebuild_project.image_index_builder[0].arn]
+    ) :
+  [aws_codebuild_project.cb_project[0].arn])
+
+
+  codebuild_projects_names = (
+    var.parallel_multiplatform_build_enabled ?
+    concat(
+      [for k, v in var.parallel_instances_configuration : aws_codebuild_project.cache_builders[k].name],
+      [aws_codebuild_project.image_index_builder[0].name]
+    ) :
+  [aws_codebuild_project.cb_project[0].name])
+
+  arm64_cache_tag = "cache_arm64"
+  amd64_cache_tag = "cache_amd64"
+}
+
 data "aws_iam_policy_document" "assume_role_codebuild" {
   statement {
     effect = "Allow"
@@ -137,6 +159,7 @@ data "aws_secretsmanager_secret" "secrets_to_read" {
 }
 
 resource "aws_codebuild_project" "cb_project" {
+  count          = var.parallel_multiplatform_build_enabled ? 0 : 1
   name           = "${local.final_name}${local.codepipeline_resources_suffix}"
   build_timeout  = var.build_minutes_timeout
   queued_timeout = var.codebuild_queue_minutes_timeout
@@ -178,16 +201,6 @@ resource "aws_codebuild_project" "cb_project" {
         value = environment_variable.value.value
       }
     }
-
-    # # make a secret env variable for each element in secrets_to_read
-    # dynamic "environment_variable" {
-    #   for_each = data.aws_secretsmanager_secret.secrets_to_read
-    #   content {
-    #     type  = "SECRETS_MANAGER"
-    #     name = environment_variable.value["name"]
-    #     value = environment_variable.value["name"]
-    #   }
-    # }
   }
 
   source {
@@ -206,3 +219,161 @@ resource "aws_codebuild_project" "cb_project" {
     type = "NO_CACHE"
   }
 }
+
+
+#region Multi Platform
+
+# Here will be configured Codebuild project to build the cache layer
+# that will be later used to build the multi-platform index image
+resource "aws_codebuild_project" "cache_builders" {
+  for_each = var.parallel_multiplatform_build_enabled ? var.parallel_instances_configuration : {}
+
+  name           = "${local.final_name}${local.codepipeline_resources_suffix}-${each.key}"
+  build_timeout  = each.value.build_minutes_timeout
+  queued_timeout = var.codebuild_queue_minutes_timeout
+  service_role   = aws_iam_role.codebuild_role.arn
+
+  environment {
+    compute_type                = each.value.compute_type
+    image                       = each.value.image
+    image_pull_credentials_type = "CODEBUILD"
+    privileged_mode             = each.value.privileged_mode
+    type                        = each.value.container_type
+
+    environment_variable {
+      name  = "CACHE_TAG"
+      type  = "PLAINTEXT"
+      value = each.key
+    }
+
+    environment_variable {
+      name  = "PLATFORM_NAME"
+      type  = "PLAINTEXT"
+      value = each.value.platform_name
+    }
+
+    environment_variable {
+      name  = "REPO_NAME"
+      type  = "PLAINTEXT"
+      value = var.repo_name
+    }
+
+    environment_variable {
+      name  = "BRANCH_NAME"
+      type  = "PLAINTEXT"
+      value = var.repo_branch
+    }
+
+    dynamic "environment_variable" {
+      for_each = var.ecr_custom_registry_name != "" ? [1] : []
+      content {
+        name  = "CUSTOM_REGISTRY_NAME"
+        type  = "PLAINTEXT"
+        value = var.ecr_custom_registry_name
+      }
+    }
+
+    dynamic "environment_variable" {
+      for_each = var.codebuild_additional_env_vars
+      content {
+        name  = environment_variable.value.name
+        type  = environment_variable.value.type
+        value = environment_variable.value.value
+      }
+    }
+  }
+
+  source {
+    type         = "CODEPIPELINE"
+    insecure_ssl = false
+    buildspec    = each.value.buildspec_path
+  }
+
+  artifacts {
+    type                = "CODEPIPELINE"
+    encryption_disabled = true
+    packaging           = "NONE"
+  }
+
+  cache {
+    type = "NO_CACHE"
+  }
+}
+
+# Here will be configured Codebuild project to build the multi-platform index image
+resource "aws_codebuild_project" "image_index_builder" {
+  count = var.parallel_multiplatform_build_enabled ? 1 : 0
+
+  name           = "${local.final_name}${local.codepipeline_resources_suffix}-image-index"
+  build_timeout  = var.build_minutes_timeout
+  queued_timeout = var.codebuild_queue_minutes_timeout
+  service_role   = aws_iam_role.codebuild_role.arn
+
+  environment {
+    compute_type                = var.codebuild_compute_type
+    image                       = var.codebuild_image
+    image_pull_credentials_type = "CODEBUILD"
+    privileged_mode             = var.codebuild_privileged_mode
+    type                        = var.codebuild_container_type
+
+    environment_variable {
+      name  = "ARM_CACHE_TAG"
+      type  = "PLAINTEXT"
+      value = local.arm64_cache_tag
+    }
+
+    environment_variable {
+      name  = "AMD_CACHE_TAG"
+      type  = "PLAINTEXT"
+      value = local.amd64_cache_tag
+    }
+
+    environment_variable {
+      name  = "REPO_NAME"
+      type  = "PLAINTEXT"
+      value = var.repo_name
+    }
+
+    environment_variable {
+      name  = "BRANCH_NAME"
+      type  = "PLAINTEXT"
+      value = var.repo_branch
+    }
+
+    dynamic "environment_variable" {
+      for_each = var.ecr_custom_registry_name != "" ? [1] : []
+      content {
+        name  = "CUSTOM_REGISTRY_NAME"
+        type  = "PLAINTEXT"
+        value = var.ecr_custom_registry_name
+      }
+    }
+
+    dynamic "environment_variable" {
+      for_each = var.codebuild_additional_env_vars
+      content {
+        name  = environment_variable.value.name
+        type  = environment_variable.value.type
+        value = environment_variable.value.value
+      }
+    }
+  }
+
+  source {
+    type         = "CODEPIPELINE"
+    insecure_ssl = false
+    buildspec    = var.codebuild_buildspec_path
+  }
+
+  artifacts {
+    type                = "CODEPIPELINE"
+    encryption_disabled = true
+    packaging           = "NONE"
+  }
+
+  cache {
+    type = "NO_CACHE"
+  }
+}
+
+#endregion
