@@ -1,195 +1,255 @@
-
-import boto3
-import traceback
 import json
 import logging
 import os
+from typing import Dict, List, Optional, Any
+import boto3
+from botocore.exceptions import ClientError, BotoCoreError
 
-logger: logging.Logger = logging.getLogger()
-logger.setLevel(logging.INFO)
+# Configure logging
+logger = logging.getLogger()
+logger.setLevel(os.getenv('LOG_LEVEL', 'INFO'))
 
+# Initialize AWS clients outside handler for connection reuse
 sns_client = boto3.client('sns')
 codebuild_client = boto3.client('codebuild')
 
-# some names used to access dict attributes
-detail: str = "detail"
-build_id: str = "build-id"
-build_status: str = "build-status"
-additional_information: str = "additional-information"
+# Constants
+class EnvVars:
+    REPO_NAME = "REPO_NAME"
+    IMAGE_TAG = "IMAGE_TAG"
+    BRANCH_NAME = "BRANCH_NAME"
+    CUSTOM_REGISTRY_NAME = "CUSTOM_REGISTRY_NAME"
+    SNS_TOPIC_ARN = "SNS_TOPIC_ARN"
+    EXPORTED_ENV_VARS = "exportedEnvironmentVariables"
 
-build_start_time: str = "build-start-time"
-environment: str = "environment"
-environment_variables: str = "environment-variables"
-logs: str = "logs"
-deep_link: str = "deep-link"
-phases_attr: str = "phases"
-phase_type_attr: str = "phase-type"
-phase_context: str = "phase-context"
-phase_status: str = "phase-status"
-start_time: str = "start-time"
-end_time: str = "end-time"
+class EventKeys:
+    DETAIL = "detail"
+    BUILD_ID = "build-id"
+    BUILD_STATUS = "build-status"
+    ADDITIONAL_INFO = "additional-information"
+    PROJECT_NAME = "project-name"
+    BUILD_START_TIME = "build-start-time"
+    ENVIRONMENT = "environment"
+    ENV_VARIABLES = "environment-variables"
+    LOGS = "logs"
+    LOGS_LINK = "logs-link"
+    DEEP_LINK = "deep-link"
+    PHASES = "phases"
+    PHASE_TYPE = "phase-type"
+    PHASE_CONTEXT = "phase-context"
+    PHASE_STATUS = "phase-status"
+    BUILD_NUMBER = "build-number"
 
-monitor_logs: str = "logs-link"
-failed_phases_attr: str = "failed-phases"
-build_number: str = "build-number"
+class CustomError(Exception):
+    """Custom exception for Lambda-specific errors"""
+    pass
 
-REPO_NAME_ATTR_KEY: str = "REPO_NAME"
-IMAGE_TAG_ATTR_KEY: str = "IMAGE_TAG"
-BRANCH_NAME_ATTR_KEY: str = "BRANCH_NAME"
-CUSTOM_REGISTRY_NAME_ATTR_KEY: str = "CUSTOM_REGISTRY_NAME"
-TOPIC_ARN_ENV_VAR: str = "SNS_TOPIC_ARN"
-EXPORTED_ENV_VAR_ATTR_KEY: str = "exportedEnvironmentVariables"
-
-def get_nested(dictionary, keys, default=None):
+def get_nested_value(data: Dict[str, Any], keys: List[str], default: Any = None) -> Any:
+    """Safely extract nested dictionary values"""
     for key in keys:
-        if isinstance(dictionary, dict):
-            dictionary = dictionary.get(key, default)
+        if isinstance(data, dict):
+            data = data.get(key, default)
         else:
             return default
-    return dictionary
+    return data
 
-def get_build_details(build_id: str) -> dict:
-    build_details: dict = None
-    
-    return_value: dict = codebuild_client.batch_get_builds(
-        ids=[build_id]
+def extract_env_variables(env_vars: Optional[List[Dict[str, str]]]) -> Dict[str, Optional[str]]:
+    """Extract required environment variables from CodeBuild event"""
+    if not env_vars:
+        return {"repo_name": None, "branch_name": None, "custom_registry_name": None}
+
+    result = {"repo_name": None, "branch_name": None, "custom_registry_name": None}
+
+    for env_var in env_vars:
+        name = env_var.get("name", "").upper()
+        value = env_var.get("value")
+
+        if name == EnvVars.REPO_NAME:
+            result["repo_name"] = value
+        elif name == EnvVars.BRANCH_NAME:
+            result["branch_name"] = value
+        elif name == EnvVars.CUSTOM_REGISTRY_NAME:
+            result["custom_registry_name"] = value
+
+    return result
+
+def get_build_details(build_id: str) -> Dict[str, Any]:
+    """Fetch detailed build information from CodeBuild"""
+    try:
+        response = codebuild_client.batch_get_builds(ids=[build_id])
+        builds = response.get("builds", [])
+
+        if not builds:
+            raise CustomError(f"No build found for ID: {build_id}")
+
+        logger.debug(f"Build details retrieved for {build_id}")
+        return builds[0]
+
+    except (ClientError, BotoCoreError) as e:
+        logger.error(f"Failed to get build details for {build_id}: {e}")
+        raise CustomError(f"Failed to retrieve build details: {e}")
+
+def extract_failed_phases(phases: Optional[List[Dict[str, Any]]]) -> List[Dict[str, Any]]:
+    """Extract failed phases from build phases"""
+    if not phases:
+        return []
+
+    failed_phases = []
+    for phase in phases:
+        if phase.get(EventKeys.PHASE_STATUS) == "FAILED":
+            failed_phases.append(phase)
+
+    return failed_phases
+
+def build_message_content(event_data: Dict[str, Any], build_details: Dict[str, Any]) -> Dict[str, Any]:
+    """Build the notification message content"""
+    # Extract basic information
+    build_status = get_nested_value(event_data, [EventKeys.DETAIL, EventKeys.BUILD_STATUS])
+    project_name = get_nested_value(event_data, [EventKeys.DETAIL, EventKeys.PROJECT_NAME])
+    build_start_time = get_nested_value(event_data, [EventKeys.DETAIL, EventKeys.ADDITIONAL_INFO, EventKeys.BUILD_START_TIME])
+    logs_link = get_nested_value(event_data, [EventKeys.DETAIL, EventKeys.ADDITIONAL_INFO, EventKeys.LOGS, EventKeys.DEEP_LINK])
+    build_number = get_nested_value(event_data, [EventKeys.DETAIL, EventKeys.ADDITIONAL_INFO, EventKeys.BUILD_NUMBER])
+
+    # Extract environment variables
+    env_vars = get_nested_value(event_data, [EventKeys.DETAIL, EventKeys.ADDITIONAL_INFO, EventKeys.ENVIRONMENT, EventKeys.ENV_VARIABLES])
+    env_data = extract_env_variables(env_vars)
+
+    if not env_data["repo_name"]:
+        raise CustomError("Repository name not found in CodeBuild environment variables")
+
+    # Build subject line
+    repo_identifier = f"{env_data['repo_name']}:{env_data['branch_name']}"
+    if env_data["custom_registry_name"]:
+        repo_identifier = f"{env_data['repo_name']}:{env_data['branch_name']} - {env_data['custom_registry_name']}"
+
+    # Check for image tag in exported variables
+    exported_vars = build_details.get(EnvVars.EXPORTED_ENV_VARS, [])
+    image_tag = None
+    for var in exported_vars:
+        if var.get("name") == EnvVars.IMAGE_TAG and var.get("value"):
+            image_tag = var["value"]
+            repo_identifier = f"{env_data['repo_name']}:{image_tag}"
+            break
+
+    subject = f"Status of <{repo_identifier}> {project_name.split('-')[-1]} (build #{build_number}) is <{build_status}>"
+
+    # Build message body
+    message_body = (
+        f"PROJECT: {project_name}\n"
+        f"STATUS: {build_status}\n"
+        f"TIME: {build_start_time}\n"
+        f"COMPLETE_LOGS:\n{logs_link}"
     )
-    
-    logger.info(f"Complete Build Details: {return_value}")
-    build_details: dict = return_value["builds"][0]
-    
-    return build_details
 
-def lambda_handler(event, context):
+    if exported_vars:
+        message_body += f"\nBUILD_OUTPUT: {exported_vars}"
+
+    # Handle failed builds
+    json_data = {
+        EventKeys.BUILD_STATUS: build_status,
+        EventKeys.BUILD_START_TIME: build_start_time,
+        EventKeys.LOGS_LINK: logs_link,
+        EventKeys.BUILD_NUMBER: build_number
+    }
+
+    if build_status == "FAILED":
+        phases = get_nested_value(event_data, [EventKeys.DETAIL, EventKeys.ADDITIONAL_INFO, EventKeys.PHASES])
+        failed_phases = extract_failed_phases(phases)
+
+        if failed_phases:
+            message_body += "\nFAILED_COMMANDS:\n\n"
+            for phase in failed_phases:
+                phase_type = phase.get(EventKeys.PHASE_TYPE, "Unknown")
+                phase_context = phase.get(EventKeys.PHASE_CONTEXT, [])
+
+                error_details = "\n".join(phase_context) if phase_context else "No error details available"
+                message_body += f"PHASE: <{phase_type}>\nERRORS:\n{error_details}\n\n"
+
+            json_data["failed-phases"] = failed_phases
+
+    return {
+        "subject": subject,
+        "body": message_body,
+        "json_data": json_data
+    }
+
+def publish_to_sns(topic_arn: str, message_content: Dict[str, Any]) -> Dict[str, Any]:
+    """Publish message to SNS topic"""
+    sns_message = {
+        "default": message_content["body"],
+        "email-json": message_content["json_data"],
+        "email": message_content["body"]
+    }
 
     try:
-        logger.info(f"Complete Event: {event}")
-        
-        # Getting environmental variables of codebuild to find the repo_name
-        env_vars: list[dict] = get_nested(event, [detail,additional_information,environment,environment_variables], None)
-        repo_name: str = None
-        branch_name: str = None
-        custom_registry_name: str = None
-
-        for env_var in env_vars:
-            if env_var["name"].upper() == REPO_NAME_ATTR_KEY:
-                repo_name = env_var["value"]
-            elif env_var["name"].upper() == BRANCH_NAME_ATTR_KEY:
-                branch_name = env_var["value"]
-            elif env_var["name"].upper() == CUSTOM_REGISTRY_NAME_ATTR_KEY:
-                custom_registry_name = env_var["value"]
-
-        if repo_name is None:
-            raise Exception(
-                "No repo_name found in the codebuild environment variables")
-
-        
-        if custom_registry_name:
-            logger.info(f"Reacting build event on repository:branch - image <{repo_name}:{branch_name} - {custom_registry_name}>")
-        else:
-            logger.info(f"Reacting build event on repository:branch <{repo_name}:{branch_name}>")
-
-        sns_topic_arn: str = os.getenv(TOPIC_ARN_ENV_VAR)
-
-        logger.info(f"sns_topic_arn is <{sns_topic_arn}>")
-
-        string_message: str = ""
-        json_message: dict = {}
-
-        logger.info(f"Building notification message...")
-        
-        build_id_value: str = get_nested(event, [detail, build_id])
-        message_build_status = get_nested(event, [detail, build_status])
-        message_build_start_time = get_nested(event, [detail, additional_information, build_start_time])
-        message_monitor_logs = get_nested(event, [detail, additional_information, logs, deep_link])
-        message_build_number = get_nested(event, [detail, additional_information, build_number])
-
-        message_subject: str = f"Status of <{repo_name}:{branch_name}> pipeline (build N <{message_build_number}>) is <{message_build_status}>"
-        if custom_registry_name:
-            message_subject = f"Status of <{repo_name}:{branch_name} - {custom_registry_name}> pipeline (build N <{message_build_number}>) is <{message_build_status}>"
-        
-        build_details: dict = get_build_details(build_id_value)
-        expo_env_vars: dict = get_nested(build_details, [EXPORTED_ENV_VAR_ATTR_KEY])
-        
-        # Beginning to build the string message
-        string_message = (string_message + f"STATUS: {message_build_status}\n" + 
-        f"TIME: {message_build_start_time}\n" +
-        f"COMPLETE_LOGS:\n{message_monitor_logs}")
-        if expo_env_vars:
-            string_message = string_message + f"\nBUILD_OUTPUT: {expo_env_vars}"
-            for var in expo_env_vars:
-                if var["name"] == IMAGE_TAG_ATTR_KEY and var["value"]:
-                    message_subject = f"Status of <{repo_name}:{var['value']}> pipeline (build N <{message_build_number}>) is <{message_build_status}>"
-                    break
-        
-        # Beginning to build the json message
-        json_message[build_status] = message_build_status
-        json_message[build_start_time] = message_build_start_time
-        json_message[monitor_logs] = message_monitor_logs
-        json_message[build_number] = message_build_number
-        
-        if message_build_status == "FAILED":
-            failed_phases: list[dict] = []
-            
-            phases: list[dict] = get_nested(event, [detail, additional_information, phases_attr])
-            
-            failed_phase_found: bool = False
-            for phase in phases:
-                status: str = get_nested(phase, [phase_status])
-                if status == "FAILED":
-                    
-                    phase_type_value: str = get_nested(phase, [phase_type_attr])
-                    phase_context_value: list[str] = get_nested(phase, [phase_context])
-                    
-                    # Print in the message the first line
-                    if not failed_phase_found:
-                        failed_phase_found = not failed_phase_found
-                        string_message = string_message + "\nFAILED_COMMANDS:\n\n"
-                        
-                    Well_printed_errors: str = "\n".join(phase_context_value)
-                    string_message = (string_message + 
-                        f"PHASE: <{phase_type_value}>\n" +
-                        f"ERRORS:\n" + 
-                        f"{Well_printed_errors}\n\n")
-                    failed_phases.append(phase)
-
-            json_message[failed_phases_attr] = failed_phases
-
-        sns_compatible_json_message: dict = {
-            "default": string_message,
-            "email-json": json_message,
-            "email": string_message
-        }
-        
-        logging.info(f"Notification message built: <{sns_compatible_json_message}>")
-        
-        response: dict = sns_client.publish(
-            TopicArn=sns_topic_arn,
-            Message=json.dumps(sns_compatible_json_message),
+        response = sns_client.publish(
+            TopicArn=topic_arn,
+            Message=json.dumps(sns_message),
             MessageStructure='json',
-            Subject=message_subject
+            Subject=message_content["subject"]
         )
-        if response is None:
-            
-            logging.error(f"There was an error sending the message to SNS Topic <{sns_topic_arn}>.")
-            
-            return {
-                'statusCode': 500,
-                'body': f"There was an error sending the message to SNS Topic <{sns_topic_arn}>."
-            }
 
-        logging.info(f"SNS message published to topic <{sns_topic_arn}>")
-        # Return a success message
+        logger.info(f"SNS message published successfully to {topic_arn}")
+        return response
+
+    except (ClientError, BotoCoreError) as e:
+        logger.error(f"Failed to publish to SNS topic {topic_arn}: {e}")
+        raise CustomError(f"SNS publish failed: {e}")
+
+def lambda_handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
+    """Main Lambda handler function"""
+    try:
+        logger.info(f"Processing CodeBuild event: {event}")
+
+        # Get SNS topic ARN
+        sns_topic_arn = os.getenv(EnvVars.SNS_TOPIC_ARN)
+        if not sns_topic_arn:
+            raise CustomError("SNS_TOPIC_ARN environment variable not set")
+
+        # Extract build ID and get detailed information
+        build_id = get_nested_value(event, [EventKeys.DETAIL, EventKeys.BUILD_ID])
+        if not build_id:
+            raise CustomError("Build ID not found in event")
+
+        build_details = get_build_details(build_id)
+
+        logger.info(f"Build Details: {build_details}")
+
+        # Build notification message
+        message_content = build_message_content(event, build_details)
+
+        logger.info(f"Message Content: {message_content}")
+
+        # Log repository information
+        env_vars = get_nested_value(event, [EventKeys.DETAIL, EventKeys.ADDITIONAL_INFO, EventKeys.ENVIRONMENT, EventKeys.ENV_VARIABLES])
+        env_data = extract_env_variables(env_vars)
+
+        if env_data["custom_registry_name"]:
+            logger.info(f"Processing build for {env_data['repo_name']}:{env_data['branch_name']} - {env_data['custom_registry_name']}")
+        else:
+            logger.info(f"Processing build for {env_data['repo_name']}:{env_data['branch_name']}")
+
+        # Publish to SNS
+        publish_to_sns(sns_topic_arn, message_content)
+
         return {
             'statusCode': 200,
-            'body': f"Event pushed successfully to SNS topic <{sns_topic_arn}>"
+            'body': json.dumps({
+                'message': f'Event processed successfully and published to SNS topic {sns_topic_arn}',
+                'build_id': build_id
+            })
         }
 
-    except Exception as exc:
-        logger.error(exc)
-        logger.error(traceback.format_exc())
+    except CustomError as e:
+        logger.error(f"Custom error: {e}")
+        return {
+            'statusCode': 400,
+            'body': json.dumps({'error': str(e)})
+        }
+
+    except Exception as e:
+        logger.error(f"Unexpected error: {e}", exc_info=True)
         return {
             'statusCode': 500,
-            'body': "There was an error processing this request."
+            'body': json.dumps({'error': 'Internal server error'})
         }
-

@@ -304,7 +304,7 @@ resource "aws_codebuild_project" "cache_builders" {
 resource "aws_codebuild_project" "image_index_builder" {
   count = var.parallel_multiplatform_build_enabled ? 1 : 0
 
-  name           = "${local.final_name}${local.codepipeline_resources_suffix}-image-index"
+  name           = "${local.final_name}${local.codepipeline_resources_suffix}-image_index"
   build_timeout  = var.build_minutes_timeout
   queued_timeout = var.codebuild_queue_minutes_timeout
   service_role   = aws_iam_role.codebuild_role.arn

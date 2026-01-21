@@ -59,7 +59,7 @@ resource "aws_lambda_function" "codebuild_event_listener" {
   description      = "Lambda that will react to events from ${aws_codepipeline.pipeline.name} for repo ${var.repo_org}/${var.repo_name} branch ${var.repo_branch}"
   source_code_hash = data.archive_file.lambda.output_base64sha256
 
-  runtime       = "python3.12"
+  runtime       = "python3.13"
   architectures = ["arm64"]
   timeout       = 10
   memory_size   = 256
