@@ -46,7 +46,9 @@ data "aws_iam_policy_document" "codepipeline_default" {
     actions = [
       "codebuild:BatchGetBuilds",
       "codebuild:StartBuild",
-      "codebuild:StopBuild"
+      "codebuild:StopBuild",
+      "codebuild:BatchGetBuildBatches",
+      "codebuild:StartBuildBatch"
     ]
 
     resources = local.codebuild_projects_arns
