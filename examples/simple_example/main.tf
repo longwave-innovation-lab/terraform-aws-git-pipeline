@@ -31,19 +31,18 @@ module "github_codepipeline" {
   depends_on = [aws_ssm_parameter.test_parameters]
   source     = "../.."
 
-  repo_org                             = "Longwave-innovation"
-  repo_name                            = "example_pipe_extremely_long_nameaaaaaaaaaaa"
-  repo_branch                          = "main"
+  repo_org                             = "llw-RnD"
+  repo_name                            = "eks-golden-docs"
+  repo_branch                          = "dev"
   existing_codestart_gh_connection_arn = aws_codestarconnections_connection.github_connection.arn
 
   force_delete_registry = true
-
-  secrets_to_read = [
-    "arn:aws:secretsmanager:eu-west-1:687331130220:secret:InnovationDockerCreds-vOTSnB"
-  ]
+  # secrets_to_read = [
+  #   "arn:aws:secretsmanager:eu-west-1:687331130220:secret:InnovationDockerCreds-vOTSnB"
+  # ]
   ecr_scan_images_on_push          = true
-  parameters_paths_to_read         = ["/test/"]
-  ecr_image_tag_mutability         = "IMMUTABLE_WITH_EXCLUSION"
+  parameters_paths_to_read         = ["/test/", "/lw/dockerhub/*"]
+  ecr_image_tag_mutability         = "immutable_with_exclusion"
   ecr_mutability_exclusion_filters = ["dev-*", "qa-*"]
   ecr_external_access_arns = [
     "arn:aws:iam::760661275543:root",
