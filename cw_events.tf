@@ -9,7 +9,7 @@ resource "aws_cloudwatch_event_rule" "codebuild_events_rule" {
     region      = [data.aws_region.current.region]
     detail = {
       build-status = ["IN_PROGRESS", "FAILED", "STOPPED", "SUCCEEDED"]
-      project-name = [aws_codebuild_project.cb_project.name]
+      project-name = local.codebuild_projects_names
     }
   })
 }

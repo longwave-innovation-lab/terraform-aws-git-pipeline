@@ -49,7 +49,7 @@ data "aws_iam_policy_document" "codepipeline_default" {
       "codebuild:StopBuild"
     ]
 
-    resources = [aws_codebuild_project.cb_project.arn]
+    resources = local.codebuild_projects_arns
   }
 }
 
@@ -152,21 +152,76 @@ resource "aws_codepipeline" "pipeline" {
     }
   }
 
-  stage {
-    name = "Build"
+  dynamic "stage" {
+    for_each = var.parallel_multiplatform_build_enabled ? [] : [1]
+    content {
+      name = "Build"
 
-    action {
-      name             = "Build"
-      category         = "Build"
-      owner            = "AWS"
-      provider         = "CodeBuild"
-      input_artifacts  = ["source_output"]
-      output_artifacts = ["build_output"]
-      version          = "1"
+      action {
+        name             = "Build"
+        category         = "Build"
+        owner            = "AWS"
+        provider         = "CodeBuild"
+        input_artifacts  = ["source_output"]
+        output_artifacts = ["build_output"]
+        version          = "1"
 
-      configuration = {
-        ProjectName = aws_codebuild_project.cb_project.name
+        configuration = {
+          ProjectName = aws_codebuild_project.cb_project[0].name
+        }
       }
     }
   }
+
+  #region multi-platform
+  dynamic "stage" {
+    for_each = var.parallel_multiplatform_build_enabled ? [1] : []
+    content {
+      name = "Multiplatform-Cache-Build"
+
+      dynamic "action" {
+        for_each = var.parallel_multiplatform_build_enabled ? var.parallel_instances_configuration : {}
+        content {
+          name             = "Builder-${action.key}"
+          category         = "Build"
+          owner            = "AWS"
+          provider         = "CodeBuild"
+          input_artifacts  = ["source_output"]
+          output_artifacts = ["build_output_${action.key}"]
+          # output_artifacts = ["multiplatform_build_output"]
+          version   = "1"
+          run_order = 2
+
+          configuration = {
+            ProjectName = aws_codebuild_project.cache_builders[action.key].name
+          }
+        }
+      }
+    }
+  }
+
+
+  dynamic "stage" {
+    for_each = var.parallel_multiplatform_build_enabled ? [1] : []
+    content {
+      name = "CreateImageIndex"
+
+      action {
+        name     = "Builder-image-index"
+        category = "Build"
+        owner    = "AWS"
+        provider = "CodeBuild"
+        # input_artifacts  = [for k, v in var.parallel_instances_configuration : "build_output_${k}"]
+        input_artifacts  = ["source_output"]
+        output_artifacts = ["complete_build_output"]
+        version          = "1"
+        run_order        = 3
+
+        configuration = {
+          ProjectName = aws_codebuild_project.image_index_builder[0].name
+        }
+      }
+    }
+  }
+  #endregion
 }

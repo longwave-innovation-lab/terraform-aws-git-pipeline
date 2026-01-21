@@ -5,19 +5,25 @@ locals {
   registry_name = var.ecr_custom_registry_name != "" ? var.ecr_custom_registry_name : var.repo_name
   registry_arn  = var.ecr_use_existing ? data.aws_ecr_repository.existing[0].arn : aws_ecr_repository.registry[0].arn
   registry_url  = var.ecr_use_existing ? data.aws_ecr_repository.existing[0].repository_url : aws_ecr_repository.registry[0].repository_url
+
+  mutability_exclusion_tags = (
+    var.parallel_multiplatform_build_enabled ?
+    concat(var.ecr_mutability_exclusion_filters, [local.arm64_cache_tag, local.amd64_cache_tag])
+    : var.ecr_mutability_exclusion_filters
+  )
 }
 
 resource "aws_ecr_repository" "registry" {
   count                = var.ecr_use_existing ? 0 : 1
   name                 = local.registry_name
-  image_tag_mutability = var.ecr_image_tag_mutability
+  image_tag_mutability = upper(var.ecr_image_tag_mutability)
   force_delete         = var.force_delete_registry
   image_scanning_configuration {
     scan_on_push = var.ecr_scan_images_on_push
   }
 
   dynamic "image_tag_mutability_exclusion_filter" {
-    for_each = toset(var.ecr_mutability_exclusion_filters)
+    for_each = toset(local.mutability_exclusion_tags)
     content {
       filter      = image_tag_mutability_exclusion_filter.value
       filter_type = "WILDCARD"

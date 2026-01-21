@@ -36,7 +36,16 @@ module "github_codepipeline" {
   repo_branch                          = "dev"
   existing_codestart_gh_connection_arn = aws_codestarconnections_connection.github_connection.arn
 
-  force_delete_registry = true
+  force_delete_registry                = true
+  parallel_multiplatform_build_enabled = true
+  parallel_instances_configuration = {
+    cache_amd64 = {
+      buildspec_path = "buildspec-cache.yaml"
+    }
+    cache_arm64 = {
+      buildspec_path = "buildspec-cache.yaml"
+    }
+  }
   # secrets_to_read = [
   #   "arn:aws:secretsmanager:eu-west-1:687331130220:secret:InnovationDockerCreds-vOTSnB"
   # ]

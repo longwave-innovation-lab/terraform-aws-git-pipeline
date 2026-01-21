@@ -74,7 +74,7 @@ variable "codebuild_compute_type" {
 
 variable "codebuild_image" {
   type        = string
-  default     = "aws/codebuild/amazonlinux2-x86_64-standard:5.0"
+  default     = "aws/codebuild/amazonlinux-x86_64-standard:5.0"
   description = "Base image for the CodeBuild project"
 }
 
@@ -106,17 +106,18 @@ variable "codebuild_additional_env_vars" {
   description = "List of additional environment variables to add to the CodeBuild project. See [documentation](https://docs.aws.amazon.com/codebuild/latest/APIReference/API_EnvironmentVariable.html)"
 }
 
+variable "codebuild_role_additional_policy" {
+  type        = any
+  default     = {}
+  description = "Additional policy to attach to the CodeBuild role, it must be in json"
+}
+
 variable "sns_subscribers" {
   type        = list(string)
   default     = []
   description = "List of email addresses to subscribe to SNS notifications"
 }
 
-variable "codebuild_role_additional_policy" {
-  type        = any
-  default     = {}
-  description = "Additional policy to attach to the CodeBuild role, it must be in json"
-}
 
 variable "add_manual_approval" {
   type        = bool
@@ -134,6 +135,10 @@ variable "ecr_image_tag_mutability" {
   type        = string
   default     = "MUTABLE"
   description = "Mutability mode for image tags. Must be one of: `MUTABLE`, `IMMUTABLE`, `IMMUTABLE_WITH_EXCLUSION`, or `MUTABLE_WITH_EXCLUSION`."
+  validation {
+    condition     = contains(["MUTABLE", "IMMUTABLE", "IMMUTABLE_WITH_EXCLUSION", "MUTABLE_WITH_EXCLUSION"], upper(var.ecr_image_tag_mutability))
+    error_message = "Invalid value. Available values: `MUTABLE`, `IMMUTABLE`, `IMMUTABLE_WITH_EXCLUSION`, or `MUTABLE_WITH_EXCLUSION`"
+  }
 }
 
 variable "ecr_mutability_exclusion_filters" {
@@ -194,4 +199,50 @@ variable "codepipeline_source_file_paths" {
   type        = list(string)
   default     = ["*"]
   description = "A list of patterns of Git repository file paths that, when a commit is pushed, are to be included as criteria that starts the pipeline. Pipeline type must be V2."
+}
+
+variable "parallel_multiplatform_build_enabled" {
+  type        = bool
+  default     = false
+  description = "Whether to enable parallel multiplatform build to speed up process. When enabled the default variables will be used to configure the project to build the multilayer index. When enabled `cache_arm64` and `cache_amd64` are automatically added to ECR mutability exclusion list."
+}
+
+variable "parallel_instances_configuration" {
+  type = object({
+    cache_amd64 = object({
+      compute_type          = optional(string, "BUILD_GENERAL1_MEDIUM")
+      image                 = optional(string, "aws/codebuild/amazonlinux-x86_64-standard:5.0")
+      privileged_mode       = optional(bool, true)
+      container_type        = optional(string, "LINUX_CONTAINER")
+      buildspec_path        = optional(string, "buildspec-cache.yaml")
+      build_minutes_timeout = optional(number, 15)
+      platform_name         = optional(string, "linux/amd64")
+    })
+    cache_arm64 = object({
+      compute_type          = optional(string, "BUILD_GENERAL1_MEDIUM")
+      image                 = optional(string, "aws/codebuild/amazonlinux-aarch64-standard:3.0")
+      privileged_mode       = optional(bool, true)
+      container_type        = optional(string, "ARM_CONTAINER")
+      buildspec_path        = optional(string, "buildspec-cache.yaml")
+      build_minutes_timeout = optional(number, 15)
+      platform_name         = optional(string, "linux/arm64")
+    })
+  })
+  default = {
+    cache_amd64 = {
+      compute_type    = "BUILD_GENERAL1_MEDIUM"
+      image           = "aws/codebuild/amazonlinux-x86_64-standard:5.0"
+      privileged_mode = true
+      container_type  = "LINUX_CONTAINER"
+      buildspec_path  = "buildspec-cache.yaml"
+    }
+    cache_arm64 = {
+      compute_type    = "BUILD_GENERAL1_MEDIUM"
+      image           = "aws/codebuild/amazonlinux-aarch64-standard:3.0"
+      privileged_mode = true
+      container_type  = "ARM_CONTAINER"
+      buildspec_path  = "buildspec-cache.yaml"
+    }
+  }
+  description = "Configuration for both environments. To know about possible values check [CodeBuild doc](https://docs.aws.amazon.com/codebuild/latest/userguide/build-env-ref.html)."
 }
