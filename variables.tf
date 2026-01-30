@@ -3,12 +3,17 @@ variable "repo_name" {
   description = "Name of the repository"
 }
 
-variable "repo_org" {
+variable "repo_owner" {
   type        = string
+  default     = ""
   description = "Name of the organization"
+  validation {
+    condition     = var.is_codecommit == false ? trim(var.repo_owner, " ") != "" : true
+    error_message = "Owner name is required when is not a CodeCommit repository."
+  }
 }
 
-variable "repo_org_shortname" {
+variable "repo_owner_shortname" {
   type        = string
   default     = ""
   description = "This is used to name resources when repo name and repo org are too long."
@@ -19,9 +24,26 @@ variable "repo_branch" {
   description = "Name of the branch to listen"
 }
 
-variable "existing_codestart_gh_connection_arn" {
+variable "existing_codestart_connection_arn" {
   type        = string
+  default     = ""
   description = "Arn of the existing GitHub connection"
+  validation {
+    condition     = var.is_codecommit == false ? trim(var.existing_codestart_connection_arn, " ") != "" : true
+    error_message = "Connection ARN is required when is not a CodeCommit repository."
+  }
+}
+
+variable "git_provider_url" {
+  type        = string
+  default     = "https://github.com"
+  description = "URL of the git provider."
+}
+
+variable "is_codecommit" {
+  type        = bool
+  default     = false
+  description = "Whether the repository is a CodeCommit repository."
 }
 
 variable "ecr_scan_images_on_push" {

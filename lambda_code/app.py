@@ -19,6 +19,7 @@ class EnvVars:
     IMAGE_TAG = "IMAGE_TAG"
     BRANCH_NAME = "BRANCH_NAME"
     CUSTOM_REGISTRY_NAME = "CUSTOM_REGISTRY_NAME"
+    MULTIPLATFORM_ENABLED = "MULTIPLATFORM_ENABLED"
     SNS_TOPIC_ARN = "SNS_TOPIC_ARN"
     EXPORTED_ENV_VARS = "exportedEnvironmentVariables"
 
@@ -70,7 +71,8 @@ def extract_env_variables(env_vars: Optional[List[Dict[str, str]]]) -> Dict[str,
             result["branch_name"] = value
         elif name == EnvVars.CUSTOM_REGISTRY_NAME:
             result["custom_registry_name"] = value
-
+        elif name == EnvVars.MULTIPLATFORM_ENABLED:
+            result["multiplatform_enabled"] = value.lower() in ["true", "1"]
     return result
 
 def get_build_details(build_id: str) -> Dict[str, Any]:
@@ -131,8 +133,9 @@ def build_message_content(event_data: Dict[str, Any], build_details: Dict[str, A
             repo_identifier = f"{env_data['repo_name']}:{image_tag}"
             break
 
-    subject = f"Status of <{repo_identifier}> {project_name.split('-')[-1]} (build #{build_number}) is <{build_status}>"
-
+    subject = f"Status of <{repo_identifier}> (build #{build_number}) is <{build_status}>"
+    if env_data.get("multiplatform_enabled"):
+        subject = f"Status of <{repo_identifier}> {project_name.split('-')[-1]} (build #{build_number}) is <{build_status}>"
     # Build message body
     message_body = (
         f"PROJECT: {project_name}\n"
@@ -182,11 +185,17 @@ def publish_to_sns(topic_arn: str, message_content: Dict[str, Any]) -> Dict[str,
     }
 
     try:
+        subject: str = message_content.get("subject", "CodeBuild Notification")
+        if len(subject) > 100:
+            subject = subject[:100]
+
+        logger.info(f"Subject for SNS message: {subject}")
+
         response = sns_client.publish(
             TopicArn=topic_arn,
             Message=json.dumps(sns_message),
             MessageStructure='json',
-            Subject=message_content["subject"]
+            Subject=subject
         )
 
         logger.info(f"SNS message published successfully to {topic_arn}")
@@ -221,13 +230,13 @@ def lambda_handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
         logger.info(f"Message Content: {message_content}")
 
         # Log repository information
-        env_vars = get_nested_value(event, [EventKeys.DETAIL, EventKeys.ADDITIONAL_INFO, EventKeys.ENVIRONMENT, EventKeys.ENV_VARIABLES])
-        env_data = extract_env_variables(env_vars)
+        # env_vars = get_nested_value(event, [EventKeys.DETAIL, EventKeys.ADDITIONAL_INFO, EventKeys.ENVIRONMENT, EventKeys.ENV_VARIABLES])
+        # env_data = extract_env_variables(env_vars)
 
-        if env_data["custom_registry_name"]:
-            logger.info(f"Processing build for {env_data['repo_name']}:{env_data['branch_name']} - {env_data['custom_registry_name']}")
-        else:
-            logger.info(f"Processing build for {env_data['repo_name']}:{env_data['branch_name']}")
+        # if env_data["custom_registry_name"]:
+        #     logger.info(f"Processing build for {env_data['repo_name']}:{env_data['branch_name']} - {env_data['custom_registry_name']}")
+        # else:
+        #     logger.info(f"Processing build for {env_data['repo_name']}:{env_data['branch_name']}")
 
         # Publish to SNS
         publish_to_sns(sns_topic_arn, message_content)

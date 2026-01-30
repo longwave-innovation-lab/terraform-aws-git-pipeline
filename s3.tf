@@ -1,5 +1,5 @@
 locals {
-  original_name = "${var.repo_org}-${var.repo_name}-artifact-bucket"
+  original_name = "${var.repo_owner}-${var.repo_name}-artifact-bucket"
 
   sanitized_name = lower(
     substr(

@@ -5,7 +5,7 @@ locals {
 }
 
 resource "aws_sns_topic" "pipeline_notifications" {
-  name_prefix  = length("${local.final_name}${local.codepipeline_resources_suffix}") > 38 ? substr("${local.final_name}${local.codepipeline_resources_suffix}", 0, 37) : "${local.final_name}${local.codepipeline_resources_suffix}"
+  name_prefix  = length("${local.final_name}${local.pipeline_resources_suffix}") > 38 ? substr("${local.final_name}${local.pipeline_resources_suffix}", 0, 37) : "${local.final_name}${local.pipeline_resources_suffix}"
   display_name = local.final_display_name
 }
 

@@ -1,4 +1,4 @@
-# Maual Approval with Filter <!-- omit in toc -->
+# Simple Example <!-- omit in toc -->
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
@@ -15,7 +15,7 @@
 
 ## Intro
 
-This example shows the creation of a pipeline of `type V2`, that has a manual approval step and it is triggered only when there's a push on the main branch over the file `package.json`.
+This example shows the creation of a pipeline of `type V1`, that listen to every change on the branch `main`.
 
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
@@ -30,21 +30,19 @@ This example shows the creation of a pipeline of `type V2`, that has a manual ap
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | 6.13.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 6.0.0 |
 
 ## Modules
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_github_codepipeline"></a> [github\_codepipeline](#module\_github\_codepipeline) | ../.. | n/a |
+| <a name="module_codecommit_pipeline"></a> [codecommit\_pipeline](#module\_codecommit\_pipeline) | ../.. | n/a |
 
 ## Resources
 
 | Name | Type |
 |------|------|
-| [aws_codestarconnections_connection.github_connection](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/codestarconnections_connection) | resource |
 | [aws_ssm_parameter.test_parameters](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ssm_parameter) | resource |
-| [aws_iam_policy_document.example_extra](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 
 ## Inputs
 
@@ -62,6 +60,6 @@ This example shows the creation of a pipeline of `type V2`, that has a manual ap
 | <a name="output_codepipeline_role_arn"></a> [codepipeline\_role\_arn](#output\_codepipeline\_role\_arn) | The Amazon Resource Name (ARN) specifying the role for CodePipeline. |
 | <a name="output_ecr_arn"></a> [ecr\_arn](#output\_ecr\_arn) | The Amazon Resource Name (ARN) of the ECR repository. |
 | <a name="output_ecr_registry_name"></a> [ecr\_registry\_name](#output\_ecr\_registry\_name) | The name of the ECR repository. |
-| <a name="output_ecr_registry_uri"></a> [ecr\_registry\_uri](#output\_ecr\_registry\_uri) | The URL of the ECR repository. |
+| <a name="output_ecr_registry_url"></a> [ecr\_registry\_url](#output\_ecr\_registry\_url) | The URL of the ECR repository. |
 | <a name="output_parameters_to_read"></a> [parameters\_to\_read](#output\_parameters\_to\_read) | The parameters that were read from SSM. |
 <!-- END_TF_DOCS -->

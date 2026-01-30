@@ -31,16 +31,16 @@ module "github_codepipeline" {
   depends_on = [aws_ssm_parameter.test_parameters]
   source     = "../.."
 
-  repo_org                             = "Longwave-innovation"
-  repo_name                            = "demo_pipe"
-  repo_branch                          = "main"
-  codepipeline_type                    = "v2"
-  codepipeline_source_file_paths       = ["package.json"]
-  existing_codestart_gh_connection_arn = aws_codestarconnections_connection.github_connection.arn
-  add_manual_approval                  = true
-  force_delete_registry                = true
-  ecr_use_existing                     = true
-  ecr_max_untagged_images              = 10
+  repo_owner                        = "Longwave-innovation"
+  repo_name                         = "demo_pipe"
+  repo_branch                       = "main"
+  codepipeline_type                 = "v2"
+  codepipeline_source_file_paths    = ["package.json"]
+  existing_codestart_connection_arn = aws_codestarconnections_connection.github_connection.arn
+  add_manual_approval               = true
+  force_delete_registry             = true
+  ecr_use_existing                  = true
+  ecr_max_untagged_images           = 10
   secrets_to_read = [
     "arn:aws:secretsmanager:eu-west-1:687331130220:secret:InnovationDockerCreds-vOTSnB"
   ]

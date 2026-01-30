@@ -1,7 +1,7 @@
 
 resource "aws_cloudwatch_event_rule" "codebuild_events_rule" {
-  name_prefix = length("${local.final_name}${local.codepipeline_resources_suffix}") > 38 ? substr("${local.final_name}${local.codepipeline_resources_suffix}", 0, 37) : "${local.final_name}${local.codepipeline_resources_suffix}"
-  description = "Capture CodeBuild events for ${var.repo_org}/${var.repo_name} branch ${var.repo_branch}"
+  name_prefix = length("${local.final_name}${local.pipeline_resources_suffix}") > 38 ? substr("${local.final_name}${local.pipeline_resources_suffix}", 0, 37) : "${local.final_name}${local.pipeline_resources_suffix}"
+  description = "Capture CodeBuild events for ${var.repo_owner}/${var.repo_name} branch ${var.repo_branch}"
 
   event_pattern = jsonencode({
     source      = ["aws.codebuild"]
@@ -16,7 +16,7 @@ resource "aws_cloudwatch_event_rule" "codebuild_events_rule" {
 
 resource "aws_cloudwatch_event_target" "lambda_target" {
   rule      = aws_cloudwatch_event_rule.codebuild_events_rule.name
-  target_id = substr("${local.final_name}${local.codepipeline_resources_suffix}", 0, 64)
+  target_id = substr("${local.final_name}${local.pipeline_resources_suffix}", 0, 64)
   arn       = aws_lambda_function.codebuild_event_listener.arn
 
   retry_policy {
@@ -30,5 +30,5 @@ resource "aws_cloudwatch_event_target" "lambda_target" {
 }
 
 resource "aws_sqs_queue" "evnt_rule_target_dlq" {
-  name_prefix = length("${local.final_name}${local.codepipeline_resources_suffix}") > 38 ? substr("${local.final_name}${local.codepipeline_resources_suffix}", 0, 37) : "${local.final_name}${local.codepipeline_resources_suffix}"
+  name_prefix = length("${local.final_name}${local.pipeline_resources_suffix}") > 38 ? substr("${local.final_name}${local.pipeline_resources_suffix}", 0, 37) : "${local.final_name}${local.pipeline_resources_suffix}"
 }

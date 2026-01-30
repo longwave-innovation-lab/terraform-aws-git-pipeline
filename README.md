@@ -46,10 +46,10 @@ resource "aws_codestarconnections_connection" "github_connection" {
 
 module "github_codepipeline" {
   source                               = "git::https://github.com/Longwave-innovation/terraform-aws-github-pipeline.git?ref=v0.7.0"
-  repo_org                             = "org_name"
+  repo_owner                             = "org_name"
   repo_name                            = "repo_name"
   repo_branch                          = "branch_name"
-  existing_codestart_gh_connection_arn = aws_codestarconnections_connection.github_connection.arn
+  existing_codestart_connection_arn = aws_codestarconnections_connection.github_connection.arn
   force_delete_registry                = true
   sns_subscribers                      = ["subscriber_mail@domain.com"]
 }
@@ -75,11 +75,11 @@ resource "aws_codestarconnections_connection" "github_connection" {
 
 module "github_codepipeline" {
   source                               = "git::https://github.com/Longwave-innovation/terraform-aws-github-pipeline.git?ref=v0.7.0"
-  repo_org                             = "org_name"
+  repo_owner                             = "org_name"
   repo_name                            = "repo_name"
   repo_branch                          = "branch_name"
   add_manual_approval                  = true
-  existing_codestart_gh_connection_arn = aws_codestarconnections_connection.github_connection.arn
+  existing_codestart_connection_arn = aws_codestarconnections_connection.github_connection.arn
   force_delete_registry                = true
   sns_subscribers                      = ["subscriber_mail@domain.com"]
 }
@@ -137,11 +137,11 @@ data "aws_ssm_parameter" "parameter" {
 
 module "github_codepipeline" {
   source                               = "git::https://github.com/Longwave-innovation/terraform-aws-github-pipeline.git?ref=v0.7.0"
-  repo_org                             = "org_name"
+  repo_owner                             = "org_name"
   repo_name                            = "repo_name"
   repo_branch                          = "branch_name"
   codepipeline_type                    = "v2"
-  existing_codestart_gh_connection_arn = aws_codestarconnections_connection.github_connection.arn
+  existing_codestart_connection_arn = aws_codestarconnections_connection.github_connection.arn
   force_delete_registry                = true
   secrets_to_read                      = [data.aws_secretsmanager_secret.secret.arn]
   parameters_paths_to_read             = ["/my-paramater-path/"]
@@ -263,7 +263,9 @@ No modules.
 | Name | Type |
 |------|------|
 | [aws_cloudwatch_event_rule.codebuild_events_rule](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_event_rule) | resource |
+| [aws_cloudwatch_event_rule.repo_changes](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_event_rule) | resource |
 | [aws_cloudwatch_event_target.lambda_target](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_event_target) | resource |
+| [aws_cloudwatch_event_target.trigger](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_event_target) | resource |
 | [aws_codebuild_project.cache_builders](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/codebuild_project) | resource |
 | [aws_codebuild_project.cb_project](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/codebuild_project) | resource |
 | [aws_codebuild_project.image_index_builder](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/codebuild_project) | resource |
@@ -271,7 +273,9 @@ No modules.
 | [aws_ecr_lifecycle_policy.images_lifecycle](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ecr_lifecycle_policy) | resource |
 | [aws_ecr_repository.registry](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ecr_repository) | resource |
 | [aws_ecr_repository_policy.external_access](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ecr_repository_policy) | resource |
+| [aws_iam_policy.start_pipeline](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_policy) | resource |
 | [aws_iam_role.codebuild_role](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
+| [aws_iam_role.codecommit_changes](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
 | [aws_iam_role.codepipeline_role](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
 | [aws_iam_role.lambda_function_role](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
 | [aws_iam_role_policy.codebuild_default](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy) | resource |
@@ -282,6 +286,7 @@ No modules.
 | [aws_iam_role_policy.codepipeline_default](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy) | resource |
 | [aws_iam_role_policy.codepipeline_manual_approval](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy) | resource |
 | [aws_iam_role_policy_attachment.lambda_basic_execution](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
+| [aws_iam_role_policy_attachment.start_pipeline](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
 | [aws_lambda_function.codebuild_event_listener](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lambda_function) | resource |
 | [aws_lambda_permission.allow_eventbridge](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lambda_permission) | resource |
 | [aws_s3_bucket.pipeline_artifact_bucket](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket) | resource |
@@ -291,7 +296,8 @@ No modules.
 | [aws_sqs_queue.evnt_rule_target_dlq](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/sqs_queue) | resource |
 | [archive_file.lambda](https://registry.terraform.io/providers/hashicorp/archive/latest/docs/data-sources/file) | data source |
 | [aws_caller_identity.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity) | data source |
-| [aws_codestarconnections_connection.github_provider](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/codestarconnections_connection) | data source |
+| [aws_codecommit_repository.source](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/codecommit_repository) | data source |
+| [aws_codestarconnections_connection.git_provider](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/codestarconnections_connection) | data source |
 | [aws_ecr_lifecycle_policy_document.policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ecr_lifecycle_policy_document) | data source |
 | [aws_ecr_repository.existing](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ecr_repository) | data source |
 | [aws_iam_policy_document.assume_role_codebuild](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
@@ -302,7 +308,9 @@ No modules.
 | [aws_iam_policy_document.codepipeline_default](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_iam_policy_document.codepipeline_manual_approval](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_iam_policy_document.ecr_ext_access](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
+| [aws_iam_policy_document.event_assume_role](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_iam_policy_document.lambda_function_policy_document](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
+| [aws_iam_policy_document.start_pipeline](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_region.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region) | data source |
 | [aws_secretsmanager_secret.secrets_to_read](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/secretsmanager_secret) | data source |
 | [aws_ssm_parameters_by_path.parameters_to_read](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ssm_parameters_by_path) | data source |
@@ -311,10 +319,8 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_existing_codestart_gh_connection_arn"></a> [existing\_codestart\_gh\_connection\_arn](#input\_existing\_codestart\_gh\_connection\_arn) | Arn of the existing GitHub connection | `string` | n/a | yes |
 | <a name="input_repo_branch"></a> [repo\_branch](#input\_repo\_branch) | Name of the branch to listen | `string` | n/a | yes |
 | <a name="input_repo_name"></a> [repo\_name](#input\_repo\_name) | Name of the repository | `string` | n/a | yes |
-| <a name="input_repo_org"></a> [repo\_org](#input\_repo\_org) | Name of the organization | `string` | n/a | yes |
 | <a name="input_add_manual_approval"></a> [add\_manual\_approval](#input\_add\_manual\_approval) | Whether to add manual approval to the CodePipeline | `bool` | `false` | no |
 | <a name="input_build_minutes_timeout"></a> [build\_minutes\_timeout](#input\_build\_minutes\_timeout) | Number of minutes to timeout the build | `number` | `5` | no |
 | <a name="input_codebuild_additional_env_vars"></a> [codebuild\_additional\_env\_vars](#input\_codebuild\_additional\_env\_vars) | List of additional environment variables to add to the CodeBuild project. See [documentation](https://docs.aws.amazon.com/codebuild/latest/APIReference/API_EnvironmentVariable.html) | <pre>list(object({<br/>    name  = string<br/>    type  = string<br/>    value = string<br/>  }))</pre> | `[]` | no |
@@ -339,11 +345,15 @@ No modules.
 | <a name="input_ecr_prod_tag_pattern_list"></a> [ecr\_prod\_tag\_pattern\_list](#input\_ecr\_prod\_tag\_pattern\_list) | Tag pattern list to match production images. See [ECR lifecycle policy doc](https://docs.aws.amazon.com/AmazonECR/latest/userguide/lifecycle_policy_parameters.html#lp_tag_pattern_list). | `list(string)` | <pre>[<br/>  "latest",<br/>  "0.*.*",<br/>  "1.*.*",<br/>  "2.*.*"<br/>]</pre> | no |
 | <a name="input_ecr_scan_images_on_push"></a> [ecr\_scan\_images\_on\_push](#input\_ecr\_scan\_images\_on\_push) | Whether to scan images on push to the registry | `bool` | `false` | no |
 | <a name="input_ecr_use_existing"></a> [ecr\_use\_existing](#input\_ecr\_use\_existing) | Whether to use an existing ECR repository | `bool` | `false` | no |
+| <a name="input_existing_codestart_connection_arn"></a> [existing\_codestart\_connection\_arn](#input\_existing\_codestart\_connection\_arn) | Arn of the existing GitHub connection | `string` | `""` | no |
 | <a name="input_force_delete_registry"></a> [force\_delete\_registry](#input\_force\_delete\_registry) | Whether to force delete the registry, even if there are still images | `bool` | `false` | no |
+| <a name="input_git_provider_url"></a> [git\_provider\_url](#input\_git\_provider\_url) | URL of the git provider. | `string` | `"https://github.com"` | no |
+| <a name="input_is_codecommit"></a> [is\_codecommit](#input\_is\_codecommit) | Whether the repository is a CodeCommit repository. | `bool` | `false` | no |
 | <a name="input_parallel_instances_configuration"></a> [parallel\_instances\_configuration](#input\_parallel\_instances\_configuration) | Configuration for both environments. To know about possible values check [CodeBuild doc](https://docs.aws.amazon.com/codebuild/latest/userguide/build-env-ref.html). | <pre>object({<br/>    cache_amd64 = object({<br/>      compute_type          = optional(string, "BUILD_GENERAL1_MEDIUM")<br/>      image                 = optional(string, "aws/codebuild/amazonlinux-x86_64-standard:5.0")<br/>      privileged_mode       = optional(bool, true)<br/>      container_type        = optional(string, "LINUX_CONTAINER")<br/>      buildspec_path        = optional(string, "buildspec-cache.yaml")<br/>      build_minutes_timeout = optional(number, 15)<br/>      platform_name         = optional(string, "linux/amd64")<br/>    })<br/>    cache_arm64 = object({<br/>      compute_type          = optional(string, "BUILD_GENERAL1_MEDIUM")<br/>      image                 = optional(string, "aws/codebuild/amazonlinux-aarch64-standard:3.0")<br/>      privileged_mode       = optional(bool, true)<br/>      container_type        = optional(string, "ARM_CONTAINER")<br/>      buildspec_path        = optional(string, "buildspec-cache.yaml")<br/>      build_minutes_timeout = optional(number, 15)<br/>      platform_name         = optional(string, "linux/arm64")<br/>    })<br/>  })</pre> | <pre>{<br/>  "cache_amd64": {<br/>    "buildspec_path": "buildspec-cache.yaml",<br/>    "compute_type": "BUILD_GENERAL1_MEDIUM",<br/>    "container_type": "LINUX_CONTAINER",<br/>    "image": "aws/codebuild/amazonlinux-x86_64-standard:5.0",<br/>    "privileged_mode": true<br/>  },<br/>  "cache_arm64": {<br/>    "buildspec_path": "buildspec-cache.yaml",<br/>    "compute_type": "BUILD_GENERAL1_MEDIUM",<br/>    "container_type": "ARM_CONTAINER",<br/>    "image": "aws/codebuild/amazonlinux-aarch64-standard:3.0",<br/>    "privileged_mode": true<br/>  }<br/>}</pre> | no |
 | <a name="input_parallel_multiplatform_build_enabled"></a> [parallel\_multiplatform\_build\_enabled](#input\_parallel\_multiplatform\_build\_enabled) | Whether to enable parallel multiplatform build to speed up process. When enabled the default variables will be used to configure the project to build the multilayer index. When enabled `cache_arm64` and `cache_amd64` are automatically added to ECR mutability exclusion list. | `bool` | `false` | no |
 | <a name="input_parameters_paths_to_read"></a> [parameters\_paths\_to\_read](#input\_parameters\_paths\_to\_read) | List of parameters PATHS from Parameter store to read from the Codebuild project. <br> **Note**: the last part of the path, the `paramater name`, should not be present in this variable otherwise no parameters will be found at runtime. | `list(string)` | `[]` | no |
-| <a name="input_repo_org_shortname"></a> [repo\_org\_shortname](#input\_repo\_org\_shortname) | This is used to name resources when repo name and repo org are too long. | `string` | `""` | no |
+| <a name="input_repo_owner"></a> [repo\_owner](#input\_repo\_owner) | Name of the organization | `string` | `""` | no |
+| <a name="input_repo_owner_shortname"></a> [repo\_owner\_shortname](#input\_repo\_owner\_shortname) | This is used to name resources when repo name and repo org are too long. | `string` | `""` | no |
 | <a name="input_secrets_to_read"></a> [secrets\_to\_read](#input\_secrets\_to\_read) | List of secrets ARNs from SecretManager to read from the Codebuild project | `list(string)` | `[]` | no |
 | <a name="input_sns_subscribers"></a> [sns\_subscribers](#input\_sns\_subscribers) | List of email addresses to subscribe to SNS notifications | `list(string)` | `[]` | no |
 
