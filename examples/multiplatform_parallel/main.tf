@@ -1,7 +1,7 @@
 
 resource "aws_codestarconnections_connection" "github_connection" {
-  name          = "GHConnection"
-  provider_type = "GitHub"
+  name          = "Gitlab"
+  provider_type = "GitLab"
 }
 
 data "aws_iam_policy_document" "example_extra" {
@@ -31,10 +31,12 @@ module "github_codepipeline" {
   depends_on = [aws_ssm_parameter.test_parameters]
   source     = "../.."
 
-  repo_org                             = "llw-RnD"
-  repo_name                            = "eks-golden-docs"
-  repo_branch                          = "dev"
-  existing_codestart_gh_connection_arn = aws_codestarconnections_connection.github_connection.arn
+  repo_owner                        = "llw-RnD"
+  repo_name                         = "eks-golden-docs"
+  repo_branch                       = "main"
+  git_provider_url                  = "https://gitlab.com"
+  codepipeline_type                 = "v2"
+  existing_codestart_connection_arn = aws_codestarconnections_connection.github_connection.arn
 
   force_delete_registry                = true
   parallel_multiplatform_build_enabled = true

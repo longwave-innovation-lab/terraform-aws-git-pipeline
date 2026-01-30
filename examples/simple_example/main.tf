@@ -31,10 +31,10 @@ module "github_codepipeline" {
   depends_on = [aws_ssm_parameter.test_parameters]
   source     = "../.."
 
-  repo_org                             = "llw-RnD"
-  repo_name                            = "eks-golden-docs"
-  repo_branch                          = "dev"
-  existing_codestart_gh_connection_arn = aws_codestarconnections_connection.github_connection.arn
+  repo_owner                        = "llw-RnD"
+  repo_name                         = "eks-golden-docs"
+  repo_branch                       = "dev"
+  existing_codestart_connection_arn = aws_codestarconnections_connection.github_connection.arn
 
   force_delete_registry = true
   # secrets_to_read = [

@@ -34,7 +34,7 @@ data "aws_iam_policy_document" "assume_role_codebuild" {
 }
 
 resource "aws_iam_role" "codebuild_role" {
-  name_prefix        = substr("${var.repo_org}_${var.repo_name}_${var.repo_branch}_Codebuild", 0, 38)
+  name_prefix        = substr("${local.final_name}_Codebuild", 0, 38)
   assume_role_policy = data.aws_iam_policy_document.assume_role_codebuild.json
 }
 
@@ -49,8 +49,8 @@ data "aws_iam_policy_document" "codebuild_default_policy" {
     ]
 
     resources = [
-      "arn:aws:logs:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:log-group:/aws/codebuild/${local.final_name}${local.codepipeline_resources_suffix}*",
-      "arn:aws:logs:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:log-group:/aws/codebuild/${local.final_name}${local.codepipeline_resources_suffix}"
+      "arn:aws:logs:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:log-group:/aws/codebuild/${local.final_name}${local.pipeline_resources_suffix}*",
+      "arn:aws:logs:${data.aws_region.current.region}:${data.aws_caller_identity.current.account_id}:log-group:/aws/codebuild/${local.final_name}${local.pipeline_resources_suffix}"
     ]
   }
 
@@ -160,7 +160,7 @@ data "aws_secretsmanager_secret" "secrets_to_read" {
 
 resource "aws_codebuild_project" "cb_project" {
   count          = var.parallel_multiplatform_build_enabled ? 0 : 1
-  name           = "${local.final_name}${local.codepipeline_resources_suffix}"
+  name           = "${local.final_name}${local.pipeline_resources_suffix}"
   build_timeout  = var.build_minutes_timeout
   queued_timeout = var.codebuild_queue_minutes_timeout
   service_role   = aws_iam_role.codebuild_role.arn
@@ -171,6 +171,12 @@ resource "aws_codebuild_project" "cb_project" {
     image_pull_credentials_type = "CODEBUILD"
     privileged_mode             = var.codebuild_privileged_mode
     type                        = var.codebuild_container_type
+
+    environment_variable {
+      name  = "MULTIPLATFORM_ENABLED"
+      type  = "PLAINTEXT"
+      value = "False"
+    }
 
     environment_variable {
       name  = "REPO_NAME"
@@ -228,7 +234,7 @@ resource "aws_codebuild_project" "cb_project" {
 resource "aws_codebuild_project" "cache_builders" {
   for_each = var.parallel_multiplatform_build_enabled ? var.parallel_instances_configuration : {}
 
-  name           = "${local.final_name}${local.codepipeline_resources_suffix}-${each.key}"
+  name           = "${local.final_name}${local.pipeline_resources_suffix}-${each.key}"
   build_timeout  = each.value.build_minutes_timeout
   queued_timeout = var.codebuild_queue_minutes_timeout
   service_role   = aws_iam_role.codebuild_role.arn
@@ -239,6 +245,12 @@ resource "aws_codebuild_project" "cache_builders" {
     image_pull_credentials_type = "CODEBUILD"
     privileged_mode             = each.value.privileged_mode
     type                        = each.value.container_type
+
+    environment_variable {
+      name  = "MULTIPLATFORM_ENABLED"
+      type  = "PLAINTEXT"
+      value = "True"
+    }
 
     environment_variable {
       name  = "CACHE_TAG"
@@ -304,7 +316,7 @@ resource "aws_codebuild_project" "cache_builders" {
 resource "aws_codebuild_project" "image_index_builder" {
   count = var.parallel_multiplatform_build_enabled ? 1 : 0
 
-  name           = "${local.final_name}${local.codepipeline_resources_suffix}-image_index"
+  name           = "${local.final_name}${local.pipeline_resources_suffix}-image_index"
   build_timeout  = var.build_minutes_timeout
   queued_timeout = var.codebuild_queue_minutes_timeout
   service_role   = aws_iam_role.codebuild_role.arn
@@ -315,6 +327,12 @@ resource "aws_codebuild_project" "image_index_builder" {
     image_pull_credentials_type = "CODEBUILD"
     privileged_mode             = var.codebuild_privileged_mode
     type                        = var.codebuild_container_type
+
+    environment_variable {
+      name  = "MULTIPLATFORM_ENABLED"
+      type  = "PLAINTEXT"
+      value = "True"
+    }
 
     environment_variable {
       name  = "ARM_CACHE_TAG"

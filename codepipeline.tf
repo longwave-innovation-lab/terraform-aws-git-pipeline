@@ -12,7 +12,7 @@ data "aws_iam_policy_document" "assume_role_codepipeline" {
 }
 
 resource "aws_iam_role" "codepipeline_role" {
-  name_prefix        = length("${local.final_name}${local.codepipeline_resources_suffix}") > 38 ? substr("${local.final_name}${local.codepipeline_resources_suffix}", 0, 37) : "${local.final_name}${local.codepipeline_resources_suffix}"
+  name_prefix        = length("${local.final_name}") > 38 ? substr("${local.final_name}", 0, 37) : "${local.final_name}"
   assume_role_policy = data.aws_iam_policy_document.assume_role_codepipeline.json
 }
 
@@ -34,10 +34,19 @@ data "aws_iam_policy_document" "codepipeline_default" {
     ]
   }
 
-  statement {
-    effect    = "Allow"
-    actions   = ["codestar-connections:UseConnection"]
-    resources = [data.aws_codestarconnections_connection.github_provider.arn]
+  # statement {
+  #   effect    = "Allow"
+  #   actions   = ["codestar-connections:UseConnection"]
+  #   resources = [data.aws_codestarconnections_connection.git_provider[0].arn]
+  # }
+
+  dynamic "statement" {
+    for_each = !var.is_codecommit ? [1] : []
+    content {
+      effect    = "Allow"
+      actions   = ["codestar-connections:UseConnection"]
+      resources = [data.aws_codestarconnections_connection.git_provider[0].arn]
+    }
   }
 
   statement {
@@ -52,6 +61,28 @@ data "aws_iam_policy_document" "codepipeline_default" {
     ]
 
     resources = local.codebuild_projects_arns
+  }
+
+  dynamic "statement" {
+    for_each = var.is_codecommit ? [1] : []
+    content {
+      effect = "Allow"
+
+      actions = [
+        "codecommit:Get*",
+        "codecommit:List*",
+        "codecommit:GitPull",
+        "codecommit:BatchGet*",
+        "codecommit:Describe*",
+        "codecommit:UploadArchive",
+        "codecommit:BatchDescribe*",
+        "codecommit:EvaluatePullRequestApprovalRules",
+      ]
+
+      resources = [
+        data.aws_codecommit_repository.source[0].arn
+      ]
+    }
   }
 }
 
@@ -82,7 +113,7 @@ resource "aws_iam_role_policy" "codepipeline_manual_approval" {
 }
 
 resource "aws_codepipeline" "pipeline" {
-  name          = "${local.final_name}${local.codepipeline_resources_suffix}"
+  name          = local.final_name
   role_arn      = aws_iam_role.codepipeline_role.arn
   pipeline_type = upper(var.codepipeline_type)
   artifact_store {
@@ -90,8 +121,10 @@ resource "aws_codepipeline" "pipeline" {
     type     = "S3"
   }
 
+  # Trigger is used only with external git providers
+  # Codecommit relies on EventBridge rules
   dynamic "trigger" {
-    for_each = upper(var.codepipeline_type) == "V2" ? [1] : []
+    for_each = upper(var.codepipeline_type) == "V2" && !var.is_codecommit ? [1] : []
     content {
       provider_type = "CodeStarSourceConnection"
       git_configuration {
@@ -111,22 +144,47 @@ resource "aws_codepipeline" "pipeline" {
     }
   }
 
-  stage {
-    name = "Source"
+  # Source from git providers
+  dynamic "stage" {
+    for_each = !var.is_codecommit ? [1] : []
+    content {
+      name = "GitProviderSource"
 
-    action {
-      name             = "Source"
-      category         = "Source"
-      owner            = "AWS"
-      provider         = "CodeStarSourceConnection"
-      version          = "1"
-      output_artifacts = ["source_output"]
+      action {
+        name             = "GitProviderSource"
+        category         = "Source"
+        owner            = "AWS"
+        provider         = "CodeStarSourceConnection"
+        version          = "1"
+        output_artifacts = ["source_output"]
 
-      configuration = {
-        ConnectionArn    = data.aws_codestarconnections_connection.github_provider.arn
-        FullRepositoryId = "${var.repo_org}/${var.repo_name}"
-        BranchName       = var.repo_branch
+        configuration = {
+          ConnectionArn    = data.aws_codestarconnections_connection.git_provider[0].arn
+          FullRepositoryId = "${var.repo_owner}/${var.repo_name}"
+          BranchName       = var.repo_branch
 
+        }
+      }
+    }
+  }
+
+  dynamic "stage" {
+    for_each = var.is_codecommit ? [1] : []
+    content {
+      name = "CodeCommitSource"
+      action {
+        name             = "CodeCommitSource"
+        category         = "Source"
+        owner            = "AWS"
+        provider         = "CodeCommit"
+        version          = "1"
+        output_artifacts = ["source_output"]
+
+        configuration = {
+          PollForSourceChanges = false
+          RepositoryName       = var.repo_name
+          BranchName           = var.repo_branch
+        }
       }
     }
   }

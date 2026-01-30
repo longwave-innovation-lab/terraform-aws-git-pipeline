@@ -1,5 +1,5 @@
 resource "aws_iam_role" "lambda_function_role" {
-  name_prefix = substr("${local.final_name}${local.codepipeline_resources_suffix}", 0, 37)
+  name_prefix = substr("${local.final_name}${local.pipeline_resources_suffix}", 0, 37)
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
@@ -53,10 +53,10 @@ resource "aws_lambda_function" "codebuild_event_listener" {
   # If the file is not in the current working directory you will need to include a
   # path.module in the filename.
   filename         = "${path.module}/lambda_function_payload.zip"
-  function_name    = substr("${local.final_name}${local.codepipeline_resources_suffix}", 0, 64)
+  function_name    = substr("${local.final_name}${local.pipeline_resources_suffix}", 0, 64)
   role             = aws_iam_role.lambda_function_role.arn
   handler          = "app.lambda_handler"
-  description      = "Lambda that will react to events from ${aws_codepipeline.pipeline.name} for repo ${var.repo_org}/${var.repo_name} branch ${var.repo_branch}"
+  description      = "Lambda that will react to events from ${aws_codepipeline.pipeline.name} for repo ${var.repo_owner}/${var.repo_name} branch ${var.repo_branch}"
   source_code_hash = data.archive_file.lambda.output_base64sha256
 
   runtime       = "python3.13"

@@ -75,4 +75,3 @@
 
 * **sns:** corretta issue lunghezza DisplayName closes [#36](https://github.com/Longwave-innovation/terraform-aws-github-pipeline/issues/36) ([3692dcd](https://github.com/Longwave-innovation/terraform-aws-github-pipeline/commit/3692dcd7974098c3e8e881f7a980b72cc7d26e8d))
 * solved lifecycle policy creation on new ECR registry ([2db2b14](https://github.com/Longwave-innovation/terraform-aws-github-pipeline/commit/2db2b14191ed1171d7111c721f55a8dff9eea9a5))
-
