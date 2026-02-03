@@ -1,4 +1,11 @@
-## 0.1.0 (2026-01-30)
+## [0.1.1](https://github.com/Longwave-innovation/terraform-aws-git-pipeline/compare/v0.1.0...v0.1.1) (2026-02-03)
+
+
+### Bug Fixes
+
+* manual approval info are now correct with CodeCommit closes [#2](https://github.com/Longwave-innovation/terraform-aws-git-pipeline/issues/2) ([866c42b](https://github.com/Longwave-innovation/terraform-aws-git-pipeline/commit/866c42b3f9a0acea0a498d9d1c4ec4be6b6bbc0b))
+
+## [0.1.0](https://github.com/Longwave-innovation/terraform-aws-git-pipeline/compare/cd304134ce404db0ad3761c9540179725b7edc8d...v0.1.0) (2026-01-30)
 
 
 ### ⚠ BREAKING CHANGES
