@@ -1,3 +1,11 @@
+locals {
+  manual_approval_link = (
+    var.add_manual_approval && var.is_codecommit ?
+    data.aws_codecommit_repository.source[0].clone_url_http :
+    local.github_repo_url
+  )
+}
+
 data "aws_iam_policy_document" "assume_role_codepipeline" {
   statement {
     effect = "Allow"
@@ -205,8 +213,8 @@ resource "aws_codepipeline" "pipeline" {
         configuration = {
           NotificationArn    = aws_sns_topic.pipeline_notifications.arn
           IsSummaryRequired  = "False"
-          CustomData         = "Deploy of ${local.github_repo_url} must be approved beforehand"
-          ExternalEntityLink = local.github_repo_url
+          CustomData         = "Deploy of ${local.manual_approval_link} must be approved beforehand"
+          ExternalEntityLink = local.manual_approval_link
         }
       }
     }
