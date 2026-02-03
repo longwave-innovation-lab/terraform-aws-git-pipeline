@@ -30,21 +30,19 @@ This example shows the creation of a pipeline of `type V1`, that listen to every
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | 6.13.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 6.0.0 |
 
 ## Modules
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_codecommit_pipeline"></a> [github\_codepipeline](#module\_github\_codepipeline) | ../.. | n/a |
+| <a name="module_codecommit_pipeline"></a> [codecommit\_pipeline](#module\_codecommit\_pipeline) | ../.. | n/a |
 
 ## Resources
 
 | Name | Type |
 |------|------|
-| [aws_codestarconnections_connection.github_connection](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/codestarconnections_connection) | resource |
 | [aws_ssm_parameter.test_parameters](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ssm_parameter) | resource |
-| [aws_iam_policy_document.example_extra](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 
 ## Inputs
 
