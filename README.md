@@ -136,12 +136,12 @@ data "aws_ssm_parameter" "parameter" {
 }
 
 module "github_codepipeline" {
-  source                               = "git::https://github.com/Longwave-innovation/terraform-aws-github-pipeline.git?ref=v0.7.0"
-  repo_owner                             = "org_name"
+  source                               = "git::https://github.com/longwave-innovation-lab/terraform-aws-github-pipeline.git?ref=v0.7.0"
+  repo_owner                           = "org_name"
   repo_name                            = "repo_name"
   repo_branch                          = "branch_name"
   codepipeline_type                    = "v2"
-  existing_codestart_connection_arn = aws_codestarconnections_connection.github_connection.arn
+  existing_codestart_connection_arn    = aws_codestarconnections_connection.github_connection.arn
   force_delete_registry                = true
   secrets_to_read                      = [data.aws_secretsmanager_secret.secret.arn]
   parameters_paths_to_read             = ["/my-paramater-path/"]
