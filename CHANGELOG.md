@@ -1,3 +1,10 @@
+## [0.1.2](https://github.com/Longwave-innovation/terraform-aws-git-pipeline/compare/v0.1.1...v0.1.2) (2026-03-04)
+
+
+### Bug Fixes
+
+* fix example module git pipeline ([6263cbd](https://github.com/Longwave-innovation/terraform-aws-git-pipeline/commit/6263cbd40833579936879a8ee7778ba2dbf452a2))
+
 ## [0.1.1](https://github.com/Longwave-innovation/terraform-aws-git-pipeline/compare/v0.1.0...v0.1.1) (2026-02-03)
 
 
