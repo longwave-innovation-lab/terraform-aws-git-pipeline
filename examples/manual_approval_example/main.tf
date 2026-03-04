@@ -31,9 +31,9 @@ module "github_codepipeline" {
   depends_on = [aws_ssm_parameter.test_parameters]
   source     = "../.."
 
-  repo_owner                        = "example-organization"
-  repo_name                         = "example-repository"
-  repo_branch                       = "main"
+  repo_owner                        = "org_name"
+  repo_name                         = "repo_name"
+  repo_branch                       = "branch_name"
   codepipeline_type                 = "v2"
   codepipeline_source_file_paths    = ["package.json"]
   existing_codestart_connection_arn = aws_codestarconnections_connection.github_connection.arn
