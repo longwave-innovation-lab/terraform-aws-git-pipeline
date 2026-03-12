@@ -16,8 +16,6 @@ locals {
     ) :
   [aws_codebuild_project.cb_project[0].name])
 
-  arm64_cache_tag = "cache_arm64"
-  amd64_cache_tag = "cache_amd64"
 }
 
 data "aws_iam_policy_document" "assume_role_codebuild" {
