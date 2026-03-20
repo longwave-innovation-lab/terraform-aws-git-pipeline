@@ -1,4 +1,4 @@
-# terraform-aws-github-pipeline <!-- omit from toc -->
+# terraform-aws-git-pipeline <!-- omit from toc -->
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
@@ -45,7 +45,7 @@ resource "aws_codestarconnections_connection" "github_connection" {
 }
 
 module "github_codepipeline" {
-  source                               = "git::https://github.com/longwave-innovation-lab/terraform-aws-github-pipeline.git?ref=v0.7.0"
+  source                               = "git::https://github.com/longwave-innovation-lab/terraform-aws-git-pipeline.git?ref=v0.7.0"
   repo_owner                           = "org_name"
   repo_name                            = "repo_name"
   repo_branch                          = "branch_name"
@@ -74,7 +74,7 @@ resource "aws_codestarconnections_connection" "github_connection" {
 }
 
 module "github_codepipeline" {
-  source                               = "git::https://github.com/longwave-innovation-lab/terraform-aws-github-pipeline.git?ref=v0.7.0"
+  source                               = "git::https://github.com/longwave-innovation-lab/terraform-aws-git-pipeline.git?ref=v0.7.0"
   repo_owner                           = "org_name"
   repo_name                            = "repo_name"
   repo_branch                          = "branch_name"
@@ -136,7 +136,7 @@ data "aws_ssm_parameter" "parameter" {
 }
 
 module "github_codepipeline" {
-  source                               = "git::https://github.com/longwave-innovation-lab/terraform-aws-github-pipeline.git?ref=v0.7.0"
+  source                               = "git::https://github.com/longwave-innovation-lab/terraform-aws-git-pipeline.git?ref=v0.7.0"
   repo_owner                           = "org_name"
   repo_name                            = "repo_name"
   repo_branch                          = "branch_name"
