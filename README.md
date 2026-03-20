@@ -45,7 +45,7 @@ resource "aws_codestarconnections_connection" "github_connection" {
 }
 
 module "github_codepipeline" {
-  source                               = "git::https://github.com/longwave-innovation-lab/terraform-aws-git-pipeline.git?ref=v0.7.0"
+  source                               = "git::https://github.com/longwave-innovation-lab/terraform-aws-git-pipeline.git?ref=v0.1.4"
   repo_owner                           = "org_name"
   repo_name                            = "repo_name"
   repo_branch                          = "branch_name"
@@ -74,7 +74,7 @@ resource "aws_codestarconnections_connection" "github_connection" {
 }
 
 module "github_codepipeline" {
-  source                               = "git::https://github.com/longwave-innovation-lab/terraform-aws-git-pipeline.git?ref=v0.7.0"
+  source                               = "git::https://github.com/longwave-innovation-lab/terraform-aws-git-pipeline.git?ref=v0.1.4"
   repo_owner                           = "org_name"
   repo_name                            = "repo_name"
   repo_branch                          = "branch_name"
@@ -136,7 +136,7 @@ data "aws_ssm_parameter" "parameter" {
 }
 
 module "github_codepipeline" {
-  source                               = "git::https://github.com/longwave-innovation-lab/terraform-aws-git-pipeline.git?ref=v0.7.0"
+  source                               = "git::https://github.com/longwave-innovation-lab/terraform-aws-git-pipeline.git?ref=v0.1.4"
   repo_owner                           = "org_name"
   repo_name                            = "repo_name"
   repo_branch                          = "branch_name"
