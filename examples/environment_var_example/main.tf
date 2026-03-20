@@ -65,13 +65,13 @@ module "github_codepipeline" {
   ]
   source = "../.."
 
-  repo_owner                        = "Longwave-innovation"
-  repo_name                         = "demo_pipe"
-  repo_branch                       = "main"
+  repo_owner                        = "org_name"
+  repo_name                         = "repo_name"
+  repo_branch                       = "branch_name"
   codepipeline_type                 = "v2"
   existing_codestart_connection_arn = aws_codestarconnections_connection.github_connection.arn
   force_delete_registry             = true
-  ecr_custom_registry_name          = "demo_pipe_secrets"
+  ecr_custom_registry_name          = "example_secrets"
   # secrets_to_read = [
   #   aws_secretsmanager_secret.secret.arn
   # ]

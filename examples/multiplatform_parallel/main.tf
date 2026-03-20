@@ -31,9 +31,9 @@ module "github_codepipeline" {
   depends_on = [aws_ssm_parameter.test_parameters]
   source     = "../.."
 
-  repo_owner                        = "llw-RnD"
-  repo_name                         = "eks-golden-docs"
-  repo_branch                       = "main"
+  repo_owner                        = "org_name"
+  repo_name                         = "repo_name"
+  repo_branch                       = "branch_name"
   git_provider_url                  = "https://gitlab.com"
   codepipeline_type                 = "v2"
   existing_codestart_connection_arn = aws_codestarconnections_connection.github_connection.arn
@@ -56,9 +56,9 @@ module "github_codepipeline" {
   ecr_image_tag_mutability         = "immutable_with_exclusion"
   ecr_mutability_exclusion_filters = ["dev-*", "qa-*"]
   ecr_external_access_arns = [
-    "arn:aws:iam::760661275543:root",
-    "arn:aws:iam::760661275543:role/lw-intesa-poc-k8s-eks-nodes"
+     "arn:aws:iam::111111111111:root",
+     "arn:aws:iam::111111111111:role/example-eks-nodes-role"
   ]
   codebuild_role_additional_policy = data.aws_iam_policy_document.example_extra.json
-  sns_subscribers                  = ["mirco.bozzolini@lantechlongwave.it"]
+  sns_subscribers                  = ["subscriber_mail@domain.com"]
 }

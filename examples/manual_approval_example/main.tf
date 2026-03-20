@@ -31,9 +31,9 @@ module "github_codepipeline" {
   depends_on = [aws_ssm_parameter.test_parameters]
   source     = "../.."
 
-  repo_owner                        = "Longwave-innovation"
-  repo_name                         = "demo_pipe"
-  repo_branch                       = "main"
+  repo_owner                        = "org_name"
+  repo_name                         = "repo_name"
+  repo_branch                       = "branch_name"
   codepipeline_type                 = "v2"
   codepipeline_source_file_paths    = ["package.json"]
   existing_codestart_connection_arn = aws_codestarconnections_connection.github_connection.arn
@@ -42,7 +42,7 @@ module "github_codepipeline" {
   ecr_use_existing                  = true
   ecr_max_untagged_images           = 10
   secrets_to_read = [
-    "arn:aws:secretsmanager:eu-west-1:687331130220:secret:InnovationDockerCreds-vOTSnB"
+    "arn:aws:secretsmanager:eu-west-1:123456789012:secret:InnovationDockerCreds-xxxxxx"
   ]
   codebuild_additional_env_vars = [{
     name  = "TEST1"
@@ -56,5 +56,5 @@ module "github_codepipeline" {
   ]
   parameters_paths_to_read         = ["/test/"]
   codebuild_role_additional_policy = data.aws_iam_policy_document.example_extra.json
-  sns_subscribers                  = ["mirco.bozzolini@longwave.it"]
+  sns_subscribers                  = ["subscriber_mail@domain.com"]
 }
