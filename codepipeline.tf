@@ -154,7 +154,7 @@ resource "aws_codepipeline" "pipeline" {
 
   # Source from git providers
   dynamic "stage" {
-    for_each = !var.is_codecommit ? [1] : []
+    for_each = upper(var.codepipeline_type) != "V2" && !var.is_codecommit ? [1] : []
     content {
       name = "GitProviderSource"
 
@@ -170,7 +170,6 @@ resource "aws_codepipeline" "pipeline" {
           ConnectionArn    = data.aws_codestarconnections_connection.git_provider[0].arn
           FullRepositoryId = "${var.repo_owner}/${var.repo_name}"
           BranchName       = var.repo_branch
-
         }
       }
     }
