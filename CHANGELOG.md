@@ -1,3 +1,10 @@
+## [0.1.4](https://github.com/longwave-innovation-lab/terraform-aws-git-pipeline/compare/v0.1.3...v0.1.4) (2026-03-20)
+
+
+### Bug Fixes
+
+* using pipeline V2 won't give error with multi source ([77812b7](https://github.com/longwave-innovation-lab/terraform-aws-git-pipeline/commit/77812b79f02025c8aa680a3e64d75ad564e78348))
+
 ## [0.1.3](https://github.com/longwave-innovation-lab/terraform-aws-git-pipeline/compare/v0.1.2...v0.1.3) (2026-03-04)
 
 
