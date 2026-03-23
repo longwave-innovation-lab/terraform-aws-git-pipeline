@@ -1,3 +1,14 @@
+## [1.0.0](https://github.com/longwave-innovation-lab/terraform-aws-git-pipeline/compare/v0.1.5...v1.0.0) (2026-03-23)
+
+
+### ⚠ BREAKING CHANGES
+
+* now codepipeline_type must be uppercase, defualt is V2
+
+### Bug Fixes
+
+* now codepipeline_type must be uppercase, defualt is V2 ([e87fdbd](https://github.com/longwave-innovation-lab/terraform-aws-git-pipeline/commit/e87fdbd1a59a2f08dabdaa725bd51d3bf1a35e9d))
+
 ## [0.1.5](https://github.com/longwave-innovation-lab/terraform-aws-git-pipeline/compare/v0.1.4...v0.1.5) (2026-03-23)
 
 
@@ -29,11 +40,4 @@
 ### Bug Fixes
 
 * fix example module git pipeline ([6263cbd](https://github.com/longwave-innovation-lab/terraform-aws-git-pipeline/commit/6263cbd40833579936879a8ee7778ba2dbf452a2))
-
-## [0.1.1](https://github.com/longwave-innovation-lab/terraform-aws-git-pipeline/compare/v0.1.0...v0.1.1) (2026-02-03)
-
-
-### Bug Fixes
-
-* manual approval info are now correct with CodeCommit closes [#2](https://github.com/longwave-innovation-lab/terraform-aws-git-pipeline/issues/2) ([866c42b](https://github.com/longwave-innovation-lab/terraform-aws-git-pipeline/commit/866c42b3f9a0acea0a498d9d1c4ec4be6b6bbc0b))
 
