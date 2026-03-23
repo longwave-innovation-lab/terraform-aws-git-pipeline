@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/longwave-innovation-lab/terraform-aws-git-pipeline/compare/v1.0.0...v1.0.1) (2026-03-23)
+
+
+### Bug Fixes
+
+* removed wrong condition on source stage that was overriding pr changes ([7a6cf3a](https://github.com/longwave-innovation-lab/terraform-aws-git-pipeline/commit/7a6cf3a1a78ec626b3e773ce249a756e05c71e57))
+
 ## [1.0.0](https://github.com/longwave-innovation-lab/terraform-aws-git-pipeline/compare/v0.1.5...v1.0.0) (2026-03-23)
 
 
@@ -33,11 +40,4 @@
 ### Bug Fixes
 
 * fix example module git pipeline -2 ([b9e2982](https://github.com/longwave-innovation-lab/terraform-aws-git-pipeline/commit/b9e29825a4036361b770a6740d81383b9e55bdd0))
-
-## [0.1.2](https://github.com/longwave-innovation-lab/terraform-aws-git-pipeline/compare/v0.1.1...v0.1.2) (2026-03-04)
-
-
-### Bug Fixes
-
-* fix example module git pipeline ([6263cbd](https://github.com/longwave-innovation-lab/terraform-aws-git-pipeline/commit/6263cbd40833579936879a8ee7778ba2dbf452a2))
 
