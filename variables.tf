@@ -212,9 +212,13 @@ variable "ecr_max_untagged_images" {
 }
 
 variable "codepipeline_type" {
-  type        = string
-  default     = "V1"
-  description = "Codepipeline version, it can be `v1` or `v2`. [See documentation to choose](https://docs.aws.amazon.com/codepipeline/latest/userguide/pipeline-types.html)"
+  type    = string
+  default = "V2"
+  validation {
+    condition     = contains(["V1", "V2"], var.codepipeline_type)
+    error_message = "Codepipeline type must be `V1` or `V2`"
+  }
+  description = "Codepipeline version, it can be `V1` or `V2`. [See documentation to choose](https://docs.aws.amazon.com/codepipeline/latest/userguide/pipeline-types.html)"
 }
 
 variable "codepipeline_source_file_paths" {
