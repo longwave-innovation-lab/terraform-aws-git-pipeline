@@ -4,6 +4,8 @@ locals {
     data.aws_codecommit_repository.source[0].clone_url_http :
     local.github_repo_url
   )
+
+  git_stage_src_name = "GitProviderSource"
 }
 
 data "aws_iam_policy_document" "assume_role_codepipeline" {
@@ -129,14 +131,14 @@ resource "aws_codepipeline" "pipeline" {
     type     = "S3"
   }
 
-  # Trigger is used only with external git providers
-  # Codecommit relies on EventBridge rules
+  # V2 pipeline cab have a trigger block to granularly define the events
+  # used to trigger the pipelines
   dynamic "trigger" {
     for_each = upper(var.codepipeline_type) == "V2" && !var.is_codecommit ? [1] : []
     content {
       provider_type = "CodeStarSourceConnection"
       git_configuration {
-        source_action_name = "Source"
+        source_action_name = local.git_stage_src_name
 
         push {
           branches {
@@ -152,14 +154,15 @@ resource "aws_codepipeline" "pipeline" {
     }
   }
 
-  # Source from git providers
+  # V1 source is more static and widely connected to the repo, it cannot react on
+  # specific file changes
   dynamic "stage" {
     for_each = upper(var.codepipeline_type) != "V2" && !var.is_codecommit ? [1] : []
     content {
-      name = "GitProviderSource"
+      name = local.git_stage_src_name
 
       action {
-        name             = "GitProviderSource"
+        name             = local.git_stage_src_name
         category         = "Source"
         owner            = "AWS"
         provider         = "CodeStarSourceConnection"
@@ -219,8 +222,9 @@ resource "aws_codepipeline" "pipeline" {
     }
   }
 
+  # Single stage build
   dynamic "stage" {
-    for_each = var.parallel_multiplatform_build_enabled ? [] : [1]
+    for_each = !var.parallel_multiplatform_build_enabled ? [1] : []
     content {
       name = "Build"
 
