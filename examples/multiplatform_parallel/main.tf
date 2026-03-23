@@ -56,8 +56,8 @@ module "github_codepipeline" {
   ecr_image_tag_mutability         = "immutable_with_exclusion"
   ecr_mutability_exclusion_filters = ["dev-*", "qa-*"]
   ecr_external_access_arns = [
-     "arn:aws:iam::111111111111:root",
-     "arn:aws:iam::111111111111:role/example-eks-nodes-role"
+    "arn:aws:iam::111111111111:root",
+    "arn:aws:iam::111111111111:role/example-eks-nodes-role"
   ]
   codebuild_role_additional_policy = data.aws_iam_policy_document.example_extra.json
   sns_subscribers                  = ["subscriber_mail@domain.com"]
