@@ -34,8 +34,8 @@ module "github_codepipeline" {
   repo_owner                        = "org_name"
   repo_name                         = "repo_name"
   repo_branch                       = "branch_name"
-  git_provider_url                  = "https://gitlab.com"
-  codepipeline_type                 = "v2"
+  git_provider_url                  = "https://github.com"
+  codepipeline_type                 = "V2"
   existing_codestart_connection_arn = aws_codestarconnections_connection.github_connection.arn
 
   force_delete_registry                = true
@@ -55,10 +55,10 @@ module "github_codepipeline" {
   parameters_paths_to_read         = ["/test/", "/lw/dockerhub/*"]
   ecr_image_tag_mutability         = "immutable_with_exclusion"
   ecr_mutability_exclusion_filters = ["dev-*", "qa-*"]
-  ecr_external_access_arns = [
-    "arn:aws:iam::111111111111:root",
-    "arn:aws:iam::111111111111:role/example-eks-nodes-role"
-  ]
+  # ecr_external_access_arns = [
+  #   "arn:aws:iam::111111111111:root",
+  #   "arn:aws:iam::111111111111:role/example-eks-nodes-role"
+  # ]
   codebuild_role_additional_policy = data.aws_iam_policy_document.example_extra.json
   sns_subscribers                  = ["subscriber_mail@domain.com"]
 }

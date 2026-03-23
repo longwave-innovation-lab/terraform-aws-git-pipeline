@@ -125,7 +125,7 @@ resource "aws_iam_role_policy" "codepipeline_manual_approval" {
 resource "aws_codepipeline" "pipeline" {
   name          = local.final_name
   role_arn      = aws_iam_role.codepipeline_role.arn
-  pipeline_type = upper(var.codepipeline_type)
+  pipeline_type = var.codepipeline_type
   artifact_store {
     location = aws_s3_bucket.pipeline_artifact_bucket.bucket
     type     = "S3"
@@ -134,7 +134,7 @@ resource "aws_codepipeline" "pipeline" {
   # V2 pipeline cab have a trigger block to granularly define the events
   # used to trigger the pipelines
   dynamic "trigger" {
-    for_each = upper(var.codepipeline_type) == "V2" && !var.is_codecommit ? [1] : []
+    for_each = var.codepipeline_type == "V2" && !var.is_codecommit ? [1] : []
     content {
       provider_type = "CodeStarSourceConnection"
       git_configuration {
