@@ -1,4 +1,4 @@
-# terraform-aws-github-pipeline <!-- omit from toc -->
+# terraform-aws-git-pipeline <!-- omit from toc -->
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
@@ -45,7 +45,7 @@ resource "aws_codestarconnections_connection" "github_connection" {
 }
 
 module "github_codepipeline" {
-  source                               = "git::https://github.com/longwave-innovation-lab/terraform-aws-github-pipeline.git?ref=v0.7.0"
+  source                               = "git::https://github.com/longwave-innovation-lab/terraform-aws-git-pipeline.git?ref=v0.1.4"
   repo_owner                           = "org_name"
   repo_name                            = "repo_name"
   repo_branch                          = "branch_name"
@@ -74,7 +74,7 @@ resource "aws_codestarconnections_connection" "github_connection" {
 }
 
 module "github_codepipeline" {
-  source                               = "git::https://github.com/longwave-innovation-lab/terraform-aws-github-pipeline.git?ref=v0.7.0"
+  source                               = "git::https://github.com/longwave-innovation-lab/terraform-aws-git-pipeline.git?ref=v0.1.4"
   repo_owner                           = "org_name"
   repo_name                            = "repo_name"
   repo_branch                          = "branch_name"
@@ -136,7 +136,7 @@ data "aws_ssm_parameter" "parameter" {
 }
 
 module "github_codepipeline" {
-  source                               = "git::https://github.com/longwave-innovation-lab/terraform-aws-github-pipeline.git?ref=v0.7.0"
+  source                               = "git::https://github.com/longwave-innovation-lab/terraform-aws-git-pipeline.git?ref=v0.1.4"
   repo_owner                           = "org_name"
   repo_name                            = "repo_name"
   repo_branch                          = "branch_name"
@@ -332,7 +332,7 @@ No modules.
 | <a name="input_codebuild_queue_minutes_timeout"></a> [codebuild\_queue\_minutes\_timeout](#input\_codebuild\_queue\_minutes\_timeout) | Number of minutes to timeout the codebuild queue | `number` | `60` | no |
 | <a name="input_codebuild_role_additional_policy"></a> [codebuild\_role\_additional\_policy](#input\_codebuild\_role\_additional\_policy) | Additional policy to attach to the CodeBuild role, it must be in json | `any` | `{}` | no |
 | <a name="input_codepipeline_source_file_paths"></a> [codepipeline\_source\_file\_paths](#input\_codepipeline\_source\_file\_paths) | A list of patterns of Git repository file paths that, when a commit is pushed, are to be included as criteria that starts the pipeline. Pipeline type must be V2. | `list(string)` | <pre>[<br/>  "*"<br/>]</pre> | no |
-| <a name="input_codepipeline_type"></a> [codepipeline\_type](#input\_codepipeline\_type) | Codepipeline version, it can be `v1` or `v2`. [See documentation to choose](https://docs.aws.amazon.com/codepipeline/latest/userguide/pipeline-types.html) | `string` | `"V1"` | no |
+| <a name="input_codepipeline_type"></a> [codepipeline\_type](#input\_codepipeline\_type) | Codepipeline version, it can be `V1` or `V2`. [See documentation to choose](https://docs.aws.amazon.com/codepipeline/latest/userguide/pipeline-types.html) | `string` | `"V2"` | no |
 | <a name="input_ecr_custom_registry_name"></a> [ecr\_custom\_registry\_name](#input\_ecr\_custom\_registry\_name) | If the repo name is not the same as the image name use this. E.g. Mono repositories with multiple projects inside | `string` | `""` | no |
 | <a name="input_ecr_dev_tag_pattern_list"></a> [ecr\_dev\_tag\_pattern\_list](#input\_ecr\_dev\_tag\_pattern\_list) | Tag pattern list to match development images. See [ECR lifecycle policy doc](https://docs.aws.amazon.com/AmazonECR/latest/userguide/lifecycle_policy_parameters.html#lp_tag_pattern_list). | `list(string)` | <pre>[<br/>  "dev-*.*.*"<br/>]</pre> | no |
 | <a name="input_ecr_external_access_arns"></a> [ecr\_external\_access\_arns](#input\_ecr\_external\_access\_arns) | List of resources that needs to access the registry. [Look here](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_elements_principal.html) on syntax. | `list(string)` | `[]` | no |

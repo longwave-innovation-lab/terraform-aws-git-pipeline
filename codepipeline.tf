@@ -157,7 +157,7 @@ resource "aws_codepipeline" "pipeline" {
   # V1 source is more static and widely connected to the repo, it cannot react on
   # specific file changes
   dynamic "stage" {
-    for_each = !var.is_codecommit ? [1] : []
+    for_each = upper(var.codepipeline_type) != "V2" && !var.is_codecommit ? [1] : []
     content {
       name = local.git_stage_src_name
 
