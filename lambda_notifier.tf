@@ -45,14 +45,14 @@ resource "aws_iam_role_policy" "codebuild_describe" {
 
 data "archive_file" "lambda" {
   type        = "zip"
-  source_file = "${path.module}/lambda_code/app.py"
-  output_path = "${path.module}/lambda_function_payload.zip"
+  source_file = "${path.module}/lambda_code/notifier.py"
+  output_path = "${path.module}/lambda_notifier_payload.zip"
 }
 
 resource "aws_lambda_function" "codebuild_event_listener" {
   # If the file is not in the current working directory you will need to include a
   # path.module in the filename.
-  filename         = "${path.module}/lambda_function_payload.zip"
+  filename         = "${path.module}/lambda_notifier_payload.zip"
   function_name    = substr("${local.final_name}${local.pipeline_resources_suffix}", 0, 64)
   role             = aws_iam_role.lambda_function_role.arn
   handler          = "app.lambda_handler"
