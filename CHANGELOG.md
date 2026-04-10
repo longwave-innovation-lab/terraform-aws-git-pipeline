@@ -1,3 +1,20 @@
+## [2.0.0](https://github.com/longwave-innovation-lab/terraform-aws-git-pipeline/compare/v1.0.1...v2.0.0) (2026-04-10)
+
+
+### ⚠ BREAKING CHANGES
+
+* Codecommit filtering works, path are glob patterns, unit testing closes, changed name of path filter variable #11
+
+### Features
+
+* Codecommit filtering works, path are glob patterns, unit testing closes, changed name of path filter variable [#11](https://github.com/longwave-innovation-lab/terraform-aws-git-pipeline/issues/11) ([26640a7](https://github.com/longwave-innovation-lab/terraform-aws-git-pipeline/commit/26640a76497cdd76e77a60f2df561a5a8f4b8e2e))
+* codecommit path filter first draft [#11](https://github.com/longwave-innovation-lab/terraform-aws-git-pipeline/issues/11) ([398897d](https://github.com/longwave-innovation-lab/terraform-aws-git-pipeline/commit/398897dcc5ae238b1761f7f8fd3e9d172b9b774a))
+
+
+### Bug Fixes
+
+* **ci:** mdlint now wait for doctoc to run ([7a1d831](https://github.com/longwave-innovation-lab/terraform-aws-git-pipeline/commit/7a1d8319183f2f7635f8104e5eaf66a2df369f0a))
+
 ## [1.0.1](https://github.com/longwave-innovation-lab/terraform-aws-git-pipeline/compare/v1.0.0...v1.0.1) (2026-03-23)
 
 
@@ -33,11 +50,4 @@
 ### Bug Fixes
 
 * using pipeline V2 won't give error with multi source ([77812b7](https://github.com/longwave-innovation-lab/terraform-aws-git-pipeline/commit/77812b79f02025c8aa680a3e64d75ad564e78348))
-
-## [0.1.3](https://github.com/longwave-innovation-lab/terraform-aws-git-pipeline/compare/v0.1.2...v0.1.3) (2026-03-04)
-
-
-### Bug Fixes
-
-* fix example module git pipeline -2 ([b9e2982](https://github.com/longwave-innovation-lab/terraform-aws-git-pipeline/commit/b9e29825a4036361b770a6740d81383b9e55bdd0))
 
