@@ -43,7 +43,7 @@ variable "git_provider_url" {
 variable "pipeline_custom_name" {
   type        = string
   default     = ""
-  description = "Custom name for the pipeline, if not set the name will be generated with the pattern <owner>-<repo_name>-<repo_branch> and truncated to 64 characters if needed. This value takes precedence over the generated one. Use this in case of multiple pipelines on a monorepo."
+  description = "Custom name for the pipeline, if not set the name will be generated with the pattern {owner}-{repo_name}-{repo_branch} and truncated to 64 characters if needed. This value takes precedence over the generated one. Use this in case of multiple pipelines on a monorepo."
   validation {
     condition     = length(var.pipeline_custom_name) == 0 || (length(trim(var.pipeline_custom_name, " ")) > 0 && length(trim(var.pipeline_custom_name, " ")) <= 64)
     error_message = "Custom pipeline name must be between 1 and 64 characters."
