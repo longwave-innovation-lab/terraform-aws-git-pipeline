@@ -71,7 +71,7 @@ jobs:
 
   lint-markdown:
     name: Markdown Linting
-    needs: [ tf-docs ]
+    needs: [ readme-toc ]
     runs-on: ubuntu-latest
     steps:
 
