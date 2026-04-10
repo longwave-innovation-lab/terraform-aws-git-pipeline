@@ -36,6 +36,7 @@ This example shows the creation of a pipeline of `type V1`, that listen to every
 
 | Name | Source | Version |
 |------|--------|---------|
+| <a name="module_codecommit_path_filtered_pipeline"></a> [codecommit\_path\_filtered\_pipeline](#module\_codecommit\_path\_filtered\_pipeline) | ../.. | n/a |
 | <a name="module_codecommit_pipeline"></a> [codecommit\_pipeline](#module\_codecommit\_pipeline) | ../.. | n/a |
 
 ## Resources
