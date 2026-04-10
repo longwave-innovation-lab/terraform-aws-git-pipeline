@@ -16,4 +16,14 @@ locals {
 
   arm64_cache_tag = "cache_arm64"
   amd64_cache_tag = "cache_amd64"
+
+  # --- Monorepo / path-filter traffic controller ---
+  # Active only when: CodeCommit repo AND caller has specified real path filters (not just the catch-all "*")
+  use_lambda_trigger = (
+    var.is_codecommit &&
+    length(var.codepipeline_source_file_paths) > 0 &&
+    # Invalidate the boolean if the only path filter is the catch-all "*", in that case we can simply use Eventbridge
+    !(length(var.codepipeline_source_file_paths) == 1 && var.codepipeline_source_file_paths[0] == "*")
+  )
+
 }
