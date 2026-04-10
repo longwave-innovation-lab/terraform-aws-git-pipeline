@@ -303,6 +303,7 @@ No modules.
 | [aws_cloudwatch_event_rule.codebuild_events_rule](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_event_rule) | resource |
 | [aws_cloudwatch_event_rule.repo_changes](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_event_rule) | resource |
 | [aws_cloudwatch_event_target.lambda_target](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_event_target) | resource |
+| [aws_cloudwatch_event_target.traffic_controller_trigger](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_event_target) | resource |
 | [aws_cloudwatch_event_target.trigger](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_event_target) | resource |
 | [aws_codebuild_project.cache_builders](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/codebuild_project) | resource |
 | [aws_codebuild_project.cb_project](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/codebuild_project) | resource |
@@ -316,6 +317,7 @@ No modules.
 | [aws_iam_role.codecommit_changes](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
 | [aws_iam_role.codepipeline_role](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
 | [aws_iam_role.lambda_function_role](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
+| [aws_iam_role.traffic_controller](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role) | resource |
 | [aws_iam_role_policy.codebuild_default](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy) | resource |
 | [aws_iam_role_policy.codebuild_describe](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy) | resource |
 | [aws_iam_role_policy.codebuild_extra](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy) | resource |
@@ -323,16 +325,22 @@ No modules.
 | [aws_iam_role_policy.codebuild_secrets](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy) | resource |
 | [aws_iam_role_policy.codepipeline_default](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy) | resource |
 | [aws_iam_role_policy.codepipeline_manual_approval](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy) | resource |
+| [aws_iam_role_policy.invoke_traffic_controller](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy) | resource |
+| [aws_iam_role_policy.traffic_controller](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy) | resource |
 | [aws_iam_role_policy_attachment.lambda_basic_execution](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
 | [aws_iam_role_policy_attachment.start_pipeline](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
+| [aws_iam_role_policy_attachment.traffic_controller_basic_execution](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy_attachment) | resource |
 | [aws_lambda_function.codebuild_event_listener](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lambda_function) | resource |
+| [aws_lambda_function.traffic_controller](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lambda_function) | resource |
 | [aws_lambda_permission.allow_eventbridge](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lambda_permission) | resource |
+| [aws_lambda_permission.traffic_controller_from_eventbridge](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lambda_permission) | resource |
 | [aws_s3_bucket.pipeline_artifact_bucket](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket) | resource |
 | [aws_s3_bucket_public_access_block.codepipeline_bucket_pab](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_public_access_block) | resource |
 | [aws_sns_topic.pipeline_notifications](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/sns_topic) | resource |
 | [aws_sns_topic_subscription.pipeline_notifications_lambda](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/sns_topic_subscription) | resource |
 | [aws_sqs_queue.evnt_rule_target_dlq](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/sqs_queue) | resource |
 | [archive_file.lambda](https://registry.terraform.io/providers/hashicorp/archive/latest/docs/data-sources/file) | data source |
+| [archive_file.traffic_controller](https://registry.terraform.io/providers/hashicorp/archive/latest/docs/data-sources/file) | data source |
 | [aws_caller_identity.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/caller_identity) | data source |
 | [aws_codecommit_repository.source](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/codecommit_repository) | data source |
 | [aws_codestarconnections_connection.git_provider](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/codestarconnections_connection) | data source |
@@ -347,8 +355,10 @@ No modules.
 | [aws_iam_policy_document.codepipeline_manual_approval](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_iam_policy_document.ecr_ext_access](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_iam_policy_document.event_assume_role](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
+| [aws_iam_policy_document.invoke_traffic_controller](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_iam_policy_document.lambda_function_policy_document](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_iam_policy_document.start_pipeline](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
+| [aws_iam_policy_document.traffic_controller](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_region.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region) | data source |
 | [aws_secretsmanager_secret.secrets_to_read](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/secretsmanager_secret) | data source |
 | [aws_ssm_parameters_by_path.parameters_to_read](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/ssm_parameters_by_path) | data source |
@@ -369,7 +379,6 @@ No modules.
 | <a name="input_codebuild_privileged_mode"></a> [codebuild\_privileged\_mode](#input\_codebuild\_privileged\_mode) | Whether to run the build in privileged mode which is needed when using Docker | `bool` | `true` | no |
 | <a name="input_codebuild_queue_minutes_timeout"></a> [codebuild\_queue\_minutes\_timeout](#input\_codebuild\_queue\_minutes\_timeout) | Number of minutes to timeout the codebuild queue | `number` | `60` | no |
 | <a name="input_codebuild_role_additional_policy"></a> [codebuild\_role\_additional\_policy](#input\_codebuild\_role\_additional\_policy) | Additional policy to attach to the CodeBuild role, it must be in json | `any` | `{}` | no |
-| <a name="input_source_file_path_filters"></a> [codepipeline\_source\_file\_paths](#input\_codepipeline\_source\_file\_paths) | A list of patterns of Git repository file paths that, when a commit is pushed, are to be included as criteria that starts the pipeline. Pipeline type must be V2. | `list(string)` | <pre>[<br/>  "*"<br/>]</pre> | no |
 | <a name="input_codepipeline_type"></a> [codepipeline\_type](#input\_codepipeline\_type) | Codepipeline version, it can be `V1` or `V2`. [See documentation to choose](https://docs.aws.amazon.com/codepipeline/latest/userguide/pipeline-types.html) | `string` | `"V2"` | no |
 | <a name="input_ecr_custom_registry_name"></a> [ecr\_custom\_registry\_name](#input\_ecr\_custom\_registry\_name) | If the repo name is not the same as the image name use this. E.g. Mono repositories with multiple projects inside | `string` | `""` | no |
 | <a name="input_ecr_dev_tag_pattern_list"></a> [ecr\_dev\_tag\_pattern\_list](#input\_ecr\_dev\_tag\_pattern\_list) | Tag pattern list to match development images. See [ECR lifecycle policy doc](https://docs.aws.amazon.com/AmazonECR/latest/userguide/lifecycle_policy_parameters.html#lp_tag_pattern_list). | `list(string)` | <pre>[<br/>  "dev-*.*.*"<br/>]</pre> | no |
@@ -390,10 +399,12 @@ No modules.
 | <a name="input_parallel_instances_configuration"></a> [parallel\_instances\_configuration](#input\_parallel\_instances\_configuration) | Configuration for both environments. To know about possible values check [CodeBuild doc](https://docs.aws.amazon.com/codebuild/latest/userguide/build-env-ref.html). | <pre>object({<br/>    cache_amd64 = object({<br/>      compute_type          = optional(string, "BUILD_GENERAL1_MEDIUM")<br/>      image                 = optional(string, "aws/codebuild/amazonlinux-x86_64-standard:5.0")<br/>      privileged_mode       = optional(bool, true)<br/>      container_type        = optional(string, "LINUX_CONTAINER")<br/>      buildspec_path        = optional(string, "buildspec-cache.yaml")<br/>      build_minutes_timeout = optional(number, 15)<br/>      platform_name         = optional(string, "linux/amd64")<br/>    })<br/>    cache_arm64 = object({<br/>      compute_type          = optional(string, "BUILD_GENERAL1_MEDIUM")<br/>      image                 = optional(string, "aws/codebuild/amazonlinux-aarch64-standard:3.0")<br/>      privileged_mode       = optional(bool, true)<br/>      container_type        = optional(string, "ARM_CONTAINER")<br/>      buildspec_path        = optional(string, "buildspec-cache.yaml")<br/>      build_minutes_timeout = optional(number, 15)<br/>      platform_name         = optional(string, "linux/arm64")<br/>    })<br/>  })</pre> | <pre>{<br/>  "cache_amd64": {<br/>    "buildspec_path": "buildspec-cache.yaml",<br/>    "compute_type": "BUILD_GENERAL1_MEDIUM",<br/>    "container_type": "LINUX_CONTAINER",<br/>    "image": "aws/codebuild/amazonlinux-x86_64-standard:5.0",<br/>    "privileged_mode": true<br/>  },<br/>  "cache_arm64": {<br/>    "buildspec_path": "buildspec-cache.yaml",<br/>    "compute_type": "BUILD_GENERAL1_MEDIUM",<br/>    "container_type": "ARM_CONTAINER",<br/>    "image": "aws/codebuild/amazonlinux-aarch64-standard:3.0",<br/>    "privileged_mode": true<br/>  }<br/>}</pre> | no |
 | <a name="input_parallel_multiplatform_build_enabled"></a> [parallel\_multiplatform\_build\_enabled](#input\_parallel\_multiplatform\_build\_enabled) | Whether to enable parallel multiplatform build to speed up process. When enabled the default variables will be used to configure the project to build the multilayer index. When enabled `cache_arm64` and `cache_amd64` are automatically added to ECR mutability exclusion list. | `bool` | `false` | no |
 | <a name="input_parameters_paths_to_read"></a> [parameters\_paths\_to\_read](#input\_parameters\_paths\_to\_read) | List of parameters PATHS from Parameter store to read from the Codebuild project. <br> **Note**: the last part of the path, the `paramater name`, should not be present in this variable otherwise no parameters will be found at runtime. | `list(string)` | `[]` | no |
+| <a name="input_pipeline_custom_name"></a> [pipeline\_custom\_name](#input\_pipeline\_custom\_name) | Custom name for the pipeline, if not set the name will be generated with the pattern <owner>-<repo\_name>-<repo\_branch> and truncated to 64 characters if needed. This value takes precedence over the generated one. Use this in case of multiple pipelines on a monorepo. | `string` | `""` | no |
 | <a name="input_repo_owner"></a> [repo\_owner](#input\_repo\_owner) | Name of the organization | `string` | `""` | no |
 | <a name="input_repo_owner_shortname"></a> [repo\_owner\_shortname](#input\_repo\_owner\_shortname) | This is used to name resources when repo name and repo org are too long. | `string` | `""` | no |
 | <a name="input_secrets_to_read"></a> [secrets\_to\_read](#input\_secrets\_to\_read) | List of secrets ARNs from SecretManager to read from the Codebuild project | `list(string)` | `[]` | no |
 | <a name="input_sns_subscribers"></a> [sns\_subscribers](#input\_sns\_subscribers) | List of email addresses to subscribe to SNS notifications | `list(string)` | `[]` | no |
+| <a name="input_source_file_path_filters"></a> [source\_file\_path\_filters](#input\_source\_file\_path\_filters) | Glob patterns of file paths that trigger the pipeline on push. Supports `*`, `**`, and `?`. For GitHub/external providers, requires `codepipeline_type = "V2"`. For CodeCommit, leaving this as `["*"]` routes events directly to the pipeline via EventBridge; setting specific patterns instead deploys a Lambda traffic controller that inspects commit diffs and triggers the pipeline only when a matching file is changed. | `list(string)` | <pre>[<br/>  "*"<br/>]</pre> | no |
 
 ## Outputs
 
