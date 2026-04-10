@@ -40,6 +40,17 @@ variable "git_provider_url" {
   description = "URL of the git provider."
 }
 
+variable "pipeline_custom_name" {
+  type        = string
+  default     = ""
+  description = "Custom name for the pipeline, if not set the name will be generated with the pattern <owner>-<repo_name>-<repo_branch> and truncated to 64 characters if needed. This value takes precedence over the generated one. Use this in case of multiple pipelines on a monorepo."
+  validation {
+    condition     = length(var.pipeline_custom_name) == 0 || (length(trim(var.pipeline_custom_name, " ")) > 0 && length(trim(var.pipeline_custom_name, " ")) <= 64)
+    error_message = "Custom pipeline name must be between 1 and 64 characters."
+
+  }
+}
+
 variable "is_codecommit" {
   type        = bool
   default     = false
@@ -221,10 +232,10 @@ variable "codepipeline_type" {
   description = "Codepipeline version, it can be `V1` or `V2`. [See documentation to choose](https://docs.aws.amazon.com/codepipeline/latest/userguide/pipeline-types.html)"
 }
 
-variable "codepipeline_source_file_paths" {
+variable "source_file_path_filters" {
   type        = list(string)
   default     = ["*"]
-  description = "A list of patterns of Git repository file paths that, when a commit is pushed, are to be included as criteria that starts the pipeline. Pipeline type must be V2."
+  description = "Glob patterns of file paths that trigger the pipeline on push. Supports `*`, `**`, and `?`. For GitHub/external providers, requires `codepipeline_type = \"V2\"`. For CodeCommit, leaving this as `[\"*\"]` routes events directly to the pipeline via EventBridge; setting specific patterns instead deploys a Lambda traffic controller that inspects commit diffs and triggers the pipeline only when a matching file is changed."
 }
 
 variable "parallel_multiplatform_build_enabled" {

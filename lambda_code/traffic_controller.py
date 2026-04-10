@@ -4,13 +4,18 @@ Monorepo Lambda Traffic Controller
 Triggered by EventBridge on every CodeCommit push to the watched branch.
 
 Compares file paths changed in the commit against FILE_PATH_FILTERS.
-If any changed file matches a filter prefix, triggers DEFAULT_PIPELINE_NAME.
+If any changed file matches a filter pattern, triggers DEFAULT_PIPELINE_NAME.
 If FILE_PATH_FILTERS == ["*"] it triggers on every push (should not happen
 because the Terraform toggle avoids creating this Lambda in that case).
 
+Filter patterns follow Unix shell glob semantics (PurePosixPath.match):
+  'services/api/*'  – any file directly under services/api/
+  '**/*.js'         – any .js file anywhere in the tree
+  'infra/**'        – everything under infra/
+
 Environment variables
 ---------------------
-FILE_PATH_FILTERS     JSON array   [ "services/api/", ... ]
+FILE_PATH_FILTERS     JSON array   [ "services/api/*", "**/*.tf", ... ]
 DEFAULT_PIPELINE_NAME string       name of the pipeline owned by this module
 LOG_LEVEL             string       Python log-level (default INFO)
 """
@@ -20,6 +25,7 @@ from __future__ import annotations
 import json
 import logging
 import os
+import re
 from typing import Any
 
 import boto3
@@ -50,6 +56,63 @@ _WILDCARD_ONLY = _FILE_PATH_FILTERS == ["*"]
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
+
+
+def _glob_to_regex(pattern: str) -> re.Pattern:
+    """
+    Translate a glob pattern to a compiled regex with full ** support.
+
+    Rules:
+      '**/  at any position   matches zero or more path segments (including none)
+      '**'  at end            matches anything including slashes
+      '*'                     matches any chars within a single path segment
+      '?'                     matches any single char within a segment
+      Everything else is treated as a literal (re.escape'd).
+    """
+    i = 0
+    result = ["^"]
+    while i < len(pattern):
+        chunk = pattern[i:]
+        if chunk.startswith("**/"):
+            # Zero or more path segments followed by a slash.
+            result.append("(?:.+/)?")
+            i += 3
+        elif chunk.startswith("**"):
+            # Trailing ** – match everything including slashes.
+            result.append(".*")
+            i += 2
+        elif pattern[i] == "*":
+            # Single segment wildcard – no slash crossing.
+            result.append("[^/]*")
+            i += 1
+        elif pattern[i] == "?":
+            result.append("[^/]")
+            i += 1
+        else:
+            result.append(re.escape(pattern[i]))
+            i += 1
+    result.append("$")
+    return re.compile("".join(result))
+
+
+def _matches_any_filter(path: str) -> bool:
+    """
+    Return True when *path* matches any configured filter pattern.
+
+    Patterns support:
+      '*'          – any chars within a single path segment  (no slash crossing)
+      '**'         – any number of path segments  (globstar)
+      '?'          – any single char within a segment
+
+    Examples:
+      'services/api/*'  – direct children of services/api/
+      '**/*.js'         – any .js file at any depth, including root level
+      'infra/**'        – everything under infra/ at any depth
+
+    The special single-element filter ["*"] is handled by the _WILDCARD_ONLY
+    sentinel before this function is ever called.
+    """
+    return any(bool(_glob_to_regex(f).match(path)) for f in _FILE_PATH_FILTERS)
 
 
 def _get_changed_paths(repo: str, before_ref: str, after_ref: str) -> list[str]:
@@ -88,14 +151,6 @@ def _get_changed_paths(repo: str, before_ref: str, after_ref: str) -> list[str]:
 
     # Deduplicate (a path can appear in both before/after on rename/edit)
     return list(dict.fromkeys(paths))
-
-
-def _matches_any_filter(path: str) -> bool:
-    """Return True when *path* starts with any configured filter prefix."""
-    for f in _FILE_PATH_FILTERS:
-        if f == "*" or path.startswith(f):
-            return True
-    return False
 
 
 def _should_trigger(changed_paths: list[str]) -> bool:
