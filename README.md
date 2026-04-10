@@ -10,6 +10,7 @@
   - [Using Environment Variables](#using-environment-variables)
 - [CodeBuild Enviroment Configuration](#codebuild-enviroment-configuration)
 - [Parallel multiplatform](#parallel-multiplatform)
+- [Lambda Unit Tests](#lambda-unit-tests)
 - [Requirements](#requirements)
 - [Providers](#providers)
 - [Modules](#modules)
@@ -238,6 +239,43 @@ variable "parallel_instances_configuration" {
 }
 ```
 
+## Lambda Unit Tests
+
+The monorepo traffic controller Lambda (`lambda_code/traffic_controller.py`) ships with a unit test suite that requires **no external dependencies** beyond `boto3`, which is already part of the Lambda runtime and any standard Python environment used with this module.
+
+### Setup
+
+Create and activate a virtual environment, then install `boto3`:
+
+```sh
+python -m venv .venv
+
+# Linux / macOS
+source .venv/bin/activate
+
+# Windows (PowerShell)
+.\.venv\Scripts\Activate.ps1
+
+pip install boto3
+```
+
+### Running the tests
+
+From the **repo root**, with the virtual environment active:
+
+```sh
+python -m unittest discover -s lambda_code/tests -p "test_*.py" -v
+```
+
+### pre-commit integration
+
+The test suite is wired into pre-commit and runs automatically whenever a `.py` file under `lambda_code/` is staged. No extra setup is needed beyond the standard pre-commit install:
+
+```sh
+pre-commit install
+pre-commit install --hook-type commit-msg
+```
+
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
 
@@ -331,7 +369,7 @@ No modules.
 | <a name="input_codebuild_privileged_mode"></a> [codebuild\_privileged\_mode](#input\_codebuild\_privileged\_mode) | Whether to run the build in privileged mode which is needed when using Docker | `bool` | `true` | no |
 | <a name="input_codebuild_queue_minutes_timeout"></a> [codebuild\_queue\_minutes\_timeout](#input\_codebuild\_queue\_minutes\_timeout) | Number of minutes to timeout the codebuild queue | `number` | `60` | no |
 | <a name="input_codebuild_role_additional_policy"></a> [codebuild\_role\_additional\_policy](#input\_codebuild\_role\_additional\_policy) | Additional policy to attach to the CodeBuild role, it must be in json | `any` | `{}` | no |
-| <a name="input_codepipeline_source_file_paths"></a> [codepipeline\_source\_file\_paths](#input\_codepipeline\_source\_file\_paths) | A list of patterns of Git repository file paths that, when a commit is pushed, are to be included as criteria that starts the pipeline. Pipeline type must be V2. | `list(string)` | <pre>[<br/>  "*"<br/>]</pre> | no |
+| <a name="input_source_file_path_filters"></a> [codepipeline\_source\_file\_paths](#input\_codepipeline\_source\_file\_paths) | A list of patterns of Git repository file paths that, when a commit is pushed, are to be included as criteria that starts the pipeline. Pipeline type must be V2. | `list(string)` | <pre>[<br/>  "*"<br/>]</pre> | no |
 | <a name="input_codepipeline_type"></a> [codepipeline\_type](#input\_codepipeline\_type) | Codepipeline version, it can be `V1` or `V2`. [See documentation to choose](https://docs.aws.amazon.com/codepipeline/latest/userguide/pipeline-types.html) | `string` | `"V2"` | no |
 | <a name="input_ecr_custom_registry_name"></a> [ecr\_custom\_registry\_name](#input\_ecr\_custom\_registry\_name) | If the repo name is not the same as the image name use this. E.g. Mono repositories with multiple projects inside | `string` | `""` | no |
 | <a name="input_ecr_dev_tag_pattern_list"></a> [ecr\_dev\_tag\_pattern\_list](#input\_ecr\_dev\_tag\_pattern\_list) | Tag pattern list to match development images. See [ECR lifecycle policy doc](https://docs.aws.amazon.com/AmazonECR/latest/userguide/lifecycle_policy_parameters.html#lp_tag_pattern_list). | `list(string)` | <pre>[<br/>  "dev-*.*.*"<br/>]</pre> | no |

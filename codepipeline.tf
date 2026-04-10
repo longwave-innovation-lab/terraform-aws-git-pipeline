@@ -145,7 +145,7 @@ resource "aws_codepipeline" "pipeline" {
             includes = [var.repo_branch]
           }
           file_paths {
-            includes = var.codepipeline_source_file_paths
+            includes = var.source_file_path_filters
           }
 
         }

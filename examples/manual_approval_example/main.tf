@@ -35,7 +35,7 @@ module "github_codepipeline" {
   repo_name                         = "repo_name"
   repo_branch                       = "branch_name"
   codepipeline_type                 = "v2"
-  codepipeline_source_file_paths    = ["package.json"]
+  source_file_path_filters          = ["package.json"]
   existing_codestart_connection_arn = aws_codestarconnections_connection.github_connection.arn
   add_manual_approval               = true
   force_delete_registry             = true

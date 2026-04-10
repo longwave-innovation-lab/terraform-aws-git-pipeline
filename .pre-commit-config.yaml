@@ -38,3 +38,10 @@ repos:
         pass_filenames: false
         files: \.(tf|tfvars|yaml|yml)$
         exclude: ^(\.github/workflows/|\.pre-commit-config\.yaml)
+
+      - id: lambda-unit-tests
+        name: Lambda unit tests
+        entry: python -m unittest discover -s lambda_code/tests -p "test_*.py" -v
+        language: system
+        pass_filenames: false
+        files: ^lambda_code/.*\.py$

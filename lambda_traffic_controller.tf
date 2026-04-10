@@ -1,7 +1,7 @@
 # ---------------------------------------------------------------------------
 # Monorepo Lambda Traffic Controller
 #
-# Created only when is_codecommit = true AND codepipeline_source_file_paths
+# Created only when is_codecommit = true AND source_file_path_filters
 # contains specific paths (not the catch-all ["*"]).
 #
 # Flow:
@@ -98,7 +98,7 @@ resource "aws_lambda_function" "traffic_controller" {
   environment {
     variables = {
       # JSON-encoded list of path prefixes that gate whether to trigger the pipeline.
-      FILE_PATH_FILTERS     = jsonencode(var.codepipeline_source_file_paths)
+      FILE_PATH_FILTERS     = jsonencode(var.source_file_path_filters)
       DEFAULT_PIPELINE_NAME = aws_codepipeline.pipeline.name
       LOG_LEVEL             = "INFO"
     }
