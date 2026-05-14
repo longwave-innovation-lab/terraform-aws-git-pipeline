@@ -1,3 +1,25 @@
+## [3.0.0](https://github.com/longwave-innovation-lab/terraform-aws-git-pipeline/compare/v2.0.0...v3.0.0) (2026-05-14)
+
+
+### ⚠ BREAKING CHANGES
+
+* Codecommit filtering works, path are glob patterns, unit testing closes, changed name of path filter variable #11
+* now codepipeline_type must be uppercase, defualt is V2
+
+### Features
+
+* Codecommit filtering works, path are glob patterns, unit testing closes, changed name of path filter variable [#11](https://github.com/longwave-innovation-lab/terraform-aws-git-pipeline/issues/11) ([cf63ea7](https://github.com/longwave-innovation-lab/terraform-aws-git-pipeline/commit/cf63ea75144d283b8398d5a668fa0658fc45d14b))
+* codecommit path filter first draft [#11](https://github.com/longwave-innovation-lab/terraform-aws-git-pipeline/issues/11) ([457457c](https://github.com/longwave-innovation-lab/terraform-aws-git-pipeline/commit/457457c413741b1863926674bda99598bc819c2d))
+
+
+### Bug Fixes
+
+* **ci:** mdlint now wait for doctoc to run ([ea97bf9](https://github.com/longwave-innovation-lab/terraform-aws-git-pipeline/commit/ea97bf941e26ca687b683cd83c7fcdff7f631469))
+* **lambda:** fixed notifier handler closes [#13](https://github.com/longwave-innovation-lab/terraform-aws-git-pipeline/issues/13) ([d6dbb99](https://github.com/longwave-innovation-lab/terraform-aws-git-pipeline/commit/d6dbb9901d4f1b557afe11bba3ed9cee2e38ce9c))
+* more grammar changes ([3048483](https://github.com/longwave-innovation-lab/terraform-aws-git-pipeline/commit/30484831ff088f2186121e3bac1f49cbe77c1fac))
+* now codepipeline_type must be uppercase, defualt is V2 ([c600362](https://github.com/longwave-innovation-lab/terraform-aws-git-pipeline/commit/c6003620f77afb89c509268bcd99468080f596b2))
+* removed wrong condition on source stage that was overriding pr changes ([ab64db5](https://github.com/longwave-innovation-lab/terraform-aws-git-pipeline/commit/ab64db52702ac99f2c4b8bd2e712779b38c013bd))
+
 ## [2.0.0](https://github.com/longwave-innovation-lab/terraform-aws-git-pipeline/compare/v1.0.1...v2.0.0) (2026-04-10)
 
 
@@ -27,11 +49,11 @@
 
 ### ⚠ BREAKING CHANGES
 
-* now codepipeline_type must be uppercase, default is V2
+* now codepipeline_type must be uppercase, defualt is V2
 
 ### Bug Fixes
 
-* now codepipeline_type must be uppercase, default is V2 ([e87fdbd](https://github.com/longwave-innovation-lab/terraform-aws-git-pipeline/commit/e87fdbd1a59a2f08dabdaa725bd51d3bf1a35e9d))
+* now codepipeline_type must be uppercase, defualt is V2 ([e87fdbd](https://github.com/longwave-innovation-lab/terraform-aws-git-pipeline/commit/e87fdbd1a59a2f08dabdaa725bd51d3bf1a35e9d))
 
 ## [0.1.5](https://github.com/longwave-innovation-lab/terraform-aws-git-pipeline/compare/v0.1.4...v0.1.5) (2026-03-23)
 
@@ -44,9 +66,3 @@
 * source url example readme.md ([1dc4bb2](https://github.com/longwave-innovation-lab/terraform-aws-git-pipeline/commit/1dc4bb2acf34d344272021120317ec3d1e8636c7))
 * using pipeline V2 won't give error with multi source ([a796916](https://github.com/longwave-innovation-lab/terraform-aws-git-pipeline/commit/a796916257e570514b17af416d639d1ebc1b9cd1))
 
-## [0.1.4](https://github.com/longwave-innovation-lab/terraform-aws-git-pipeline/compare/v0.1.3...v0.1.4) (2026-03-20)
-
-
-### Bug Fixes
-
-* using pipeline V2 won't give error with multi source ([77812b7](https://github.com/longwave-innovation-lab/terraform-aws-git-pipeline/commit/77812b79f02025c8aa680a3e64d75ad564e78348))
