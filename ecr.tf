@@ -1,5 +1,5 @@
 # Sanitizing the name is not required anymore, it is preferred to throw an error
-# instead of faking a creation a "maybe" not functioning pipeline
+# instead of faking the creation of a "maybe" not functioning pipeline
 
 locals {
   registry_name = var.ecr_custom_registry_name != "" ? var.ecr_custom_registry_name : var.repo_name
@@ -51,9 +51,9 @@ data "aws_ecr_lifecycle_policy_document" "policy" {
   }
 
   rule {
-    # Medium priority for production tagged images
+    # Medium priority for development tagged images
     priority    = 2
-    description = "Keep last ${var.ecr_max_dev_tagged_images} production tagged images"
+    description = "Keep last ${var.ecr_max_dev_tagged_images} development tagged images"
 
     selection {
       tag_status       = "tagged"
@@ -64,7 +64,7 @@ data "aws_ecr_lifecycle_policy_document" "policy" {
   }
 
   rule {
-    # LOW priority for production tagged images
+    # Lowest priority for untagged images
     priority    = 1
     description = "Keep last ${var.ecr_max_untagged_images} untagged images"
 

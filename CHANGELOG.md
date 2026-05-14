@@ -27,11 +27,11 @@
 
 ### ⚠ BREAKING CHANGES
 
-* now codepipeline_type must be uppercase, defualt is V2
+* now codepipeline_type must be uppercase, default is V2
 
 ### Bug Fixes
 
-* now codepipeline_type must be uppercase, defualt is V2 ([e87fdbd](https://github.com/longwave-innovation-lab/terraform-aws-git-pipeline/commit/e87fdbd1a59a2f08dabdaa725bd51d3bf1a35e9d))
+* now codepipeline_type must be uppercase, default is V2 ([e87fdbd](https://github.com/longwave-innovation-lab/terraform-aws-git-pipeline/commit/e87fdbd1a59a2f08dabdaa725bd51d3bf1a35e9d))
 
 ## [0.1.5](https://github.com/longwave-innovation-lab/terraform-aws-git-pipeline/compare/v0.1.4...v0.1.5) (2026-03-23)
 
@@ -50,4 +50,3 @@
 ### Bug Fixes
 
 * using pipeline V2 won't give error with multi source ([77812b7](https://github.com/longwave-innovation-lab/terraform-aws-git-pipeline/commit/77812b79f02025c8aa680a3e64d75ad564e78348))
-

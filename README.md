@@ -8,7 +8,7 @@
   - [Basic Pipeline](#basic-pipeline)
   - [Basic Manual Approval](#basic-manual-approval)
   - [Using Environment Variables](#using-environment-variables)
-- [CodeBuild Enviroment Configuration](#codebuild-enviroment-configuration)
+- [CodeBuild Environment Configuration](#codebuild-environment-configuration)
 - [Parallel multiplatform](#parallel-multiplatform)
 - [Lambda Unit Tests](#lambda-unit-tests)
   - [Setup](#setup)
@@ -34,7 +34,7 @@ The pipeline structure is very basic at the moment.
 
 Here's some examples on how to used the module.
 
-To further customize the pipeline behavior look ad [input arguments](#inputs).
+To further customize the pipeline behavior look at [input arguments](#inputs).
 
 ### Basic Pipeline
 
@@ -167,7 +167,7 @@ module "github_codepipeline" {
 }
 ```
 
-## CodeBuild Enviroment Configuration
+## CodeBuild Environment Configuration
 
 You can use different configuration to customize your CodeBuild project where the automation will run.
 
@@ -401,7 +401,7 @@ No modules.
 | <a name="input_is_codecommit"></a> [is\_codecommit](#input\_is\_codecommit) | Whether the repository is a CodeCommit repository. | `bool` | `false` | no |
 | <a name="input_parallel_instances_configuration"></a> [parallel\_instances\_configuration](#input\_parallel\_instances\_configuration) | Configuration for both environments. To know about possible values check [CodeBuild doc](https://docs.aws.amazon.com/codebuild/latest/userguide/build-env-ref.html). | <pre>object({<br/>    cache_amd64 = object({<br/>      compute_type          = optional(string, "BUILD_GENERAL1_MEDIUM")<br/>      image                 = optional(string, "aws/codebuild/amazonlinux-x86_64-standard:5.0")<br/>      privileged_mode       = optional(bool, true)<br/>      container_type        = optional(string, "LINUX_CONTAINER")<br/>      buildspec_path        = optional(string, "buildspec-cache.yaml")<br/>      build_minutes_timeout = optional(number, 15)<br/>      platform_name         = optional(string, "linux/amd64")<br/>    })<br/>    cache_arm64 = object({<br/>      compute_type          = optional(string, "BUILD_GENERAL1_MEDIUM")<br/>      image                 = optional(string, "aws/codebuild/amazonlinux-aarch64-standard:3.0")<br/>      privileged_mode       = optional(bool, true)<br/>      container_type        = optional(string, "ARM_CONTAINER")<br/>      buildspec_path        = optional(string, "buildspec-cache.yaml")<br/>      build_minutes_timeout = optional(number, 15)<br/>      platform_name         = optional(string, "linux/arm64")<br/>    })<br/>  })</pre> | <pre>{<br/>  "cache_amd64": {<br/>    "buildspec_path": "buildspec-cache.yaml",<br/>    "compute_type": "BUILD_GENERAL1_MEDIUM",<br/>    "container_type": "LINUX_CONTAINER",<br/>    "image": "aws/codebuild/amazonlinux-x86_64-standard:5.0",<br/>    "privileged_mode": true<br/>  },<br/>  "cache_arm64": {<br/>    "buildspec_path": "buildspec-cache.yaml",<br/>    "compute_type": "BUILD_GENERAL1_MEDIUM",<br/>    "container_type": "ARM_CONTAINER",<br/>    "image": "aws/codebuild/amazonlinux-aarch64-standard:3.0",<br/>    "privileged_mode": true<br/>  }<br/>}</pre> | no |
 | <a name="input_parallel_multiplatform_build_enabled"></a> [parallel\_multiplatform\_build\_enabled](#input\_parallel\_multiplatform\_build\_enabled) | Whether to enable parallel multiplatform build to speed up process. When enabled the default variables will be used to configure the project to build the multilayer index. When enabled `cache_arm64` and `cache_amd64` are automatically added to ECR mutability exclusion list. | `bool` | `false` | no |
-| <a name="input_parameters_paths_to_read"></a> [parameters\_paths\_to\_read](#input\_parameters\_paths\_to\_read) | List of parameters PATHS from Parameter store to read from the Codebuild project. <br> **Note**: the last part of the path, the `paramater name`, should not be present in this variable otherwise no parameters will be found at runtime. | `list(string)` | `[]` | no |
+| <a name="input_parameters_paths_to_read"></a> [parameters\_paths\_to\_read](#input\_parameters\_paths\_to\_read) | List of parameters PATHS from Parameter store to read from the Codebuild project. <br> **Note**: the last part of the path, the `parameter name`, should not be present in this variable otherwise no parameters will be found at runtime. | `list(string)` | `[]` | no |
 | <a name="input_pipeline_custom_name"></a> [pipeline\_custom\_name](#input\_pipeline\_custom\_name) | Custom name for the pipeline, if not set the name will be generated with the pattern {owner}-{repo\_name}-{repo\_branch} and truncated to 64 characters if needed. This value takes precedence over the generated one. Use this in case of multiple pipelines on a monorepo. | `string` | `""` | no |
 | <a name="input_repo_owner"></a> [repo\_owner](#input\_repo\_owner) | Name of the organization | `string` | `""` | no |
 | <a name="input_repo_owner_shortname"></a> [repo\_owner\_shortname](#input\_repo\_owner\_shortname) | This is used to name resources when repo name and repo org are too long. | `string` | `""` | no |
@@ -419,12 +419,12 @@ No modules.
 | <a name="output_ecr_arn"></a> [ecr\_arn](#output\_ecr\_arn) | The Amazon Resource Name (ARN) of the ECR repository. |
 | <a name="output_ecr_registry_name"></a> [ecr\_registry\_name](#output\_ecr\_registry\_name) | The name of the ECR repository. |
 | <a name="output_ecr_registry_url"></a> [ecr\_registry\_url](#output\_ecr\_registry\_url) | The URL of the ECR repository. |
-| <a name="output_fixed_path_ssm_paramaters_to_read"></a> [fixed\_path\_ssm\_paramaters\_to\_read](#output\_fixed\_path\_ssm\_paramaters\_to\_read) | The Amazon Resource Name (ARN) of the SSM parameters with a fixed path that the pipeline will have access. |
+| <a name="output_fixed_path_ssm_parameters_to_read"></a> [fixed\_path\_ssm\_parameters\_to\_read](#output\_fixed\_path\_ssm\_parameters\_to\_read) | The Amazon Resource Name (ARN) of the SSM parameters with a fixed path that the pipeline will have access. |
 | <a name="output_lambda_codebuild_event_listener_arn"></a> [lambda\_codebuild\_event\_listener\_arn](#output\_lambda\_codebuild\_event\_listener\_arn) | The Amazon Resource Name (ARN) identifying the CodeBuild event listener Lambda function. |
 | <a name="output_lambda_codebuild_event_listener_name"></a> [lambda\_codebuild\_event\_listener\_name](#output\_lambda\_codebuild\_event\_listener\_name) | The name identifying the CodeBuild event listener Lambda function. |
 | <a name="output_lambda_codebuild_event_listener_role"></a> [lambda\_codebuild\_event\_listener\_role](#output\_lambda\_codebuild\_event\_listener\_role) | The Amazon Resource Name (ARN) identifying the IAM role for the CodeBuild event listener Lambda function. |
-| <a name="output_sns_topci_name"></a> [sns\_topci\_name](#output\_sns\_topci\_name) | The name of the SNS topic name for pipeline notifications. |
 | <a name="output_sns_topic_arn"></a> [sns\_topic\_arn](#output\_sns\_topic\_arn) | The Amazon Resource Name (ARN) of the SNS topic for pipeline notifications. |
+| <a name="output_sns_topic_name"></a> [sns\_topic\_name](#output\_sns\_topic\_name) | The name of the SNS topic for pipeline notifications. |
 | <a name="output_sqs_codebuild_events_dlq"></a> [sqs\_codebuild\_events\_dlq](#output\_sqs\_codebuild\_events\_dlq) | The URL of the SQS queue which holds dead-letter messages for CodeBuild events that couldn't be processed by the lambda listener. |
 | <a name="output_wildcard_path_ssm_parameters_to_read"></a> [wildcard\_path\_ssm\_parameters\_to\_read](#output\_wildcard\_path\_ssm\_parameters\_to\_read) | The SSM parameters with a wildcard path that the pipeline will have access. |
 <!-- END_TF_DOCS -->

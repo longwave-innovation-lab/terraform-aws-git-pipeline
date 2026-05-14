@@ -33,9 +33,9 @@ output "sns_topic_arn" {
   description = "The Amazon Resource Name (ARN) of the SNS topic for pipeline notifications."
 }
 
-output "sns_topci_name" {
+output "sns_topic_name" {
   value       = aws_sns_topic.pipeline_notifications.name
-  description = "The name of the SNS topic name for pipeline notifications."
+  description = "The name of the SNS topic for pipeline notifications."
 }
 
 output "lambda_codebuild_event_listener_arn" {
@@ -58,7 +58,7 @@ output "sqs_codebuild_events_dlq" {
   description = "The URL of the SQS queue which holds dead-letter messages for CodeBuild events that couldn't be processed by the lambda listener."
 }
 
-output "fixed_path_ssm_paramaters_to_read" {
+output "fixed_path_ssm_parameters_to_read" {
   # value       = data.aws_ssm_parameters_by_path.parameters_to_read.arns
   value       = { for k, v in data.aws_ssm_parameters_by_path.parameters_to_read : k => v.arns }
   description = "The Amazon Resource Name (ARN) of the SSM parameters with a fixed path that the pipeline will have access."

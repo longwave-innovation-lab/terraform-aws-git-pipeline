@@ -15,7 +15,7 @@
 
 ## Intro
 
-This examples shows how to set some environment variables and use them as:
+This example shows how to set some environment variables and use them as:
 
 - Standard environment variable
 - Environment variable in which a value from SecretManager will be injected
