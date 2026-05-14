@@ -55,7 +55,7 @@ resource "aws_lambda_function" "codebuild_event_listener" {
   filename         = "${path.module}/lambda_notifier_payload.zip"
   function_name    = substr("${local.final_name}${local.pipeline_resources_suffix}", 0, 64)
   role             = aws_iam_role.lambda_function_role.arn
-  handler          = "app.lambda_handler"
+  handler          = "notifier.lambda_handler"
   description      = "Lambda that will react to events from ${aws_codepipeline.pipeline.name} for repo ${var.repo_owner}/${var.repo_name} branch ${var.repo_branch}"
   source_code_hash = data.archive_file.lambda.output_base64sha256
 
