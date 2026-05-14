@@ -131,7 +131,7 @@ resource "aws_codepipeline" "pipeline" {
     type     = "S3"
   }
 
-  # V2 pipeline cab have a trigger block to granularly define the events
+  # V2 pipeline can have a trigger block to granularly define the events
   # used to trigger the pipelines
   dynamic "trigger" {
     for_each = var.codepipeline_type == "V2" && !var.is_codecommit ? [1] : []
