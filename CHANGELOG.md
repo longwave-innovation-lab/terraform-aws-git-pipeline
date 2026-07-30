@@ -1,3 +1,10 @@
+## [3.1.0](https://github.com/longwave-innovation-lab/terraform-aws-git-pipeline/compare/v3.0.0...v3.1.0) (2026-07-30)
+
+
+### Features
+
+* **ecr:** pipeline now can be deployed without ECR ([e2daf3b](https://github.com/longwave-innovation-lab/terraform-aws-git-pipeline/commit/e2daf3b979f2cc8b521ab387389de7819efb2b9f))
+
 ## [3.0.0](https://github.com/longwave-innovation-lab/terraform-aws-git-pipeline/compare/v2.0.0...v3.0.0) (2026-05-14)
 
 
@@ -54,15 +61,4 @@
 ### Bug Fixes
 
 * now codepipeline_type must be uppercase, defualt is V2 ([e87fdbd](https://github.com/longwave-innovation-lab/terraform-aws-git-pipeline/commit/e87fdbd1a59a2f08dabdaa725bd51d3bf1a35e9d))
-
-## [0.1.5](https://github.com/longwave-innovation-lab/terraform-aws-git-pipeline/compare/v0.1.4...v0.1.5) (2026-03-23)
-
-
-### Bug Fixes
-
-* correctly updated the stage source name to match the trigger block and prevent error on create, whether V2 or V1 is used ([f57b769](https://github.com/longwave-innovation-lab/terraform-aws-git-pipeline/commit/f57b76948d6d719703c09e8b5fc798d065780cf6))
-* fix version source example readme.md ([1ee40ba](https://github.com/longwave-innovation-lab/terraform-aws-git-pipeline/commit/1ee40ba3540300a2979f7dbe4106c691e39fce07))
-* removing .lock.hcl files that prevents cache plugin dir to be used ([5f3d80b](https://github.com/longwave-innovation-lab/terraform-aws-git-pipeline/commit/5f3d80b73f3a6ee473ccce3143170101642e2314))
-* source url example readme.md ([1dc4bb2](https://github.com/longwave-innovation-lab/terraform-aws-git-pipeline/commit/1dc4bb2acf34d344272021120317ec3d1e8636c7))
-* using pipeline V2 won't give error with multi source ([a796916](https://github.com/longwave-innovation-lab/terraform-aws-git-pipeline/commit/a796916257e570514b17af416d639d1ebc1b9cd1))
 
