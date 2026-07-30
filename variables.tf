@@ -57,6 +57,12 @@ variable "is_codecommit" {
   description = "Whether the repository is a CodeCommit repository."
 }
 
+variable "ecr_enabled" {
+  type        = bool
+  default     = true
+  description = "Whether ECR is enabled or not. If false no ECR resource will be created"
+}
+
 variable "ecr_scan_images_on_push" {
   type        = bool
   default     = false

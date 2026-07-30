@@ -88,30 +88,57 @@ data "aws_iam_policy_document" "codebuild_default_policy" {
     ]
   }
 
-  statement {
-    effect = "Allow"
-    actions = [
-      "ecr:BatchCheckLayerAvailability",
-      "ecr:GetDownloadUrlForLayer",
-      "ecr:GetRepositoryPolicy",
-      "ecr:DescribeRepositories",
-      "ecr:ListImages",
-      "ecr:DescribeImages",
-      "ecr:BatchGetImage",
-      "ecr:GetLifecyclePolicy",
-      "ecr:GetLifecyclePolicyPreview",
-      "ecr:ListTagsForResource",
-      "ecr:DescribeImageScanFindings",
-      "ecr:InitiateLayerUpload",
-      "ecr:UploadLayerPart",
-      "ecr:CompleteLayerUpload",
-      "ecr:PutImage"
-    ]
-    resources = [
-      local.registry_arn,
-      "${local.registry_arn}/*"
-    ]
+  dynamic "statement" {
+    for_each = var.ecr_enabled ? [1] : []
+    content {
+      effect = "Allow"
+      actions = [
+        "ecr:BatchCheckLayerAvailability",
+        "ecr:GetDownloadUrlForLayer",
+        "ecr:GetRepositoryPolicy",
+        "ecr:DescribeRepositories",
+        "ecr:ListImages",
+        "ecr:DescribeImages",
+        "ecr:BatchGetImage",
+        "ecr:GetLifecyclePolicy",
+        "ecr:GetLifecyclePolicyPreview",
+        "ecr:ListTagsForResource",
+        "ecr:DescribeImageScanFindings",
+        "ecr:InitiateLayerUpload",
+        "ecr:UploadLayerPart",
+        "ecr:CompleteLayerUpload",
+        "ecr:PutImage"
+      ]
+      resources = [
+        local.registry_arn,
+        "${local.registry_arn}/*"
+      ]
+    }
   }
+  # statement {
+  #   effect = "Allow"
+  #   actions = [
+  #     "ecr:BatchCheckLayerAvailability",
+  #     "ecr:GetDownloadUrlForLayer",
+  #     "ecr:GetRepositoryPolicy",
+  #     "ecr:DescribeRepositories",
+  #     "ecr:ListImages",
+  #     "ecr:DescribeImages",
+  #     "ecr:BatchGetImage",
+  #     "ecr:GetLifecyclePolicy",
+  #     "ecr:GetLifecyclePolicyPreview",
+  #     "ecr:ListTagsForResource",
+  #     "ecr:DescribeImageScanFindings",
+  #     "ecr:InitiateLayerUpload",
+  #     "ecr:UploadLayerPart",
+  #     "ecr:CompleteLayerUpload",
+  #     "ecr:PutImage"
+  #   ]
+  #   resources = [
+  #     local.registry_arn,
+  #     "${local.registry_arn}/*"
+  #   ]
+  # }
 
   statement {
     effect = "Allow"

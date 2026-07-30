@@ -3,8 +3,8 @@
 
 locals {
   registry_name = var.ecr_custom_registry_name != "" ? var.ecr_custom_registry_name : var.repo_name
-  registry_arn  = var.ecr_use_existing ? data.aws_ecr_repository.existing[0].arn : aws_ecr_repository.registry[0].arn
-  registry_url  = var.ecr_use_existing ? data.aws_ecr_repository.existing[0].repository_url : aws_ecr_repository.registry[0].repository_url
+  registry_arn  = var.ecr_enabled ? (var.ecr_use_existing ? data.aws_ecr_repository.existing[0].arn : aws_ecr_repository.registry[0].arn) : ""
+  registry_url  = var.ecr_enabled ? (var.ecr_use_existing ? data.aws_ecr_repository.existing[0].repository_url : aws_ecr_repository.registry[0].repository_url) : ""
 
   mutability_exclusion_tags = (
     var.parallel_multiplatform_build_enabled ?
@@ -14,7 +14,7 @@ locals {
 }
 
 resource "aws_ecr_repository" "registry" {
-  count                = var.ecr_use_existing ? 0 : 1
+  count                = var.ecr_enabled ? (var.ecr_use_existing ? 0 : 1) : 0
   name                 = local.registry_name
   image_tag_mutability = upper(var.ecr_image_tag_mutability)
   force_delete         = var.force_delete_registry
@@ -32,11 +32,12 @@ resource "aws_ecr_repository" "registry" {
 }
 
 data "aws_ecr_repository" "existing" {
-  count = var.ecr_use_existing ? 1 : 0
+  count = var.ecr_enabled ? (var.ecr_use_existing ? 1 : 0) : 0
   name  = local.registry_name
 }
 
 data "aws_ecr_lifecycle_policy_document" "policy" {
+  count = var.ecr_enabled ? 1 : 0
   rule {
     # High priority for production tagged images
     priority    = 3
@@ -77,7 +78,7 @@ data "aws_ecr_lifecycle_policy_document" "policy" {
 }
 
 data "aws_iam_policy_document" "ecr_ext_access" {
-  count = length(var.ecr_external_access_arns) > 0 ? 1 : 0
+  count = var.ecr_enabled && length(var.ecr_external_access_arns) > 0 ? 1 : 0
   statement {
     principals {
       identifiers = var.ecr_external_access_arns
@@ -103,7 +104,7 @@ data "aws_iam_policy_document" "ecr_ext_access" {
 }
 
 resource "aws_ecr_repository_policy" "external_access" {
-  count      = length(var.ecr_external_access_arns) > 0 ? 1 : 0
+  count      = var.ecr_enabled && length(var.ecr_external_access_arns) > 0 ? 1 : 0
   policy     = data.aws_iam_policy_document.ecr_ext_access[0].json
   repository = local.registry_name
 }
@@ -113,7 +114,7 @@ resource "aws_ecr_lifecycle_policy" "images_lifecycle" {
     data.aws_ecr_repository.existing,
     aws_ecr_repository.registry
   ]
-  count      = ((var.ecr_use_existing && var.ecr_override_lifecycle_policy) || !var.ecr_use_existing) ? 1 : 0
+  count      = var.ecr_enabled && ((var.ecr_use_existing && var.ecr_override_lifecycle_policy) || !var.ecr_use_existing) ? 1 : 0
   repository = local.registry_name
-  policy     = data.aws_ecr_lifecycle_policy_document.policy.json
+  policy     = data.aws_ecr_lifecycle_policy_document.policy[0].json
 }
