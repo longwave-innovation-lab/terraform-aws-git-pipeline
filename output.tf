@@ -1,15 +1,15 @@
 output "ecr_arn" {
-  value       = local.registry_arn
+  value       = var.ecr_enabled ? local.registry_arn : ""
   description = "The Amazon Resource Name (ARN) of the ECR repository."
 }
 
 output "ecr_registry_name" {
-  value       = local.registry_name
+  value       = var.ecr_enabled ? local.registry_name : ""
   description = "The name of the ECR repository."
 }
 
 output "ecr_registry_url" {
-  value       = local.registry_url
+  value       = var.ecr_enabled ? local.registry_url : ""
   description = "The URL of the ECR repository."
 }
 
