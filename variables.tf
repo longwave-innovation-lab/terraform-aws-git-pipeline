@@ -240,7 +240,7 @@ variable "codepipeline_type" {
 
 variable "source_file_path_filters" {
   type        = list(string)
-  default     = ["*"]
+  default     = ["**"]
   description = "Glob patterns of file paths that trigger the pipeline on push. Supports `*`, `**`, and `?`. For GitHub/external providers, requires `codepipeline_type = \"V2\"`. For CodeCommit, leaving this as `[\"*\"]` routes events directly to the pipeline via EventBridge; setting specific patterns instead deploys a Lambda traffic controller that inspects commit diffs and triggers the pipeline only when a matching file is changed."
 }
 
