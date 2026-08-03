@@ -1,3 +1,10 @@
+## [3.1.1](https://github.com/longwave-innovation-lab/terraform-aws-git-pipeline/compare/v3.1.0...v3.1.1) (2026-08-03)
+
+
+### Bug Fixes
+
+* changed default value for 'source_file_path_filters' closes [#16](https://github.com/longwave-innovation-lab/terraform-aws-git-pipeline/issues/16) ([aa33875](https://github.com/longwave-innovation-lab/terraform-aws-git-pipeline/commit/aa3387560ea24d1d1f7f88e21306b4eacf72839f))
+
 ## [3.1.0](https://github.com/longwave-innovation-lab/terraform-aws-git-pipeline/compare/v3.0.0...v3.1.0) (2026-07-30)
 
 
@@ -50,15 +57,4 @@
 ### Bug Fixes
 
 * removed wrong condition on source stage that was overriding pr changes ([7a6cf3a](https://github.com/longwave-innovation-lab/terraform-aws-git-pipeline/commit/7a6cf3a1a78ec626b3e773ce249a756e05c71e57))
-
-## [1.0.0](https://github.com/longwave-innovation-lab/terraform-aws-git-pipeline/compare/v0.1.5...v1.0.0) (2026-03-23)
-
-
-### ⚠ BREAKING CHANGES
-
-* now codepipeline_type must be uppercase, defualt is V2
-
-### Bug Fixes
-
-* now codepipeline_type must be uppercase, defualt is V2 ([e87fdbd](https://github.com/longwave-innovation-lab/terraform-aws-git-pipeline/commit/e87fdbd1a59a2f08dabdaa725bd51d3bf1a35e9d))
 
