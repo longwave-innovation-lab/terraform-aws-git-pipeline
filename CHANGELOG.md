@@ -1,3 +1,10 @@
+## [3.2.0](https://github.com/longwave-innovation-lab/terraform-aws-git-pipeline/compare/v3.1.1...v3.2.0) (2026-10-06)
+
+
+### Features
+
+* **codedeploy:** add opt-in CodeDeploy deploy stage ([3158bfe](https://github.com/longwave-innovation-lab/terraform-aws-git-pipeline/commit/3158bfe41a000d655e5d5208c4955fd7b7c77e15))
+
 ## [3.1.1](https://github.com/longwave-innovation-lab/terraform-aws-git-pipeline/compare/v3.1.0...v3.1.1) (2026-08-03)
 
 
@@ -50,11 +57,4 @@
 ### Bug Fixes
 
 * **ci:** mdlint now wait for doctoc to run ([7a1d831](https://github.com/longwave-innovation-lab/terraform-aws-git-pipeline/commit/7a1d8319183f2f7635f8104e5eaf66a2df369f0a))
-
-## [1.0.1](https://github.com/longwave-innovation-lab/terraform-aws-git-pipeline/compare/v1.0.0...v1.0.1) (2026-03-23)
-
-
-### Bug Fixes
-
-* removed wrong condition on source stage that was overriding pr changes ([7a6cf3a](https://github.com/longwave-innovation-lab/terraform-aws-git-pipeline/commit/7a6cf3a1a78ec626b3e773ce249a756e05c71e57))
 
