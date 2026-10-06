@@ -27,4 +27,11 @@ locals {
     !(length(var.source_file_path_filters) == 1 && var.source_file_path_filters[0] == "*")
   )
 
+  # --- Optional CodeDeploy stage ---
+  codedeploy_enabled    = var.codedeploy_config != null
+  codedeploy_stage_name = "Deploy"
+  # Notifications need at least one state to listen to, otherwise no rule is created
+  # (try() avoids attribute access on a null object when the stage is disabled)
+  codedeploy_notifications_enabled = length(try(var.codedeploy_config.notify_on_states, [])) > 0
+
 }

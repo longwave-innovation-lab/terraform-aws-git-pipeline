@@ -244,6 +244,37 @@ variable "source_file_path_filters" {
   description = "Glob patterns of file paths that trigger the pipeline on push. Supports `*`, `**`, and `?`. For GitHub/external providers, requires `codepipeline_type = \"V2\"`. For CodeCommit, leaving this as `[\"*\"]` routes events directly to the pipeline via EventBridge; setting specific patterns instead deploys a Lambda traffic controller that inspects commit diffs and triggers the pipeline only when a matching file is changed."
 }
 
+variable "codedeploy_config" {
+  type = object({
+    application_name      = string
+    deployment_group_name = string
+    notify_on_states      = optional(list(string), ["SUCCEEDED", "FAILED", "STOPPED"])
+  })
+  default     = null
+  description = <<-EOT
+    Opt-in. When set, a `Deploy` stage using AWS CodeDeploy is appended after the `Build` stage and receives the CodeBuild output artifact as the application revision (it must contain `appspec.yml` at its root).
+    <br>The CodeDeploy application and deployment group are NOT created by this module: create them in the caller and pass their names here.
+    <br>`notify_on_states`: Deploy stage states that are published to the pipeline SNS topic. Allowed values: `STARTED`, `SUCCEEDED`, `RESUMED`, `FAILED`, `CANCELED`, `STOPPED`, `STOPPING`. Use `[]` to disable deploy notifications.
+    <br>**Note**: not compatible with `parallel_multiplatform_build_enabled = true`.
+  EOT
+
+  validation {
+    condition = var.codedeploy_config == null ? true : (
+      length(trimspace(var.codedeploy_config.application_name)) > 0 &&
+      length(trimspace(var.codedeploy_config.deployment_group_name)) > 0
+    )
+    error_message = "codedeploy_config.application_name and codedeploy_config.deployment_group_name must not be empty."
+  }
+
+  validation {
+    condition = var.codedeploy_config == null ? true : alltrue([
+      for s in var.codedeploy_config.notify_on_states :
+      contains(["STARTED", "SUCCEEDED", "RESUMED", "FAILED", "CANCELED", "STOPPED", "STOPPING"], s)
+    ])
+    error_message = "codedeploy_config.notify_on_states allowed values: STARTED, SUCCEEDED, RESUMED, FAILED, CANCELED, STOPPED, STOPPING."
+  }
+}
+
 variable "parallel_multiplatform_build_enabled" {
   type        = bool
   default     = false

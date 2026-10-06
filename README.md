@@ -8,6 +8,7 @@
   - [Basic Pipeline](#basic-pipeline)
   - [Basic Manual Approval](#basic-manual-approval)
   - [Using Environment Variables](#using-environment-variables)
+  - [Deploy with CodeDeploy (opt-in)](#deploy-with-codedeploy-opt-in)
 - [CodeBuild Environment Configuration](#codebuild-environment-configuration)
 - [Parallel multiplatform](#parallel-multiplatform)
 - [Lambda Unit Tests](#lambda-unit-tests)
@@ -28,7 +29,7 @@
 Module that creates a pipeline which has a Github repository as a source.
 
 The pipeline structure is very basic at the moment.
-<br>In this version it creates a source stage followed by an optional manual approval and finally a build stage.
+<br>In this version it creates a source stage followed by an optional manual approval, a build stage and an optional CodeDeploy deploy stage.
 
 ## Usage
 
@@ -164,6 +165,53 @@ module "github_codepipeline" {
     }
   ]
   sns_subscribers = ["subscriber_mail@domain.com"]
+}
+```
+
+### Deploy with CodeDeploy (opt-in)
+
+Setting `codedeploy_config` appends a `Deploy` stage after the build: the CodeBuild output artifact is passed to AWS CodeDeploy as the application revision.
+Without `codedeploy_config` the pipeline is unchanged.
+
+What the module does:
+
+- adds the `Deploy` stage (provider `CodeDeploy`, input artifact `build_output`);
+- grants the CodePipeline role the CodeDeploy permissions, scoped to the given application and deployment group;
+- sends the Deploy stage states listed in `notify_on_states` to the pipeline SNS topic (EventBridge rule and topic policy).
+
+What the caller must provide:
+
+- the CodeDeploy application, the deployment group and its service role (see the example);
+- a buildspec that exports the deployable bundle with `appspec.yml` at its root, for example:
+
+    ```yaml
+    artifacts:
+      base-directory: dist   # folder that contains appspec.yml, scripts/ and the application files
+      files:
+        - '**/*'
+    ```
+
+- on the target instances: the CodeDeploy agent and an instance profile with `s3:GetObject` on `<artifact_bucket_arn>/*` (output `artifact_bucket_arn`), because the agent downloads the revision from the pipeline artifact bucket.
+
+Not compatible with `parallel_multiplatform_build_enabled = true`.
+
+[Try the terraform code](./examples/codedeploy_ec2_example/README.md).
+
+```hcl
+module "github_codepipeline" {
+  source                            = "git::https://github.com/longwave-innovation-lab/terraform-aws-git-pipeline.git?ref=<version>"
+  repo_owner                        = "org_name"
+  repo_name                         = "repo_name"
+  repo_branch                       = "branch_name"
+  existing_codestart_connection_arn = aws_codestarconnections_connection.github_connection.arn
+  ecr_enabled                       = false
+  sns_subscribers                   = ["subscriber_mail@domain.com"]
+
+  codedeploy_config = {
+    application_name      = aws_codedeploy_app.app.name
+    deployment_group_name = aws_codedeploy_deployment_group.group.deployment_group_name
+    notify_on_states      = ["SUCCEEDED", "FAILED"] # optional, default SUCCEEDED/FAILED/STOPPED
+  }
 }
 ```
 
