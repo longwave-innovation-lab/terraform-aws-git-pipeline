@@ -8,6 +8,7 @@
   - [Basic Pipeline](#basic-pipeline)
   - [Basic Manual Approval](#basic-manual-approval)
   - [Using Environment Variables](#using-environment-variables)
+  - [Deploy with CodeDeploy (opt-in)](#deploy-with-codedeploy-opt-in)
 - [CodeBuild Environment Configuration](#codebuild-environment-configuration)
 - [Parallel multiplatform](#parallel-multiplatform)
 - [Lambda Unit Tests](#lambda-unit-tests)
@@ -28,7 +29,7 @@
 Module that creates a pipeline which has a Github repository as a source.
 
 The pipeline structure is very basic at the moment.
-<br>In this version it creates a source stage followed by an optional manual approval and finally a build stage.
+<br>In this version it creates a source stage followed by an optional manual approval, a build stage and an optional CodeDeploy deploy stage.
 
 ## Usage
 
@@ -164,6 +165,53 @@ module "github_codepipeline" {
     }
   ]
   sns_subscribers = ["subscriber_mail@domain.com"]
+}
+```
+
+### Deploy with CodeDeploy (opt-in)
+
+Setting `codedeploy_config` appends a `Deploy` stage after the build: the CodeBuild output artifact is passed to AWS CodeDeploy as the application revision.
+Without `codedeploy_config` the pipeline is unchanged.
+
+What the module does:
+
+- adds the `Deploy` stage (provider `CodeDeploy`, input artifact `build_output`);
+- grants the CodePipeline role the CodeDeploy permissions, scoped to the given application and deployment group;
+- sends the Deploy stage states listed in `notify_on_states` to the pipeline SNS topic (EventBridge rule and topic policy).
+
+What the caller must provide:
+
+- the CodeDeploy application, the deployment group and its service role (see the example);
+- a buildspec that exports the deployable bundle with `appspec.yml` at its root, for example:
+
+    ```yaml
+    artifacts:
+      base-directory: dist   # folder that contains appspec.yml, scripts/ and the application files
+      files:
+        - '**/*'
+    ```
+
+- on the target instances: the CodeDeploy agent and an instance profile with `s3:GetObject` on `<artifact_bucket_arn>/*` (output `artifact_bucket_arn`), because the agent downloads the revision from the pipeline artifact bucket.
+
+Not compatible with `parallel_multiplatform_build_enabled = true`.
+
+[Try the terraform code](./examples/codedeploy_ec2_example/README.md).
+
+```hcl
+module "github_codepipeline" {
+  source                            = "git::https://github.com/longwave-innovation-lab/terraform-aws-git-pipeline.git?ref=<version>"
+  repo_owner                        = "org_name"
+  repo_name                         = "repo_name"
+  repo_branch                       = "branch_name"
+  existing_codestart_connection_arn = aws_codestarconnections_connection.github_connection.arn
+  ecr_enabled                       = false
+  sns_subscribers                   = ["subscriber_mail@domain.com"]
+
+  codedeploy_config = {
+    application_name      = aws_codedeploy_app.app.name
+    deployment_group_name = aws_codedeploy_deployment_group.group.deployment_group_name
+    notify_on_states      = ["SUCCEEDED", "FAILED"] # optional, default SUCCEEDED/FAILED/STOPPED
+  }
 }
 ```
 
@@ -304,7 +352,9 @@ No modules.
 | Name | Type |
 |------|------|
 | [aws_cloudwatch_event_rule.codebuild_events_rule](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_event_rule) | resource |
+| [aws_cloudwatch_event_rule.codedeploy_stage_events](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_event_rule) | resource |
 | [aws_cloudwatch_event_rule.repo_changes](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_event_rule) | resource |
+| [aws_cloudwatch_event_target.codedeploy_stage_sns](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_event_target) | resource |
 | [aws_cloudwatch_event_target.lambda_target](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_event_target) | resource |
 | [aws_cloudwatch_event_target.traffic_controller_trigger](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_event_target) | resource |
 | [aws_cloudwatch_event_target.trigger](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/cloudwatch_event_target) | resource |
@@ -326,6 +376,7 @@ No modules.
 | [aws_iam_role_policy.codebuild_extra](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy) | resource |
 | [aws_iam_role_policy.codebuild_parameters](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy) | resource |
 | [aws_iam_role_policy.codebuild_secrets](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy) | resource |
+| [aws_iam_role_policy.codepipeline_codedeploy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy) | resource |
 | [aws_iam_role_policy.codepipeline_default](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy) | resource |
 | [aws_iam_role_policy.codepipeline_manual_approval](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy) | resource |
 | [aws_iam_role_policy.invoke_traffic_controller](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/iam_role_policy) | resource |
@@ -340,6 +391,7 @@ No modules.
 | [aws_s3_bucket.pipeline_artifact_bucket](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket) | resource |
 | [aws_s3_bucket_public_access_block.codepipeline_bucket_pab](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_public_access_block) | resource |
 | [aws_sns_topic.pipeline_notifications](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/sns_topic) | resource |
+| [aws_sns_topic_policy.pipeline_notifications](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/sns_topic_policy) | resource |
 | [aws_sns_topic_subscription.pipeline_notifications_lambda](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/sns_topic_subscription) | resource |
 | [aws_sqs_queue.evnt_rule_target_dlq](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/sqs_queue) | resource |
 | [archive_file.lambda](https://registry.terraform.io/providers/hashicorp/archive/latest/docs/data-sources/file) | data source |
@@ -354,12 +406,14 @@ No modules.
 | [aws_iam_policy_document.codebuild_default_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_iam_policy_document.codebuild_parameter_store_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_iam_policy_document.codebuild_secret_policy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
+| [aws_iam_policy_document.codepipeline_codedeploy](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_iam_policy_document.codepipeline_default](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_iam_policy_document.codepipeline_manual_approval](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_iam_policy_document.ecr_ext_access](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_iam_policy_document.event_assume_role](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_iam_policy_document.invoke_traffic_controller](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_iam_policy_document.lambda_function_policy_document](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
+| [aws_iam_policy_document.pipeline_notifications_topic](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_iam_policy_document.start_pipeline](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_iam_policy_document.traffic_controller](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/iam_policy_document) | data source |
 | [aws_region.current](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/data-sources/region) | data source |
@@ -382,6 +436,7 @@ No modules.
 | <a name="input_codebuild_privileged_mode"></a> [codebuild\_privileged\_mode](#input\_codebuild\_privileged\_mode) | Whether to run the build in privileged mode which is needed when using Docker | `bool` | `true` | no |
 | <a name="input_codebuild_queue_minutes_timeout"></a> [codebuild\_queue\_minutes\_timeout](#input\_codebuild\_queue\_minutes\_timeout) | Number of minutes to timeout the codebuild queue | `number` | `60` | no |
 | <a name="input_codebuild_role_additional_policy"></a> [codebuild\_role\_additional\_policy](#input\_codebuild\_role\_additional\_policy) | Additional policy to attach to the CodeBuild role, it must be in json | `any` | `{}` | no |
+| <a name="input_codedeploy_config"></a> [codedeploy\_config](#input\_codedeploy\_config) | Opt-in. When set, a `Deploy` stage using AWS CodeDeploy is appended after the `Build` stage and receives the CodeBuild output artifact as the application revision (it must contain `appspec.yml` at its root).<br/><br>The CodeDeploy application and deployment group are NOT created by this module: create them in the caller and pass their names here.<br/><br>`notify_on_states`: Deploy stage states that are published to the pipeline SNS topic. Allowed values: `STARTED`, `SUCCEEDED`, `RESUMED`, `FAILED`, `CANCELED`, `STOPPED`, `STOPPING`. Use `[]` to disable deploy notifications.<br/><br>**Note**: not compatible with `parallel_multiplatform_build_enabled = true`. | <pre>object({<br/>    application_name      = string<br/>    deployment_group_name = string<br/>    notify_on_states      = optional(list(string), ["SUCCEEDED", "FAILED", "STOPPED"])<br/>  })</pre> | `null` | no |
 | <a name="input_codepipeline_type"></a> [codepipeline\_type](#input\_codepipeline\_type) | Codepipeline version, it can be `V1` or `V2`. [See documentation to choose](https://docs.aws.amazon.com/codepipeline/latest/userguide/pipeline-types.html) | `string` | `"V2"` | no |
 | <a name="input_ecr_custom_registry_name"></a> [ecr\_custom\_registry\_name](#input\_ecr\_custom\_registry\_name) | If the repo name is not the same as the image name use this. E.g. Mono repositories with multiple projects inside | `string` | `""` | no |
 | <a name="input_ecr_dev_tag_pattern_list"></a> [ecr\_dev\_tag\_pattern\_list](#input\_ecr\_dev\_tag\_pattern\_list) | Tag pattern list to match development images. See [ECR lifecycle policy doc](https://docs.aws.amazon.com/AmazonECR/latest/userguide/lifecycle_policy_parameters.html#lp_tag_pattern_list). | `list(string)` | <pre>[<br/>  "dev-*.*.*"<br/>]</pre> | no |
@@ -414,7 +469,10 @@ No modules.
 
 | Name | Description |
 |------|-------------|
+| <a name="output_artifact_bucket_arn"></a> [artifact\_bucket\_arn](#output\_artifact\_bucket\_arn) | The Amazon Resource Name (ARN) of the S3 bucket that stores the pipeline artifacts. |
+| <a name="output_artifact_bucket_name"></a> [artifact\_bucket\_name](#output\_artifact\_bucket\_name) | The name of the S3 bucket that stores the pipeline artifacts. With `codedeploy_config` the target instances download the revision from here: grant their instance profile `s3:GetObject` on `<bucket_arn>/*`. |
 | <a name="output_codebuild_role_arn"></a> [codebuild\_role\_arn](#output\_codebuild\_role\_arn) | The Amazon Resource Name (ARN) specifying the role for Codebuild. |
+| <a name="output_codedeploy_stage_name"></a> [codedeploy\_stage\_name](#output\_codedeploy\_stage\_name) | Name of the CodeDeploy stage of the pipeline, empty when `codedeploy_config` is not set. |
 | <a name="output_codepipeline_arn"></a> [codepipeline\_arn](#output\_codepipeline\_arn) | The Amazon Resource Name (ARN) of the CodePipeline. |
 | <a name="output_codepipeline_role_arn"></a> [codepipeline\_role\_arn](#output\_codepipeline\_role\_arn) | The Amazon Resource Name (ARN) specifying the role for CodePipeline. |
 | <a name="output_ecr_arn"></a> [ecr\_arn](#output\_ecr\_arn) | The Amazon Resource Name (ARN) of the ECR repository. |

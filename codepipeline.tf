@@ -293,4 +293,39 @@ resource "aws_codepipeline" "pipeline" {
     }
   }
   #endregion
+
+  #region codedeploy
+  # Optional deploy stage (opt-in via var.codedeploy_config).
+  # The CodeBuild output artifact is handed to CodeDeploy as the application
+  # revision, so the buildspec must export a bundle with appspec.yml at its root.
+  dynamic "stage" {
+    for_each = local.codedeploy_enabled ? [1] : []
+    content {
+      name = local.codedeploy_stage_name
+
+      action {
+        name            = local.codedeploy_stage_name
+        category        = "Deploy"
+        owner           = "AWS"
+        provider        = "CodeDeploy"
+        input_artifacts = ["build_output"]
+        version         = "1"
+
+        configuration = {
+          ApplicationName     = var.codedeploy_config.application_name
+          DeploymentGroupName = var.codedeploy_config.deployment_group_name
+        }
+      }
+    }
+  }
+  #endregion
+
+  lifecycle {
+    # The multiplatform build produces container images, not a CodeDeploy
+    # revision, and has no single "build_output" artifact to deploy
+    precondition {
+      condition     = !(local.codedeploy_enabled && var.parallel_multiplatform_build_enabled)
+      error_message = "codedeploy_config cannot be used together with parallel_multiplatform_build_enabled = true."
+    }
+  }
 }

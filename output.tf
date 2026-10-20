@@ -28,6 +28,21 @@ output "codebuild_role_arn" {
   description = "The Amazon Resource Name (ARN) specifying the role for Codebuild."
 }
 
+output "artifact_bucket_name" {
+  value       = aws_s3_bucket.pipeline_artifact_bucket.bucket
+  description = "The name of the S3 bucket that stores the pipeline artifacts. With `codedeploy_config` the target instances download the revision from here: grant their instance profile `s3:GetObject` on `<bucket_arn>/*`."
+}
+
+output "artifact_bucket_arn" {
+  value       = aws_s3_bucket.pipeline_artifact_bucket.arn
+  description = "The Amazon Resource Name (ARN) of the S3 bucket that stores the pipeline artifacts."
+}
+
+output "codedeploy_stage_name" {
+  value       = local.codedeploy_enabled ? local.codedeploy_stage_name : ""
+  description = "Name of the CodeDeploy stage of the pipeline, empty when `codedeploy_config` is not set."
+}
+
 output "sns_topic_arn" {
   value       = aws_sns_topic.pipeline_notifications.arn
   description = "The Amazon Resource Name (ARN) of the SNS topic for pipeline notifications."
