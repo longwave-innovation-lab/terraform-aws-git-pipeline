@@ -212,7 +212,7 @@ resource "aws_codebuild_project" "cb_project" {
     environment_variable {
       name  = "BRANCH_NAME"
       type  = "PLAINTEXT"
-      value = var.repo_branch
+      value = local.pipeline_ref_name
     }
 
     dynamic "environment_variable" {
@@ -298,7 +298,7 @@ resource "aws_codebuild_project" "cache_builders" {
     environment_variable {
       name  = "BRANCH_NAME"
       type  = "PLAINTEXT"
-      value = var.repo_branch
+      value = local.pipeline_ref_name
     }
 
     dynamic "environment_variable" {
@@ -380,7 +380,7 @@ resource "aws_codebuild_project" "image_index_builder" {
     environment_variable {
       name  = "BRANCH_NAME"
       type  = "PLAINTEXT"
-      value = var.repo_branch
+      value = local.pipeline_ref_name
     }
 
     dynamic "environment_variable" {

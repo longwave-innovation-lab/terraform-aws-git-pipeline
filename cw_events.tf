@@ -1,7 +1,7 @@
 
 resource "aws_cloudwatch_event_rule" "codebuild_events_rule" {
   name_prefix = length("${local.final_name}${local.pipeline_resources_suffix}") > 38 ? substr("${local.final_name}${local.pipeline_resources_suffix}", 0, 37) : "${local.final_name}${local.pipeline_resources_suffix}"
-  description = "Capture CodeBuild events for ${var.repo_owner}/${var.repo_name} branch ${var.repo_branch}"
+  description = "Capture CodeBuild events for ${var.repo_owner}/${var.repo_name} ${local.trigger_description}"
 
   event_pattern = jsonencode({
     source      = ["aws.codebuild"]

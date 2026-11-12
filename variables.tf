@@ -21,7 +21,51 @@ variable "repo_owner_shortname" {
 
 variable "repo_branch" {
   type        = string
-  description = "Name of the branch to listen"
+  default     = ""
+  description = "Name of the branch to listen. Required when `tag_trigger_enabled = false` (default branch-push mode). Ignored when `tag_trigger_enabled = true`."
+}
+
+variable "tag_trigger_enabled" {
+  type        = bool
+  default     = false
+  description = <<-EOT
+    Opt-in. When `true` the pipeline is triggered by Git **tag** pushes (filtered by `tag_trigger_includes`/`tag_trigger_excludes`) instead of branch pushes, and `repo_branch` is ignored.
+    <br>Resources are named `{owner}-{repo_name}-{tag_index}` and the pushed tag is exposed to every CodeBuild action as the `TAG_NAME` environment variable (resolved from `#{SourceVariables.TagName}`).
+    <br>`source_file_path_filters` is not applied to tag pushes.
+    <br>**Note**: requires `codepipeline_type = "V2"` and a CodeStar connection (`is_codecommit = false`).
+  EOT
+}
+
+variable "tag_trigger_includes" {
+  type        = list(string)
+  default     = ["v*"]
+  description = "Glob patterns of Git tags that trigger the pipeline. Only used when `tag_trigger_enabled = true`."
+  validation {
+    condition     = length(var.tag_trigger_includes) > 0
+    error_message = "tag_trigger_includes must contain at least one pattern."
+  }
+}
+
+variable "tag_trigger_excludes" {
+  type        = list(string)
+  default     = []
+  description = "Glob patterns of Git tags that must NOT trigger the pipeline. Excludes take precedence over includes. Only used when `tag_trigger_enabled = true`."
+}
+
+variable "tag_index" {
+  type        = string
+  default     = "production-version"
+  description = "Identifier used in place of the branch to name the resources (`{owner}-{repo_name}-{tag_index}`) and as `BRANCH_NAME` CodeBuild env var. Only used when `tag_trigger_enabled = true`."
+  validation {
+    condition     = length(trimspace(var.tag_index)) > 0
+    error_message = "tag_index must not be empty."
+  }
+}
+
+variable "tag_trigger_default_branch" {
+  type        = string
+  default     = "main"
+  description = "Branch configured on the source action when `tag_trigger_enabled = true`. AWS requires it and uses it only for manual starts (\"Release change\"), which carry no tag: `TAG_NAME` will not be resolved in that case."
 }
 
 variable "existing_codestart_connection_arn" {
@@ -43,7 +87,7 @@ variable "git_provider_url" {
 variable "pipeline_custom_name" {
   type        = string
   default     = ""
-  description = "Custom name for the pipeline, if not set the name will be generated with the pattern {owner}-{repo_name}-{repo_branch} and truncated to 64 characters if needed. This value takes precedence over the generated one. Use this in case of multiple pipelines on a monorepo."
+  description = "Custom name for the pipeline, if not set the name will be generated with the pattern {owner}-{repo_name}-{repo_branch} ({owner}-{repo_name}-{tag_index} when `tag_trigger_enabled = true`) and truncated to 64 characters if needed. This value takes precedence over the generated one. Use this in case of multiple pipelines on a monorepo."
   validation {
     condition     = length(var.pipeline_custom_name) == 0 || (length(trim(var.pipeline_custom_name, " ")) > 0 && length(trim(var.pipeline_custom_name, " ")) <= 64)
     error_message = "Custom pipeline name must be between 1 and 64 characters."

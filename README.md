@@ -9,8 +9,10 @@
   - [Basic Manual Approval](#basic-manual-approval)
   - [Using Environment Variables](#using-environment-variables)
   - [Deploy with CodeDeploy (opt-in)](#deploy-with-codedeploy-opt-in)
+  - [Trigger on tag push (opt-in)](#trigger-on-tag-push-opt-in)
 - [CodeBuild Environment Configuration](#codebuild-environment-configuration)
 - [Parallel multiplatform](#parallel-multiplatform)
+- [Terraform Tests](#terraform-tests)
 - [Lambda Unit Tests](#lambda-unit-tests)
   - [Setup](#setup)
   - [Running the tests](#running-the-tests)
@@ -215,6 +217,43 @@ module "github_codepipeline" {
 }
 ```
 
+### Trigger on tag push (opt-in)
+
+By default the pipeline is triggered by pushes on `repo_branch`. Setting `tag_trigger_enabled = true` switches the pipeline to **Git tag pushes** instead; without it the pipeline is unchanged.
+
+What changes in tag mode:
+
+- the V2 trigger listens to tags matching `tag_trigger_includes` (default `["v*"]`) and not matching `tag_trigger_excludes` (default `[]`, excludes win over includes); `repo_branch` and `source_file_path_filters` are ignored;
+- resources are named `{owner}-{repo_name}-{tag_index}` (default `tag_index = "production-version"`), `pipeline_custom_name` still takes precedence. `tag_index` is also passed as the `BRANCH_NAME` CodeBuild env var;
+- the source action gets the `SourceVariables` namespace and every CodeBuild action receives the pushed tag as the `TAG_NAME` environment variable (`#{SourceVariables.TagName}`), e.g. to tag the image in the buildspec:
+
+    ```yaml
+    build:
+      commands:
+        - docker build -t "$REPO_NAME:$TAG_NAME" .
+    ```
+
+- the source action still needs a branch (`tag_trigger_default_branch`, default `main`): AWS uses it only for manual starts ("Release change"), which carry no tag, so `TAG_NAME` is not resolved in that case. Re-run a tag build with "Retry" or by pushing a new tag.
+
+Requires `codepipeline_type = "V2"` and a CodeStar connection (`is_codecommit = false`).
+To build both a branch and tags of the same repository, use two module instances (set `ecr_use_existing = true` on the second one if they share the registry).
+
+[Try the terraform code](./examples/tag_trigger_example/README.md).
+
+```hcl
+module "github_codepipeline" {
+  source                            = "git::https://github.com/longwave-innovation-lab/terraform-aws-git-pipeline.git?ref=<version>"
+  repo_owner                        = "org_name"
+  repo_name                         = "repo_name"
+  existing_codestart_connection_arn = aws_codestarconnections_connection.github_connection.arn
+
+  tag_trigger_enabled  = true
+  tag_trigger_includes = ["v*"]       # optional, default ["v*"]
+  tag_trigger_excludes = ["v*-rc*"]   # optional, default []
+  tag_index            = "production" # optional, default "production-version"
+}
+```
+
 ## CodeBuild Environment Configuration
 
 You can use different configuration to customize your CodeBuild project where the automation will run.
@@ -290,6 +329,15 @@ variable "parallel_instances_configuration" {
 }
 ```
 
+## Terraform Tests
+
+The module behavior (branch mode unchanged, tag mode, input validation) is covered by plan-only [terraform tests](./tests) with mocked providers, so no AWS credentials are needed:
+
+```sh
+terraform init -backend=false
+terraform test
+```
+
 ## Lambda Unit Tests
 
 The monorepo traffic controller Lambda (`lambda_code/traffic_controller.py`) ships with a unit test suite that requires **no external dependencies** beyond `boto3`, which is already part of the Lambda runtime and any standard Python environment used with this module.
@@ -340,8 +388,8 @@ pre-commit install --hook-type commit-msg
 
 | Name | Version |
 |------|---------|
-| <a name="provider_archive"></a> [archive](#provider\_archive) | >= 2.7.0 |
-| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 6.0.0 |
+| <a name="provider_archive"></a> [archive](#provider\_archive) | 2.7.1 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 6.37.0 |
 
 ## Modules
 
@@ -424,7 +472,6 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_repo_branch"></a> [repo\_branch](#input\_repo\_branch) | Name of the branch to listen | `string` | n/a | yes |
 | <a name="input_repo_name"></a> [repo\_name](#input\_repo\_name) | Name of the repository | `string` | n/a | yes |
 | <a name="input_add_manual_approval"></a> [add\_manual\_approval](#input\_add\_manual\_approval) | Whether to add manual approval to the CodePipeline | `bool` | `false` | no |
 | <a name="input_build_minutes_timeout"></a> [build\_minutes\_timeout](#input\_build\_minutes\_timeout) | Number of minutes to timeout the build | `number` | `5` | no |
@@ -458,12 +505,18 @@ No modules.
 | <a name="input_parallel_instances_configuration"></a> [parallel\_instances\_configuration](#input\_parallel\_instances\_configuration) | Configuration for both environments. To know about possible values check [CodeBuild doc](https://docs.aws.amazon.com/codebuild/latest/userguide/build-env-ref.html). | <pre>object({<br/>    cache_amd64 = object({<br/>      compute_type          = optional(string, "BUILD_GENERAL1_MEDIUM")<br/>      image                 = optional(string, "aws/codebuild/amazonlinux-x86_64-standard:5.0")<br/>      privileged_mode       = optional(bool, true)<br/>      container_type        = optional(string, "LINUX_CONTAINER")<br/>      buildspec_path        = optional(string, "buildspec-cache.yaml")<br/>      build_minutes_timeout = optional(number, 15)<br/>      platform_name         = optional(string, "linux/amd64")<br/>    })<br/>    cache_arm64 = object({<br/>      compute_type          = optional(string, "BUILD_GENERAL1_MEDIUM")<br/>      image                 = optional(string, "aws/codebuild/amazonlinux-aarch64-standard:3.0")<br/>      privileged_mode       = optional(bool, true)<br/>      container_type        = optional(string, "ARM_CONTAINER")<br/>      buildspec_path        = optional(string, "buildspec-cache.yaml")<br/>      build_minutes_timeout = optional(number, 15)<br/>      platform_name         = optional(string, "linux/arm64")<br/>    })<br/>  })</pre> | <pre>{<br/>  "cache_amd64": {<br/>    "buildspec_path": "buildspec-cache.yaml",<br/>    "compute_type": "BUILD_GENERAL1_MEDIUM",<br/>    "container_type": "LINUX_CONTAINER",<br/>    "image": "aws/codebuild/amazonlinux-x86_64-standard:5.0",<br/>    "privileged_mode": true<br/>  },<br/>  "cache_arm64": {<br/>    "buildspec_path": "buildspec-cache.yaml",<br/>    "compute_type": "BUILD_GENERAL1_MEDIUM",<br/>    "container_type": "ARM_CONTAINER",<br/>    "image": "aws/codebuild/amazonlinux-aarch64-standard:3.0",<br/>    "privileged_mode": true<br/>  }<br/>}</pre> | no |
 | <a name="input_parallel_multiplatform_build_enabled"></a> [parallel\_multiplatform\_build\_enabled](#input\_parallel\_multiplatform\_build\_enabled) | Whether to enable parallel multiplatform build to speed up process. When enabled the default variables will be used to configure the project to build the multilayer index. When enabled `cache_arm64` and `cache_amd64` are automatically added to ECR mutability exclusion list. | `bool` | `false` | no |
 | <a name="input_parameters_paths_to_read"></a> [parameters\_paths\_to\_read](#input\_parameters\_paths\_to\_read) | List of parameters PATHS from Parameter store to read from the Codebuild project. <br> **Note**: the last part of the path, the `parameter name`, should not be present in this variable otherwise no parameters will be found at runtime. | `list(string)` | `[]` | no |
-| <a name="input_pipeline_custom_name"></a> [pipeline\_custom\_name](#input\_pipeline\_custom\_name) | Custom name for the pipeline, if not set the name will be generated with the pattern {owner}-{repo\_name}-{repo\_branch} and truncated to 64 characters if needed. This value takes precedence over the generated one. Use this in case of multiple pipelines on a monorepo. | `string` | `""` | no |
+| <a name="input_pipeline_custom_name"></a> [pipeline\_custom\_name](#input\_pipeline\_custom\_name) | Custom name for the pipeline, if not set the name will be generated with the pattern {owner}-{repo\_name}-{repo\_branch} ({owner}-{repo\_name}-{tag\_index} when `tag_trigger_enabled = true`) and truncated to 64 characters if needed. This value takes precedence over the generated one. Use this in case of multiple pipelines on a monorepo. | `string` | `""` | no |
+| <a name="input_repo_branch"></a> [repo\_branch](#input\_repo\_branch) | Name of the branch to listen. Required when `tag_trigger_enabled = false` (default branch-push mode). Ignored when `tag_trigger_enabled = true`. | `string` | `""` | no |
 | <a name="input_repo_owner"></a> [repo\_owner](#input\_repo\_owner) | Name of the organization | `string` | `""` | no |
 | <a name="input_repo_owner_shortname"></a> [repo\_owner\_shortname](#input\_repo\_owner\_shortname) | This is used to name resources when repo name and repo org are too long. | `string` | `""` | no |
 | <a name="input_secrets_to_read"></a> [secrets\_to\_read](#input\_secrets\_to\_read) | List of secrets ARNs from SecretManager to read from the Codebuild project | `list(string)` | `[]` | no |
 | <a name="input_sns_subscribers"></a> [sns\_subscribers](#input\_sns\_subscribers) | List of email addresses to subscribe to SNS notifications | `list(string)` | `[]` | no |
 | <a name="input_source_file_path_filters"></a> [source\_file\_path\_filters](#input\_source\_file\_path\_filters) | Glob patterns of file paths that trigger the pipeline on push. Supports `*`, `**`, and `?`. For GitHub/external providers, requires `codepipeline_type = "V2"`. For CodeCommit, leaving this as `["*"]` routes events directly to the pipeline via EventBridge; setting specific patterns instead deploys a Lambda traffic controller that inspects commit diffs and triggers the pipeline only when a matching file is changed. | `list(string)` | <pre>[<br/>  "**"<br/>]</pre> | no |
+| <a name="input_tag_index"></a> [tag\_index](#input\_tag\_index) | Identifier used in place of the branch to name the resources (`{owner}-{repo_name}-{tag_index}`) and as `BRANCH_NAME` CodeBuild env var. Only used when `tag_trigger_enabled = true`. | `string` | `"production-version"` | no |
+| <a name="input_tag_trigger_default_branch"></a> [tag\_trigger\_default\_branch](#input\_tag\_trigger\_default\_branch) | Branch configured on the source action when `tag_trigger_enabled = true`. AWS requires it and uses it only for manual starts ("Release change"), which carry no tag: `TAG_NAME` will not be resolved in that case. | `string` | `"main"` | no |
+| <a name="input_tag_trigger_enabled"></a> [tag\_trigger\_enabled](#input\_tag\_trigger\_enabled) | Opt-in. When `true` the pipeline is triggered by Git **tag** pushes (filtered by `tag_trigger_includes`/`tag_trigger_excludes`) instead of branch pushes, and `repo_branch` is ignored.<br/><br>Resources are named `{owner}-{repo_name}-{tag_index}` and the pushed tag is exposed to every CodeBuild action as the `TAG_NAME` environment variable (resolved from `#{SourceVariables.TagName}`).<br/><br>`source_file_path_filters` is not applied to tag pushes.<br/><br>**Note**: requires `codepipeline_type = "V2"` and a CodeStar connection (`is_codecommit = false`). | `bool` | `false` | no |
+| <a name="input_tag_trigger_excludes"></a> [tag\_trigger\_excludes](#input\_tag\_trigger\_excludes) | Glob patterns of Git tags that must NOT trigger the pipeline. Excludes take precedence over includes. Only used when `tag_trigger_enabled = true`. | `list(string)` | `[]` | no |
+| <a name="input_tag_trigger_includes"></a> [tag\_trigger\_includes](#input\_tag\_trigger\_includes) | Glob patterns of Git tags that trigger the pipeline. Only used when `tag_trigger_enabled = true`. | `list(string)` | <pre>[<br/>  "v*"<br/>]</pre> | no |
 
 ## Outputs
 

@@ -30,7 +30,7 @@ This example shows the creation of a pipeline of `type V1`, that listen to every
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 6.0.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | 6.37.0 |
 
 ## Modules
 

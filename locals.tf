@@ -1,6 +1,30 @@
 locals {
   pipeline_resources_suffix = "_Pipeline"
-  repo_branch_fixed         = replace(var.repo_branch, "/", "-")
+
+  # --- Optional tag-push trigger ---
+  tag_trigger_enabled = var.tag_trigger_enabled
+  # Branch set on the source action (in tag mode AWS uses it only for manual starts)
+  source_branch = local.tag_trigger_enabled ? var.tag_trigger_default_branch : var.repo_branch
+  # Identifier used for naming and the BRANCH_NAME env var
+  pipeline_ref_name = local.tag_trigger_enabled ? var.tag_index : var.repo_branch
+  trigger_description = (
+    local.tag_trigger_enabled ?
+    "tags ${join(", ", var.tag_trigger_includes)}" :
+    "branch ${var.repo_branch}"
+  )
+  source_variables_namespace = "SourceVariables"
+  # Action-level env vars injected into every CodeBuild action in tag mode
+  tag_build_action_configuration = local.tag_trigger_enabled ? {
+    EnvironmentVariables = jsonencode([
+      {
+        name  = "TAG_NAME"
+        value = "#{${local.source_variables_namespace}.TagName}"
+        type  = "PLAINTEXT"
+      }
+    ])
+  } : {}
+
+  repo_branch_fixed = replace(local.pipeline_ref_name, "/", "-")
   owner_part = (
     var.is_codecommit ?
     "" :

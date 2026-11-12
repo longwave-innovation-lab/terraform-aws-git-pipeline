@@ -134,7 +134,7 @@ resource "aws_codepipeline" "pipeline" {
   # V2 pipeline can have a trigger block to granularly define the events
   # used to trigger the pipelines
   dynamic "trigger" {
-    for_each = var.codepipeline_type == "V2" && !var.is_codecommit ? [1] : []
+    for_each = var.codepipeline_type == "V2" && !var.is_codecommit && !local.tag_trigger_enabled ? [1] : []
     content {
       provider_type = "CodeStarSourceConnection"
       git_configuration {
@@ -154,6 +154,25 @@ resource "aws_codepipeline" "pipeline" {
     }
   }
 
+  # Opt-in tag-push trigger (var.tag_trigger_enabled): tag pushes carry no
+  # branch/file-path context, so the filter only contains tags
+  dynamic "trigger" {
+    for_each = local.tag_trigger_enabled ? [1] : []
+    content {
+      provider_type = "CodeStarSourceConnection"
+      git_configuration {
+        source_action_name = local.git_stage_src_name
+
+        push {
+          tags {
+            includes = var.tag_trigger_includes
+            excludes = length(var.tag_trigger_excludes) > 0 ? var.tag_trigger_excludes : null
+          }
+        }
+      }
+    }
+  }
+
   dynamic "stage" {
     for_each = !var.is_codecommit ? [1] : []
     content {
@@ -166,11 +185,13 @@ resource "aws_codepipeline" "pipeline" {
         provider         = "CodeStarSourceConnection"
         version          = "1"
         output_artifacts = ["source_output"]
+        # Needed to resolve #{SourceVariables.TagName} in the build actions
+        namespace = local.tag_trigger_enabled ? local.source_variables_namespace : null
 
         configuration = {
           ConnectionArn    = data.aws_codestarconnections_connection.git_provider[0].arn
           FullRepositoryId = "${var.repo_owner}/${var.repo_name}"
-          BranchName       = var.repo_branch
+          BranchName       = local.source_branch
         }
       }
     }
@@ -235,9 +256,10 @@ resource "aws_codepipeline" "pipeline" {
         output_artifacts = ["build_output"]
         version          = "1"
 
-        configuration = {
-          ProjectName = aws_codebuild_project.cb_project[0].name
-        }
+        configuration = merge(
+          { ProjectName = aws_codebuild_project.cb_project[0].name },
+          local.tag_build_action_configuration
+        )
       }
     }
   }
@@ -261,9 +283,10 @@ resource "aws_codepipeline" "pipeline" {
           version   = "1"
           run_order = 2
 
-          configuration = {
-            ProjectName = aws_codebuild_project.cache_builders[action.key].name
-          }
+          configuration = merge(
+            { ProjectName = aws_codebuild_project.cache_builders[action.key].name },
+            local.tag_build_action_configuration
+          )
         }
       }
     }
@@ -286,9 +309,10 @@ resource "aws_codepipeline" "pipeline" {
         version          = "1"
         run_order        = 3
 
-        configuration = {
-          ProjectName = aws_codebuild_project.image_index_builder[0].name
-        }
+        configuration = merge(
+          { ProjectName = aws_codebuild_project.image_index_builder[0].name },
+          local.tag_build_action_configuration
+        )
       }
     }
   }
@@ -326,6 +350,22 @@ resource "aws_codepipeline" "pipeline" {
     precondition {
       condition     = !(local.codedeploy_enabled && var.parallel_multiplatform_build_enabled)
       error_message = "codedeploy_config cannot be used together with parallel_multiplatform_build_enabled = true."
+    }
+
+    precondition {
+      condition     = local.tag_trigger_enabled || length(trimspace(var.repo_branch)) > 0
+      error_message = "repo_branch is required when tag_trigger_enabled = false."
+    }
+
+    # Tag triggers exist only on V2 pipelines with a CodeStar connection source
+    precondition {
+      condition     = !local.tag_trigger_enabled || (var.codepipeline_type == "V2" && !var.is_codecommit)
+      error_message = "tag_trigger_enabled = true requires codepipeline_type = \"V2\" and is_codecommit = false."
+    }
+
+    precondition {
+      condition     = !local.tag_trigger_enabled || length(trimspace(var.tag_trigger_default_branch)) > 0
+      error_message = "tag_trigger_default_branch must not be empty when tag_trigger_enabled = true."
     }
   }
 }
